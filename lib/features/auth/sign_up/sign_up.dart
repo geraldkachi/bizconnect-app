@@ -148,7 +148,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             const SizedBox(height: 5),
                             InputField(
                               controller: signupWatch.confirmPassController,
-                              obscureText: signupWatch.obscureText,
+                              obscureText: signupWatch.obscureText1,
                               labelText: "Confirm Password",
                               hintText: "Enter Confirm Password",
                               validator: (value) =>
@@ -156,14 +156,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                       signupWatch.passController.text, value),
                               suffixIcon: IconButton(
                                 icon: SvgPicture.asset(
-                                  signupWatch.obscureText
+                                  signupWatch.obscureText1
                                       ? 'assets/svg/password-eye-close.svg'
                                       : 'assets/svg/password-eye-open.svg',
                                   width: 8.0,
                                   height: 25.03,
                                 ),
                                 onPressed: () {
-                                  signupRead.togglePassword();
+                                  signupRead.togglePasswordConfirm();
                                 },
                               ),
                             ),
@@ -202,9 +202,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               // Navigate to Terms and Conditions page
-                                              print(
-                                                  "Terms and Conditions clicked");
-                                            },
+                                              },
                                         ),
                                         const TextSpan(
                                           text: " and that you have read our ",
@@ -218,7 +216,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               // Navigate to Privacy Policy page
-                                              print("Privacy Policy clicked");
                                             },
                                         ),
                                         const TextSpan(text: "."),

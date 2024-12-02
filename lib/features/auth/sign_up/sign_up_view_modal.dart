@@ -17,6 +17,7 @@ class SignUpViewModel extends ChangeNotifier {
   final ToastService _toastService = getIt<ToastService>();
 
   bool obscureText = true;
+  bool obscureText1 = true;
   bool isLoading = false;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -63,6 +64,10 @@ class SignUpViewModel extends ChangeNotifier {
 
   void togglePassword() {
     obscureText = !obscureText;
+    notifyListeners();
+  }
+  void togglePasswordConfirm() {
+    obscureText1 = !obscureText1;
     notifyListeners();
   }
 }

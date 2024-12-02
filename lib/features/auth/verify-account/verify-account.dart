@@ -18,9 +18,7 @@ class VerifyPage extends ConsumerStatefulWidget {
 }
 
 class _VerifyPageState extends ConsumerState<VerifyPage> {
-  bool showSuccess = true;
-    final AuthService _authService = getIt<AuthService>();
-
+  final AuthService _authService = getIt<AuthService>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,6 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                     const SizedBox(height: 26),
                     const SizedBox(height: 26),
                     if (_authService.userVerified)
-                      // Email successful view
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 34, horizontal: 12),
@@ -82,7 +79,6 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                                 onPressed: () {
                                   setState(() {
                                      context.go('/setup-business-profile');
-                                    // showSuccess = false; // Toggle the view
                                   });
                                 },
                               ),
@@ -91,7 +87,6 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                         ),
                       )
                     else
-                      // Check your email view
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 34, horizontal: 12),
@@ -133,6 +128,7 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                         ),
                       ),
                     const SizedBox(height: 26),
+                    if(!_authService.userVerified) 
                     Center(
                       child: RichText(
                         text: TextSpan(

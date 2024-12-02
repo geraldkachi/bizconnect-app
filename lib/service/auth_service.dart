@@ -48,18 +48,41 @@ class AuthService {
         data: payload,
         // data: {'payload': encryptedPayload},
       );
-      final responsePayload = response;
-      debugPrint('response: $response');
+      if (response != null && response['data'] != null) {
+      final token = response['data']['token']; // Extract token
+      // debugPrint('Received token: $token');
+
+      // Optional: Decode JWT to get user details
+      final parts = token.split('.');
+      if (parts.length > 1) {
+        final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+        debugPrint('Decoded token payload: $payload');
+        _userData = AuthModel.fromJson(jsonDecode(payload)); 
+      }
+
+      // Save token securely
+      // await _secureStorage.write(key: 'accessToken', value: token);
+      await _secureStorageService.writeAccessToken(token: token);
+
+      // Deserialize user data (if provided in response)
+      // debugPrint('User data: $_userData');R
+    } else {
+      throw Exception('Invalid response structure');
+    }
       
-      final token = response['data']['token'];
-      debugPrint('token: $token');
-      debugPrint('encrypted response: $responsePayload');
-      debugPrint('decrypted response: ${response.toString()}');
-      // _userData = AuthModel.fromJson(json.decode(responsePayload));
-      _secureStorageService.writeAccessToken(token: token);
+      // final responsePayload = response;
+      // debugPrint('response: $response');
+
+      // final token = response['data']['token'];
+      // debugPrint('token: $token');
+      // debugPrint('encrypted response: $responsePayload');
+      // debugPrint('decrypted response: ${response.toString()}');
+      // // _userData = AuthModel.fromJson(json.decode(responsePayload));
+      // _secureStorageService.writeAccessToken(token: token);
     } on BizException {
       rethrow;
     } catch (e) {
+      debugPrint('response: $e');
       rethrow;
     }
   }
