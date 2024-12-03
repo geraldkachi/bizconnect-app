@@ -19,6 +19,8 @@ class SignUpViewModel extends ChangeNotifier {
   bool obscureText = true;
   bool obscureText1 = true;
   bool isLoading = false;
+  bool isChecked = false;
+
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -29,6 +31,16 @@ class SignUpViewModel extends ChangeNotifier {
 
   Future signUp(context) async {
     try {
+       // Ensure the checkbox is checked before proceeding
+    if (!isChecked) {
+      _toastService.showToast(
+        context,
+        title: 'Agreement Required',
+        subTitle: 'Please accept the terms and conditions before proceeding.',
+      );
+      return; // Exit the method if not checked
+    }
+        // Validate form input
       if (formKey.currentState!.validate()) {
         formKey.currentState!.save();
         isLoading = true;

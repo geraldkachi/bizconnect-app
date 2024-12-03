@@ -14,19 +14,21 @@ class NetworkService with ErrorHandling {
     dio = Dio(
       BaseOptions(
         baseUrl: url,
-        connectTimeout: const Duration(minutes: 1),
+        connectTimeout: const Duration(minutes: 2),
+        sendTimeout: const Duration(minutes: 2),
+        receiveTimeout: const Duration(minutes: 2),
       ),
     );
     if (kDebugMode) {
       dio.interceptors.addAll([
-        // LogInterceptor(
-        //   responseBody: true,
-        //   error: true,
-        //   requestHeader: true,
-        //   responseHeader: false,
-        //   request: false,
-        //   requestBody: true,
-        // ),
+        LogInterceptor(
+          responseBody: true,
+          error: true,
+          requestHeader: true,
+          responseHeader: false,
+          request: false,
+          requestBody: true,
+        ),
         AppInterceptor(),
       ]);
     }

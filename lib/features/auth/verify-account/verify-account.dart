@@ -78,7 +78,8 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                                 isLoading: false,
                                 onPressed: () {
                                   setState(() {
-                                     context.go('/setup-business-profile');
+                                     context.go('/login');
+                                    //  context.go('/setup-business-profile');
                                   });
                                 },
                               ),
@@ -118,7 +119,10 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'tan*****@gmail.com',
+                              // 'tan*****@gmail.com',
+                               _authService?.userData?.email != null && _authService.userData!.email!.contains('@')
+                                ? '${_authService.userData!.email?.substring(0, 3)}*****@${_authService.userData!.email?.split('@').last}'
+                                : 'Invalid email',
                               style: const TextStyle(
                                   fontSize: 12.0,
                                   color: red,

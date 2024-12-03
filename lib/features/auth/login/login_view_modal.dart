@@ -45,7 +45,7 @@ class LoginViewModel extends ChangeNotifier {
       print(verified);
         if (verified) {
           if (_authService.userRole == 'BUSINESS') {
-            router.go('/main_screen');
+            router.go('/setup-business-profile');
           } else if (role == 'CUSTOMER') {
             router.go('/main_screen');
           }

@@ -26,7 +26,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final signupRead = ref.read(signUpViewModelProvider.notifier);
 
     final currentYear = DateTime.now().year;
-    bool isChecked = false;
 
     return Scaffold(
         body: Container(
@@ -174,10 +173,11 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Checkbox(
-                                  value: isChecked,
+                                  value: signupWatch.isChecked,
+                                  activeColor: cyan100,
                                   onChanged: (value) {
                                     setState(() {
-                                      isChecked = value ?? false;
+                                      signupWatch.isChecked = value ?? false;
                                     });
                                   },
                                 ),

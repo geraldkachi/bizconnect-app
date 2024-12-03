@@ -15,7 +15,6 @@ import 'package:go_router/go_router.dart';
 
 class AuthService {
   final NetworkService _networkService = getIt<NetworkService>();
-  // final EncryptionService _encryptionService = getIt<EncryptionService>();
   final SecureStorageService _secureStorageService =
       getIt<SecureStorageService>();
 
@@ -86,6 +85,7 @@ class AuthService {
       rethrow;
     }
   }
+  
   Future<AuthModel?> login(String email, String password) async {
     try {
       // Create the payload
