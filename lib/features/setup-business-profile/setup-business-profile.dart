@@ -138,166 +138,143 @@ class _SetupBusinessProfilePageState
                 ),
                 child: Column(
                   children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0.0, vertical: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(2, (index) {
-                              return Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      prevIndex = index;
-                                      print(
-                                        prevIndex,
-                                      );
-                                    });
-                                  },
-                                  child: Column(
+                    // Tabs Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0.0, vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: List.generate(2, (index) {
+                          return Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  prevIndex = index;
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  Text(
+                                    index == 0 ? "Tab 1" : "Tab 2",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: prevIndex == index
+                                          ? Color(0xFF17BEBB)
+                                          : Color(0xFFDBD8D8),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    height: 4,
+                                    color: prevIndex == index
+                                        ? Color(0xFF17BEBB)
+                                        : Color(0xFFDBD8D8),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).expand((widget) sync* {
+                          yield widget;
+                          yield const SizedBox(width: 10);
+                        }).toList()
+                          ..removeLast(),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Scrollable Content
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                "Tell Us About Your Business",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                  color: red,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            prevIndex == 0
+                                ? Column(
                                     children: [
-                                      Text(
-                                        index == 0 ? "Tab 1" : "Tab 2",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: prevIndex == index
-                                              ? Color(0xFF17BEBB)
-                                              : Color(0xFFDBD8D8),
-                                        ),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "Business name",
+                                        hintText: "Enter Business Name",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
                                       ),
-                                      // Tab Indicator
-                                      SizedBox(
-                                          width:
-                                              10), // Gap between text and bar
-                                      Container(
-                                        // width: 164, // Width of the bar
-                                        height: 4, // Fixed height of the bar
-                                        color: prevIndex == index
-                                            ? Color(0xFF17BEBB)
-                                            : Color(0xFFDBD8D8),
+                                      const SizedBox(height: 10),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .describeYourBusinessController,
+                                        labelText: "Describe your business",
+                                        hintText:
+                                            "Short sentence about your business",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        maxLines: 5,
+                                        minLines: 3,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      ImageUploadField(
+                                        labelText: "Upload Image",
+                                        hintText:
+                                            "Upload logo or business flyer",
+                                      ),
+                                      const SizedBox(height: 10),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .businessCategoryController,
+                                        labelText: "Business Category",
+                                        hintText: "Search Business Category",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .stateAndProvinceController,
+                                        labelText: "Street",
+                                        hintText: "Enter Street name",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .zipCodePostalCodeController,
+                                        labelText: "Zip Code/Postal Code",
+                                        hintText: "Enter postal code",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                      ),
+                                      const SizedBox(height: 10),
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "Business name",
+                                        hintText: "Enter Business Name",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
                                       ),
                                     ],
                                   ),
-                                ),
-                              );
-                            }).expand((widget) sync* {
-                              yield widget;
-                              yield SizedBox(width: 10); // Gap between tabs
-                            }).toList()
-                              ..removeLast(), // Remove the last gap,
-                          ),
+                          ],
                         ),
-                        // Content Section
-                        SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 10),
-                              Center(
-                                child: Text(
-                                  "Tell Us About Your Business",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 18,
-                                      color: red),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              prevIndex == 0
-                                  ? SingleChildScrollView(
-                                    child: Column(
-                                        children: [
-                                          SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .businessNameController,
-                                            labelText: "Business name",
-                                            hintText: "Enter Business Name",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                          ),
-                                          SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .describeYourBusinessController,
-                                            labelText: "Describe your business",
-                                            hintText:
-                                                "Short Sentence about your business",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                            maxLines: 5,
-                                            minLines: 3,
-                                          ),
-                                          const SizedBox(height: 10),
-                                          ImageUploadField(
-                                            labelText: "Upload Image",
-                                            hintText:
-                                                "Upload logo or business flyer",
-                                          ),
-                                          const SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .businessCategoryController,
-                                            labelText: "Business Category",
-                                            hintText: "search Business Category",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                            // prefixIcon: ,
-                                          ),
-                                          const SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .businessCategoryController,
-                                            labelText: "Business Category",
-                                            hintText: "search Business Category",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                            // prefixIcon: ,
-                                          ),
-                                    
-                                            const SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .stateAndProvinceController,
-                                            labelText: "Street",
-                                            hintText: "Enter Street name",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                            // prefixIcon: ,
-                                          ),
-                                            const SizedBox(height: 10),
-                                          InputField(
-                                            controller: setupProfileWatch
-                                                .zipCodePostalCodeController,
-                                            labelText: "Zip code/Postal code",
-                                            hintText: "Enter postal code",
-                                            validator: (value) =>
-                                                Validator.validateName(value),
-                                            // prefixIcon: ,
-                                          ),
-                                          const SizedBox(height: 10)
-                                        ],
-                                      ),
-                                  )
-                                  : Column(
-                                      children: [
-                                        SizedBox(height: 10),
-                                        InputField(
-                                          controller: setupProfileWatch
-                                              .businessNameController,
-                                          labelText: "Business name",
-                                          hintText: "Enter Business Name",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
-                                        ),
-                                      ],
-                                    )
-                            ],
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ],
                 ),
