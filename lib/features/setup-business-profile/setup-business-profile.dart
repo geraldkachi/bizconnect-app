@@ -206,57 +206,101 @@ class _SetupBusinessProfilePageState
                                 ),
                               ),
                               SizedBox(height: 10),
-                              prevIndex == 0 ? 
-                              Column(
-                                children: [
-                                    SizedBox(height: 10),
-                                InputField(
-                                  controller:
-                                      setupProfileWatch.businessNameController,
-                                  labelText: "Business name",
-                                  hintText: "Enter Business Name",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                ),
-                                const SizedBox(height: 5),
-                                 ImageUploadField(
-                                    labelText: "Upload Image",
-                                   hintText: "Upload logo or business flyer",
-                              ),
-                                const SizedBox(height: 5),
-                                InputField(
-                                  controller: setupProfileWatch
-                                      .describeYourBusinessController,
-                                  labelText: "Business Category",
-                                  hintText:
-                                      "search Business Category",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                      // prefixIcon: ,
-                                ),
-                                ],
-                              )
-                               :
-                               Column(children: [
-                                  SizedBox(height: 10),
-                                InputField(
-                                  controller:
-                                      setupProfileWatch.businessNameController,
-                                  labelText: "Business name",
-                                  hintText: "Enter Business Name",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                ),
-                               ],)
+                              prevIndex == 0
+                                  ? Column(
+                                      children: [
+                                        SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .businessNameController,
+                                          labelText: "Business name",
+                                          hintText: "Enter Business Name",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                        ),
+                                        SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .describeYourBusinessController,
+                                          labelText: "Describe your business",
+                                          hintText:
+                                              "Short Sentence about your business",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                          maxLines: 5,
+                                          minLines: 3,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ImageUploadField(
+                                          labelText: "Upload Image",
+                                          hintText:
+                                              "Upload logo or business flyer",
+                                        ),
+                                        const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .businessCategoryController,
+                                          labelText: "Business Category",
+                                          hintText: "search Business Category",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                          // prefixIcon: ,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .businessCategoryController,
+                                          labelText: "Business Category",
+                                          hintText: "search Business Category",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                          // prefixIcon: ,
+                                        ),
+
+
+
+                                          const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .stateAndProvinceController,
+                                          labelText: "Street",
+                                          hintText: "Enter Street name",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                          // prefixIcon: ,
+                                        ),
+                                          const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .zipCodePostalCodeController,
+                                          labelText: "Zip code/Postal code",
+                                          hintText: "Enter postal code",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                          // prefixIcon: ,
+                                        ),
+                                        const SizedBox(height: 10)
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .businessNameController,
+                                          labelText: "Business name",
+                                          hintText: "Enter Business Name",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                        ),
+                                      ],
+                                    )
                             ],
                           ),
                         )
                         // ),
                       ],
                     ),
-                 
-
-                   
                   ],
                 ),
               ),

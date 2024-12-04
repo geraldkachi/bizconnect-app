@@ -9,6 +9,8 @@ class InputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final int? maxLines; // Optional: to adjust how many lines the textarea can expand to
+  final int? minLines; // Optional: to set the minimum height of the textarea
 
   const InputField({
     Key? key,
@@ -19,6 +21,8 @@ class InputField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.prefixIcon,
+    this.maxLines = 5,  // Default max lines to 5, but can be adjusted
+    this.minLines = 1,  // Default min lines to 1
   }) : super(key: key);
 
   @override
@@ -39,6 +43,8 @@ class InputField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           validator: validator,
+          maxLines: maxLines, // Adjust how many lines the input field can have
+          minLines: minLines, // Adjust the minimum number of lines (height)
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               vertical: 10.0,
