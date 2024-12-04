@@ -19,9 +19,6 @@ final setupBusinessProfileViewModelProvider =
   Slot({required this.day, required this.openTime, required this.closeTime});
 }
 
-// List<Slot> slots = [];
-
-
 class SetupBusinessProfileViewModel extends ChangeNotifier {
   final AuthService _authService = getIt<AuthService>();
   final ToastService _toastService = getIt<ToastService>();
@@ -40,7 +37,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
 
   bool obscureText = true;
   bool isLoading = false;
-  
+
 
   TextEditingController businessNameController = TextEditingController();
   TextEditingController businessEmailController = TextEditingController();
@@ -53,6 +50,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodePostalCodeController = TextEditingController();
   TextEditingController uploadImage = TextEditingController();
+  TextEditingController instagram = TextEditingController();
+  TextEditingController website = TextEditingController();
+  TextEditingController tiktok = TextEditingController();
+  TextEditingController facebook = TextEditingController();
 
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
@@ -100,7 +101,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   //   slots.remove(slot);
   //   notifyListeners();
   // }
-  
+
 void handleAddSlot(BuildContext context, SetupBusinessProfileViewModel viewModel) {
   if (viewModel.dayController.text.isEmpty ||
       viewModel.openTimeController.text.isEmpty ||

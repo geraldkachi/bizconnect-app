@@ -137,7 +137,7 @@ class _SetupBusinessProfilePageState
                               child: Column(
                                 children: [
                                   Text(
-                                    index == 0 ? "Tab 1" : "Tab 2",
+                                    index == 0 ? "" : "",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -418,14 +418,14 @@ class _SetupBusinessProfilePageState
                                       const SizedBox(height: 20),
                                       HorizontalDottedLine(),
                                       const SizedBox(height: 20),
-                                      //     DateTimeSlots(
-                                      //   initialSlots: [
-                                      //     DateTimeSlot(day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
-                                      //   ],
-                                      //   onSlotsUpdated: (updatedSlots) {
-                                      //     print('Updated Slots: $updatedSlots');
-                                      //   },
-                                      // ),
+                                          DateTimeSlots(
+                                        initialSlots: [
+                                          DateTimeSlot(day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
+                                        ],
+                                        onSlotsUpdated: (updatedSlots) {
+                                          print('Updated Slots: $updatedSlots');
+                                        },
+                                      ),
                                      
 
                                       //  DateTimeSlot(
@@ -439,17 +439,17 @@ class _SetupBusinessProfilePageState
                                       //   onDeleteSlot: setupProfileWatch.handleDeleteSlot,
                                       // ),
 
-                                       DateTimeSlot(
-                                      dayLabel: "Day",
-                                      openTimeLabel: "Opening Time",
-                                      closeTimeLabel: "Closing Time",
-                                      dayController: setupProfileWatch.dayController,
-                                      openTimeController: setupProfileWatch.openTimeController,
-                                      closeTimeController: setupProfileWatch.closeTimeController,
-                                      onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
-                                      onDeleteSlot: () {}, // Empty here for individual slots
-                                      isDeleteButtonVisible: false,
-                                    ),
+                                    //    DateTimeSlot(
+                                    //   dayLabel: "Day",
+                                    //   openTimeLabel: "Opening Time",
+                                    //   closeTimeLabel: "Closing Time",
+                                    //   dayController: setupProfileWatch.dayController,
+                                    //   openTimeController: setupProfileWatch.openTimeController,
+                                    //   closeTimeController: setupProfileWatch.closeTimeController,
+                                    //   onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
+                                    //   onDeleteSlot: () {}, // Empty here for individual slots
+                                    //   isDeleteButtonVisible: false,
+                                    // ),
                                     const SizedBox(height: 20),
 
                           // Display Slots

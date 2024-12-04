@@ -127,6 +127,14 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                           IconButton(
                             icon: const Icon(
                               Icons
+                                  .crop_portrait, // eye icon to be able to view the image
+                              color: Colors.grey,
+                            ),
+                            onPressed: _viewImage,
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons
                                   .remove_red_eye, // eye icon to be able to view the image
                               color: Colors.grey,
                             ),
