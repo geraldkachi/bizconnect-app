@@ -219,84 +219,26 @@ class _SetupBusinessProfilePageState
                                       Validator.validateName(value),
                                 ),
                                 const SizedBox(height: 5),
+                                 ImageUploadField(
+                                    labelText: "Upload Image",
+                                   hintText: "Upload logo or business flyer",
+                              ),
+                                const SizedBox(height: 5),
                                 InputField(
                                   controller: setupProfileWatch
                                       .describeYourBusinessController,
-                                  labelText: "Describe your business",
+                                  labelText: "Business Category",
                                   hintText:
-                                      "Short Sentence about your business",
+                                      "search Business Category",
                                   validator: (value) =>
                                       Validator.validateName(value),
+                                      // prefixIcon: ,
                                 ),
-                                const SizedBox(height: 5),
                                 ],
-                              //    ImageUploadField(
-                              //     key: 1,
-                              //       labelText: "Upload Image",
-                              //      hintText: "Tap to upload an image",
-                              // ),
                               )
                                :
-                               Column()
-                            ],
-                          ),
-                        )
-                        // ),
-                      ],
-                    ),
-                    // TabBar
-                    TabBar(
-                      controller: _tabController,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicatorPadding: EdgeInsets.zero,
-                      labelColor: Colors.white,
-                      unselectedLabelColor: const Color(0xffA1A6A9),
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                          width: 3.0,
-                          color: cyan100,
-                        ),
-                        insets: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                      onTap: (index) {
-                        if (index >= _tabController.length) {
-                          _tabController.index = prevIndex;
-                          return;
-                        }
-                        prevIndex = index;
-                      },
-                      tabs: const [
-                        Tab(
-                          text: "",
-                          height: 38,
-                        ),
-                        Tab(
-                          text: "",
-                          height: 38,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    // TabBarView
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 10),
-                                Center(
-                                  child: Text(
-                                    "Tell Us About Your Business",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 18,
-                                        color: red),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
+                               Column(children: [
+                                  SizedBox(height: 10),
                                 InputField(
                                   controller:
                                       setupProfileWatch.businessNameController,
@@ -305,130 +247,16 @@ class _SetupBusinessProfilePageState
                                   validator: (value) =>
                                       Validator.validateName(value),
                                 ),
-                                InputField(
-                                  controller: setupProfileWatch
-                                      .describeYourBusinessController,
-                                  labelText: "Describe your business",
-                                  hintText:
-                                      "Short Sentence about your business",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(),
-                                  child: Row(
-                                      // Expanded(child: Text("upload image"),)
-                                      ),
-                                ),
-                                Text("Upload Logo"),
-                                // image start
-                                // Display uploaded image with a delete option
-                                // if (_image)
-                                _image != null
-                                    ? Stack(
-                                        children: [
-                                          Image.file(
-                                            _image!,
-                                            height: 200,
-                                            width: 200,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: IconButton(
-                                              icon: Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () => _deleteImage(),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    :
-                                    // else
-                                    Container(
-                                        height: 200,
-                                        width: 200,
-                                        color: Colors.grey[300],
-                                        child: Center(
-                                          child: Text("No image selected"),
-                                        ),
-                                      ),
-                                SizedBox(height: 20),
-                                // Buttons for selecting image
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () =>
-                                          _pickImage(ImageSource.gallery),
-                                      child: Text('Gallery'),
-                                    ),
-                                  ],
-                                ),
-
-                                // image end
-                                InputField(
-                                  controller: setupProfileWatch
-                                      .businessCategoryController,
-                                  labelText: "Business Category*",
-                                  hintText: "search Business Category",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                ),
-                                InputField(
-                                  controller:
-                                      setupProfileWatch.selectCountryController,
-                                  labelText: "Select Country*",
-                                  hintText: "select Country",
-                                  validator: (value) =>
-                                      Validator.validateName(value),
-                                ),
-                                DropdownField<String>(
-                                  dropdownKey: dropDownKey,
-                                  labelText: "Select Category",
-                                  hintText: "Choose an option",
-                                  items: const [
-                                    'Category 1',
-                                    'Category 2',
-                                    'Category 3'
-                                  ],
-                                  selectedItem: "Category 1",
-                                  onChanged: (value) {
-                                    print("Selected: $value");
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "This field is required";
-                                    }
-                                    return null;
-                                  },
-                                  dropdownIcon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: grey400),
-                                  // showSearchBox: true,
-                                ),
-                              ],
-                            ),
+                               ],)
+                            ],
                           ),
-                          SingleChildScrollView(
-                            child: Column(
-                              children: const [
-                                Text(
-                                  'Tab 2 Content',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                SizedBox(height: 20),
-                                Text('Additional content for Tab 2'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        )
+                        // ),
+                      ],
                     ),
+                 
+
+                   
                   ],
                 ),
               ),
