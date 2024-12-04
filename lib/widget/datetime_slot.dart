@@ -225,6 +225,8 @@
 //   }
 // }
 
+// 
+
 // import 'package:flutter/material.dart';
 // import 'package:bizconnect/app/theme/colors.dart';
 
@@ -378,36 +380,36 @@
 //                     ),
 //                   ),
 //                   const SizedBox(height: 7),
-//                   TextFormField(
-//                     controller: closeTimeController,
-//                     readOnly: true,
-//                     decoration: InputDecoration(
-//                       hintText: "Select Closing Time",
-//                       contentPadding: const EdgeInsets.symmetric(
-//                         vertical: 10.0,
-//                         horizontal: 15.0,
-//                       ),
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(12.0),
-//                         borderSide:
-//                             const BorderSide(color: grey100, width: 1.0),
-//                       ),
-//                       enabledBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(12.0),
-//                         borderSide:
-//                             const BorderSide(color: grey100, width: 1.0),
-//                       ),
-//                       focusedBorder: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(12.0),
-//                         borderSide: const BorderSide(color: black, width: 1.0),
-//                       ),
-//                       suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-//                       // suffixIcon: const Icon(Icons.access_time, color: grey400),
-//                     ),
-//                     onTap: () {
-//                       // Trigger time picker logic
-//                     },
-//                   ),
+                  // TextFormField(
+                  //   controller: closeTimeController,
+                  //   readOnly: true,
+                  //   decoration: InputDecoration(
+                  //     hintText: "Select Closing Time",
+                  //     contentPadding: const EdgeInsets.symmetric(
+                  //       vertical: 10.0,
+                  //       horizontal: 15.0,
+                  //     ),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12.0),
+                  //       borderSide:
+                  //           const BorderSide(color: grey100, width: 1.0),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12.0),
+                  //       borderSide:
+                  //           const BorderSide(color: grey100, width: 1.0),
+                  //     ),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12.0),
+                  //       borderSide: const BorderSide(color: black, width: 1.0),
+                  //     ),
+                  //     suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                  //     // suffixIcon: const Icon(Icons.access_time, color: grey400),
+                  //   ),
+                  //   onTap: () {
+                  //     // Trigger time picker logic
+                  //   },
+                  // ),
 //                 ],
 //               ),
 //             ),
@@ -575,10 +577,11 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
         if (slots.length < 7)
           TextButton.icon(
             onPressed: addSlot,
-            icon: const Icon(Icons.add, color: red),
+            icon: const Icon(Icons.add_circle, color: red),
             label: const Text(
               'Add more',
-              style: TextStyle(color: red),
+              
+              style: TextStyle(color: red, decoration:  TextDecoration.underline ),
             ),
           ),
       ],
@@ -594,13 +597,13 @@ class SlotItem extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const SlotItem({
-    Key? key,
+    super.key,
     required this.slot,
     required this.availableDays,
     required this.timeSlots,
     required this.onSlotUpdated,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -617,11 +620,11 @@ class SlotItem extends StatelessWidget {
             child: TextFormField(
               controller: dayController,
               readOnly: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Day',
-                hintText: 'Select Day',
-                suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-                border: const OutlineInputBorder(),
+                hintText: '--',
+                suffixIcon: Icon(Icons.arrow_drop_down, color: grey400),
+                border: OutlineInputBorder(),
               ),
               onTap: () {
                 // Show day selection dropdown
@@ -654,11 +657,12 @@ class SlotItem extends StatelessWidget {
             child: TextFormField(
               controller: openTimeController,
               readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Open Time',
-                hintText: 'Select Opening Time',
-                suffixIcon: const Icon(Icons.access_time, color: grey400),
-                border: const OutlineInputBorder(),
+              decoration: const InputDecoration(
+                labelText: 'Opening hour',
+                hintText: '--',
+                // suffixIcon: const Icon(Icons.access_time, color: grey400),
+                suffixIcon: Icon(Icons.arrow_drop_down, color: grey400),
+                border: OutlineInputBorder(),
               ),
               onTap: () {
                 // Show time selection
@@ -691,11 +695,27 @@ class SlotItem extends StatelessWidget {
             child: TextFormField(
               controller: closeTimeController,
               readOnly: true,
-              decoration: InputDecoration(
-                labelText: 'Close Time',
-                hintText: 'Select Closing Time',
-                suffixIcon: const Icon(Icons.access_time, color: grey400),
-                border: const OutlineInputBorder(),
+              decoration:  InputDecoration(
+                labelText: 'Closing hour',
+                hintText: '--',
+                // suffixIcon: const Icon(Icons.access_time, color: grey400),
+                suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                // border: OutlineInputBorder(),
+                border:  OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide:
+                            const BorderSide(color: grey100, width: 1.0),
+                      ),
+                       enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide:
+                            const BorderSide(color: grey100, width: 1.0),
+                      ),
+                       focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: const BorderSide(color: black, width: 1.0),
+                      ),
+                      
               ),
               onTap: () {
                 // Show time selection
