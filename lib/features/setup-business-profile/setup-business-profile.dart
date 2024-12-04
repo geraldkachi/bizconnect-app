@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:bizconnect/widget/select_dropdown.dart';
 import 'package:image_picker/image_picker.dart'; // To pick an image
 import 'dart:io';
+import 'package:bizconnect/widget/image_file_upload.dart';
 
 class SetupBusinessProfilePage extends ConsumerStatefulWidget {
   const SetupBusinessProfilePage({super.key});
@@ -205,7 +206,38 @@ class _SetupBusinessProfilePageState
                                 ),
                               ),
                               SizedBox(height: 10),
-                              prevIndex == 0 ? Text("Tab 1") : Text("Tab 2")
+                              prevIndex == 0 ? 
+                              Column(
+                                children: [
+                                    SizedBox(height: 10),
+                                InputField(
+                                  controller:
+                                      setupProfileWatch.businessNameController,
+                                  labelText: "Business name",
+                                  hintText: "Enter Business Name",
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
+                                const SizedBox(height: 5),
+                                InputField(
+                                  controller: setupProfileWatch
+                                      .describeYourBusinessController,
+                                  labelText: "Describe your business",
+                                  hintText:
+                                      "Short Sentence about your business",
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
+                                const SizedBox(height: 5),
+                                ],
+                              //    ImageUploadField(
+                              //     key: 1,
+                              //       labelText: "Upload Image",
+                              //      hintText: "Tap to upload an image",
+                              // ),
+                              )
+                               :
+                               Column()
                             ],
                           ),
                         )
