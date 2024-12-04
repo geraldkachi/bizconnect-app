@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -145,11 +146,12 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const Text(''),
                       Text(
                         widget.hintText,
                         style: const TextStyle(
                           fontSize: 10.0,
-                          color: Colors.grey,
+                          color: red,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -157,7 +159,7 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                     angle: 3.14159, // Rotate 180 degrees (π radians)
                     child: const Icon(
                       Icons.file_download_sharp,
-                      color: Colors.grey,
+                      color: red,
                       size: 20,
                     ),
                   ),

@@ -2,6 +2,7 @@
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:bizconnect/utils/validator.dart';
 import 'package:bizconnect/widget/button.dart';
+import 'package:bizconnect/widget/datetime_slot.dart';
 import 'package:bizconnect/widget/input.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:bizconnect/widget/select_dropdown.dart';
 import 'package:image_picker/image_picker.dart'; // To pick an image
 import 'dart:io';
 import 'package:bizconnect/widget/image_file_upload.dart';
+import 'package:bizconnect/widget/dotted_line.dart';
 
 class SetupBusinessProfilePage extends ConsumerStatefulWidget {
   const SetupBusinessProfilePage({super.key});
@@ -40,59 +42,38 @@ class _SetupBusinessProfilePageState
     _tabController.dispose();
     super.dispose();
   }
-
-  bool _validateCurrentForm() {
-    // Validate the current form based on the active tab
-    return _formKeys[_tabController.index].currentState?.validate() ?? false;
-  }
-
-  void _onTabTapped(int index) {
-    // Prevent switching tabs unless the form is valid
-    if (index > _tabController.index && !_validateCurrentForm()) {
-      // _showToast("Please complete the form before proceeding.");
-      return;
-    }
-    prevIndex = index;
-    _tabController.index = index;
-  }
-
+ 
   final currentYear = DateTime.now().year;
   final dropDownKey = GlobalKey<DropdownSearchState<String>>();
-
-  final ImagePicker _picker = ImagePicker(); // Image picker instance
-  // FileImage? _image; // To store the selected image
-
-  File? _image; // Variable to store the selected image
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final pickedFile = await _picker.pickImage(source: source);
-      if (pickedFile != null) {
-        setState(() {
-          _image = File(pickedFile.path);
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No image selected')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
-    }
-  }
-
-  void _deleteImage() {
-    setState(() {
-      _image = null; // Remove the selected image
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
-    final setupProfileRead =
-        ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+
+    void handleAddSlot(BuildContext context, SetupBusinessProfileViewModel viewModel) {
+  if (viewModel.dayController.text.isEmpty ||
+      viewModel.openTimeController.text.isEmpty ||
+      viewModel.closeTimeController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All fields are required')),
+    );
+    return;
+  }
+
+  final slot = Slot(
+    day: viewModel.dayController.text,
+    openTime: viewModel.openTimeController.text,
+    closeTime: viewModel.closeTimeController.text,
+  );
+
+  viewModel.addSlot(slot);
+
+  // Clear fields after adding
+  viewModel.dayController.clear();
+  viewModel.openTimeController.clear();
+  viewModel.closeTimeController.clear();
+}
 
     return Scaffold(
       body: Padding(
@@ -191,20 +172,21 @@ class _SetupBusinessProfilePageState
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Center(
-                              child: Text(
-                                "Tell Us About Your Business",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18,
-                                  color: red,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
                             prevIndex == 0
                                 ? Column(
                                     children: [
+                                      const SizedBox(height: 10),
+                                      Center(
+                                        child: Text(
+                                          "Tell Us About Your Business",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 15,
+                                            color: grey500,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
                                       InputField(
                                         controller: setupProfileWatch
                                             .businessNameController,
@@ -240,55 +222,125 @@ class _SetupBusinessProfilePageState
                                       //   validator: (value) =>
                                       //       Validator.validateName(value),
                                       // ),
-                                       DropdownField<String>(
-                                  dropdownKey: dropDownKey,
-                                  labelText: "Select Category",
-                                  hintText: "Search Business Category",
-                                  items: const ["Item 1", 'Item 2', 'Item 3', 'Item 4'],
-                                  popupProps: PopupProps.bottomSheet(
-                                    // disabledItemFn: (item) => item == 'Item 3',
-                                    fit: FlexFit.tight
-                                  ),
-                                  // selectedItem: "Category 1",
-                                  onChanged: (value) {
-                                    print("Selected: $value");
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "This field is required";
-                                    }
-                                    return null;
-                                  },
-                                  dropdownIcon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: grey400),
-                                  // showSearchBox: true,
-                                ),
-                                  const SizedBox(height: 10),
-                                       DropdownField<String>(
-                                  dropdownKey: dropDownKey,
-                                  labelText: "Select Country*",
-                                  hintText: "Select Country*",
-                                  items: const ["Item 1", 'Item 2', 'Item 3', 'Item 4'],
-                                  popupProps: PopupProps.bottomSheet(
-                                    // disabledItemFn: (item) => item == 'Item 3',
-                                    fit: FlexFit.tight
-                                  ),
-                                  // selectedItem: "Category 1",
-                                  onChanged: (value) {
-                                    print("Selected: $value");
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "This field is required";
-                                    }
-                                    return null;
-                                  },
-                                  dropdownIcon: const Icon(
-                                      Icons.arrow_drop_down,
-                                      color: grey400),
-                                  // showSearchBox: true,
-                                ),
+                                      // Business Category
+                                      DropdownField<String>(
+                                        dropdownKey: dropDownKey,
+                                        labelText: "Business Category",
+                                        hintText: "Search Business Category",
+                                        items: const [
+                                          "Item 1",
+                                          'Item 2',
+                                          'Item 3',
+                                          'Item 4'
+                                        ],
+                                        popupProps: PopupProps.modalBottomSheet(
+                                            // disabledItemFn: (item) => item == 'Item 3',
+                                            fit: FlexFit.tight),
+                                        // selectedItem: "Category 1",
+                                        onChanged: (value) {
+                                          print("Selected: $value");
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "This field is required";
+                                          }
+                                          return null;
+                                        },
+                                        dropdownIcon: const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: grey400),
+                                        // showSearchBox: true,
+                                      ),
+                                      // Country
+                                      const SizedBox(height: 10),
+                                      DropdownField<String>(
+                                        dropdownKey: dropDownKey,
+                                        labelText: "Select Country",
+                                        hintText: "Select Country",
+                                        items: const [
+                                          "Item 1",
+                                          'Item 2',
+                                          'Item 3',
+                                          'Item 4'
+                                        ],
+                                        popupProps: PopupProps.modalBottomSheet(
+                                            // disabledItemFn: (item) => item == 'Item 3',
+                                            fit: FlexFit.tight),
+                                        // selectedItem: "Category 1",
+                                        onChanged: (value) {
+                                          print("Selected: $value");
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "This field is required";
+                                          }
+                                          return null;
+                                        },
+                                        dropdownIcon: const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: grey400),
+                                        // showSearchBox: true,
+                                      ),
+                                      // State and Province
+                                      const SizedBox(height: 10),
+                                      DropdownField<String>(
+                                        dropdownKey: dropDownKey,
+                                        labelText: "State and Province",
+                                        hintText: "State and Province",
+                                        items: const [
+                                          "Item 1",
+                                          'Item 2',
+                                          'Item 3',
+                                          'Item 4'
+                                        ],
+                                        popupProps: PopupProps.modalBottomSheet(
+                                            // disabledItemFn: (item) => item == 'Item 3',
+                                            fit: FlexFit.tight),
+                                        // selectedItem: "Category 1",
+                                        onChanged: (value) {
+                                          print("Selected: $value");
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "This field is required";
+                                          }
+                                          return null;
+                                        },
+                                        dropdownIcon: const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: grey400),
+                                        // showSearchBox: true,
+                                      ),
+                                      // City
+                                      const SizedBox(height: 10),
+                                      DropdownField<String>(
+                                        dropdownKey: dropDownKey,
+                                        labelText: "City",
+                                        hintText: "Select city",
+                                        items: const [
+                                          "Item 1",
+                                          'Item 2',
+                                          'Item 3',
+                                          'Item 4'
+                                        ],
+                                        popupProps: PopupProps.modalBottomSheet(
+                                            // disabledItemFn: (item) => item == 'Item 3',
+                                            fit: FlexFit.tight),
+                                        // selectedItem: "Category 1",
+                                        onChanged: (value) {
+                                          print("Selected: $value");
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "This field is required";
+                                          }
+                                          return null;
+                                        },
+                                        dropdownIcon: const Icon(
+                                            Icons.arrow_drop_down,
+                                            color: grey400),
+                                        // showSearchBox: true,
+                                      ),
                                       const SizedBox(height: 10),
                                       InputField(
                                         controller: setupProfileWatch
@@ -309,15 +361,14 @@ class _SetupBusinessProfilePageState
                                       ),
                                       const SizedBox(height: 10),
 
-
-                                       const SizedBox(height: 20),
+                                      const SizedBox(height: 20),
                                       Button(
                                         text: "Submit",
                                         isLoading: false,
                                         onPressed: () async {
                                           // loginRead.login(context);
                                           setState(() {
-                                          prevIndex = 1;
+                                            prevIndex = 1;
                                           });
                                         },
                                       ),
@@ -325,6 +376,18 @@ class _SetupBusinessProfilePageState
                                   )
                                 : Column(
                                     children: [
+                                      const SizedBox(height: 10),
+                                      Center(
+                                        child: Text(
+                                          "Operations Info",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 15,
+                                            color: grey500,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
                                       InputField(
                                         controller: setupProfileWatch
                                             .businessNameController,
@@ -333,6 +396,188 @@ class _SetupBusinessProfilePageState
                                         validator: (value) =>
                                             Validator.validateName(value),
                                       ),
+                                      const SizedBox(height: 10),
+                                      InputField(
+                                        controller: setupProfileWatch
+                                            .businessEmailController,
+                                        labelText: "Business email",
+                                        hintText: "Enter Business email",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        suffixIcon: IconButton(
+                                          icon: SvgPicture.asset(
+                                            'assets/svg/mail.svg',
+                                            width: 8.0,
+                                            height: 20.03,
+                                          ),
+                                          onPressed: () {
+                                            // signupRead.togglePassword();
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      HorizontalDottedLine(),
+                                      const SizedBox(height: 20),
+                                      //     DateTimeSlots(
+                                      //   initialSlots: [
+                                      //     DateTimeSlot(day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
+                                      //   ],
+                                      //   onSlotsUpdated: (updatedSlots) {
+                                      //     print('Updated Slots: $updatedSlots');
+                                      //   },
+                                      // ),
+                                     
+
+                                      //  DateTimeSlot(
+                                      //   dayLabel: "Day",
+                                      //   openTimeLabel: "Opening Time",
+                                      //   closeTimeLabel: "Closing Time",
+                                      //   dayController: setupProfileWatch.dayController,
+                                      //   openTimeController: setupProfileWatch.openTimeController,
+                                      //   closeTimeController: setupProfileWatch.closeTimeController,
+                                      //   onAddSlot: setupProfileWatch.handleAddSlot,
+                                      //   onDeleteSlot: setupProfileWatch.handleDeleteSlot,
+                                      // ),
+
+                                       DateTimeSlot(
+                                      dayLabel: "Day",
+                                      openTimeLabel: "Opening Time",
+                                      closeTimeLabel: "Closing Time",
+                                      dayController: setupProfileWatch.dayController,
+                                      openTimeController: setupProfileWatch.openTimeController,
+                                      closeTimeController: setupProfileWatch.closeTimeController,
+                                      onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
+                                      onDeleteSlot: () {}, // Empty here for individual slots
+                                      isDeleteButtonVisible: false,
+                                    ),
+                                    const SizedBox(height: 20),
+
+                          // Display Slots
+                          if (setupProfileWatch.slots.isNotEmpty)
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: setupProfileWatch.slots.length,
+                              itemBuilder: (context, index) {
+                                final slot = setupProfileWatch.slots[index];
+                                return ListTile(
+                                  title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () => setupProfileRead.deleteSlot(slot),
+                                  ),
+                                );
+                              },
+                            ),
+
+                                      const SizedBox(height: 20),
+                                      HorizontalDottedLine(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: const [
+                                          Text(
+                                            "Upload social media links",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: red,
+                                              letterSpacing: -.5,
+                                            ),
+                                          ),
+                                          Text(
+                                            "(optional)",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                              color: grey500,
+                                              letterSpacing: -.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // const SizedBox(height: 20),
+                                      InputField(
+                                        prefixIcon: SvgPicture.asset(
+                                          'assets/svg/instagram.svg',
+                                          width: 8.0,
+                                          height: 20.03,
+                                        ),
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "",
+                                        hintText:
+                                            "copy & paste instagram link here",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        inputPaddingH: 28.0,
+                                        inputPaddingV: 15.0,
+                                      ),
+                                      // website
+                                      InputField(
+                                        prefixIcon: SvgPicture.asset(
+                                          'assets/svg/website.svg',
+                                          width: 8.0,
+                                          height: 20.03,
+                                        ),
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "",
+                                        hintText:
+                                            "copy & paste website link here. e.g personal site, storefront, etc",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        inputPaddingH: 28.0,
+                                        inputPaddingV: 15.0,
+                                      ),
+                                      // tiktok
+                                      InputField(
+                                        prefixIcon: SvgPicture.asset(
+                                          'assets/svg/tiktok.svg',
+                                          width: 8.0,
+                                          height: 20.03,
+                                        ),
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "",
+                                        hintText:
+                                            "copy & paste tiktok link here",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        inputPaddingH: 28.0,
+                                        inputPaddingV: 15.0,
+                                      ),
+                                      // facebook
+                                      InputField(
+                                        prefixIcon: SvgPicture.asset(
+                                          'assets/svg/facebook.svg',
+                                          width: 8.0,
+                                          height: 20.03,
+                                        ),
+                                        controller: setupProfileWatch
+                                            .businessNameController,
+                                        labelText: "",
+                                        hintText:
+                                            "copy & paste facebook link here",
+                                        validator: (value) =>
+                                            Validator.validateName(value),
+                                        inputPaddingH: 28.0,
+                                        inputPaddingV: 15.0,
+                                      ),
+
+                                      const SizedBox(height: 20),
+                                      Button(
+                                        text: "Submit",
+                                        isLoading: false,
+                                        onPressed: () async {
+                                          // loginRead.login(context);
+                                          setState(() {
+                                            prevIndex = 2;
+                                          });
+                                        },
+                                      )
                                     ],
                                   ),
                           ],

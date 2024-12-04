@@ -11,6 +11,8 @@ class InputField extends StatelessWidget {
   final Widget? prefixIcon;
   final int? maxLines; // Optional: to adjust how many lines the textarea can expand to
   final int? minLines; // Optional: to set the minimum height of the textarea
+  final double? inputPaddingV;
+  final double? inputPaddingH;
 
   const InputField({
     Key? key,
@@ -23,6 +25,8 @@ class InputField extends StatelessWidget {
     this.prefixIcon,
     this.maxLines,  // Default max lines to 5, but can be adjusted
     this.minLines,  // Default min lines to 1
+    this.inputPaddingV = 10.0,
+    this.inputPaddingH = 15.0,
   }) : super(key: key);
 
   @override
@@ -50,9 +54,9 @@ class InputField extends StatelessWidget {
           maxLines: effectiveMaxLines, // Adjust how many lines the input field can have
           minLines: effectiveMinLines, // Adjust the minimum number of lines (height)
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 10.0,
-              horizontal: 15.0,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: inputPaddingV ?? 10.0,
+              horizontal: inputPaddingH ?? 15.0,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.0),
