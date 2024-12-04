@@ -21,12 +21,16 @@ class InputField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.prefixIcon,
-    this.maxLines = 5,  // Default max lines to 5, but can be adjusted
-    this.minLines = 1,  // Default min lines to 1
+    this.maxLines,  // Default max lines to 5, but can be adjusted
+    this.minLines,  // Default min lines to 1
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+       // Ensure obscureText fields have maxLines = 1
+    final int effectiveMaxLines = obscureText ? 1 : (maxLines ?? 1);
+    final int effectiveMinLines = obscureText ? 1 : (minLines ?? 1);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,8 +47,8 @@ class InputField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           validator: validator,
-          maxLines: maxLines, // Adjust how many lines the input field can have
-          minLines: minLines, // Adjust the minimum number of lines (height)
+          maxLines: effectiveMaxLines, // Adjust how many lines the input field can have
+          minLines: effectiveMinLines, // Adjust the minimum number of lines (height)
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               vertical: 10.0,

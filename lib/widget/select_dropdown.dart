@@ -15,7 +15,10 @@ class DropdownField<T> extends StatelessWidget {
   final String? Function(T?)? validator;
   final Widget? dropdownIcon;
   final bool showSearchBox;
+  final PopupProps<T>? popupProps; // Add this to allow custom PopupProps
+
   // asyncItems FutureOr<List<T>>;
+  
 
    DropdownField({
     super.key,
@@ -29,6 +32,8 @@ class DropdownField<T> extends StatelessWidget {
     this.dropdownIcon,
     this.showSearchBox = false,
     // this.asyncItems,
+    this.popupProps // Add this to allow custom PopupProps
+
   });
 
 
@@ -48,7 +53,7 @@ class DropdownField<T> extends StatelessWidget {
         const SizedBox(height: 7),
         DropdownSearch<T>(
           // key: dropDownKey,
-          popupProps: PopupProps.menu(
+          popupProps: popupProps ?? PopupProps.menu(
             showSearchBox: showSearchBox,
             searchFieldProps: TextFieldProps(
               decoration: InputDecoration(

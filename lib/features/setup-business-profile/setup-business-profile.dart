@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:bizconnect/utils/validator.dart';
+import 'package:bizconnect/widget/button.dart';
 import 'package:bizconnect/widget/input.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -231,14 +232,63 @@ class _SetupBusinessProfilePageState
                                             "Upload logo or business flyer",
                                       ),
                                       const SizedBox(height: 10),
-                                      InputField(
-                                        controller: setupProfileWatch
-                                            .businessCategoryController,
-                                        labelText: "Business Category",
-                                        hintText: "Search Business Category",
-                                        validator: (value) =>
-                                            Validator.validateName(value),
-                                      ),
+                                      // InputField(
+                                      //   controller: setupProfileWatch
+                                      //       .businessCategoryController,
+                                      //   labelText: "Business Category",
+                                      //   hintText: "Search Business Category",
+                                      //   validator: (value) =>
+                                      //       Validator.validateName(value),
+                                      // ),
+                                       DropdownField<String>(
+                                  dropdownKey: dropDownKey,
+                                  labelText: "Select Category",
+                                  hintText: "Search Business Category",
+                                  items: const ["Item 1", 'Item 2', 'Item 3', 'Item 4'],
+                                  popupProps: PopupProps.bottomSheet(
+                                    // disabledItemFn: (item) => item == 'Item 3',
+                                    fit: FlexFit.tight
+                                  ),
+                                  // selectedItem: "Category 1",
+                                  onChanged: (value) {
+                                    print("Selected: $value");
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                    return null;
+                                  },
+                                  dropdownIcon: const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: grey400),
+                                  // showSearchBox: true,
+                                ),
+                                  const SizedBox(height: 10),
+                                       DropdownField<String>(
+                                  dropdownKey: dropDownKey,
+                                  labelText: "Select Country*",
+                                  hintText: "Select Country*",
+                                  items: const ["Item 1", 'Item 2', 'Item 3', 'Item 4'],
+                                  popupProps: PopupProps.bottomSheet(
+                                    // disabledItemFn: (item) => item == 'Item 3',
+                                    fit: FlexFit.tight
+                                  ),
+                                  // selectedItem: "Category 1",
+                                  onChanged: (value) {
+                                    print("Selected: $value");
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "This field is required";
+                                    }
+                                    return null;
+                                  },
+                                  dropdownIcon: const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: grey400),
+                                  // showSearchBox: true,
+                                ),
                                       const SizedBox(height: 10),
                                       InputField(
                                         controller: setupProfileWatch
@@ -258,6 +308,19 @@ class _SetupBusinessProfilePageState
                                             Validator.validateName(value),
                                       ),
                                       const SizedBox(height: 10),
+
+
+                                       const SizedBox(height: 20),
+                                      Button(
+                                        text: "Submit",
+                                        isLoading: false,
+                                        onPressed: () async {
+                                          // loginRead.login(context);
+                                          setState(() {
+                                          prevIndex = 1;
+                                          });
+                                        },
+                                      ),
                                     ],
                                   )
                                 : Column(

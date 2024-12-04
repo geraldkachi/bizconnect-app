@@ -101,6 +101,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             //   }
                             //   return null;
                             // },
+                            
                             suffixIcon: IconButton(
                               icon: SvgPicture.asset(
                                 loginWatch.obscureText

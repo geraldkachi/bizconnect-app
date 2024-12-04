@@ -153,11 +153,14 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const Icon(
-                        Icons.download_for_offline,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
+                     Transform.rotate(
+                    angle: 3.14159, // Rotate 180 degrees (π radians)
+                    child: const Icon(
+                      Icons.file_download_sharp,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  ),
                     ],
                   ),
           ),
