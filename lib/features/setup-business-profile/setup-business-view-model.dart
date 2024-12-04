@@ -29,6 +29,8 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodePostalCodeController = TextEditingController();
+  TextEditingController uploadImage = TextEditingController();
+
 
 
   final GlobalKey<FormState> formKey = GlobalKey();
@@ -104,4 +106,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
     obscureText = !obscureText;
     notifyListeners();
   }
+  // for imaage
+
 }

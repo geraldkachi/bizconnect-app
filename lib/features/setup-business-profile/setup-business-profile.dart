@@ -9,6 +9,8 @@ import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bizconnect/widget/select_dropdown.dart';
+import 'package:image_picker/image_picker.dart'; // To pick an image
+import 'dart:io';
 
 class SetupBusinessProfilePage extends ConsumerStatefulWidget {
   const SetupBusinessProfilePage({super.key});
@@ -52,25 +54,44 @@ class _SetupBusinessProfilePageState
     _tabController.index = index;
   }
 
-    final dropDownKey = GlobalKey<DropdownSearchState<String>>();
+  final currentYear = DateTime.now().year;
+  final dropDownKey = GlobalKey<DropdownSearchState<String>>();
 
+  final ImagePicker _picker = ImagePicker(); // Image picker instance
+  // FileImage? _image; // To store the selected image
+
+  File? _image; // Variable to store the selected image
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No image selected')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
+
+  void _deleteImage() {
+    setState(() {
+      _image = null; // Remove the selected image
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentYear = DateTime.now().year;
     final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
-    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final setupProfileRead =
+        ref.read(setupBusinessProfileViewModelProvider.notifier);
 
-     Future<List<String>> fetchItems(String filter) async {
-    // Simulate fetching data with a delay
-    await Future.delayed(Duration(seconds: 1));
-    
-    // Example static list of items
-    List<String> allItems = ['Item1', 'Item2', 'Item3', 'Item4'];
-    
-    // Filter based on the input
-    return allItems.where((item) => item.toLowerCase().contains(filter.toLowerCase())).toList();
-  }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
@@ -116,6 +137,81 @@ class _SetupBusinessProfilePageState
                 ),
                 child: Column(
                   children: [
+                    Column(
+                      children: [
+                        // Tabs Row
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0.0, vertical: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(2, (index) {
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      prevIndex = index;
+                                      print(
+                                        prevIndex,
+                                      );
+                                    });
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        index == 0 ? "Tab 1" : "Tab 2",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: prevIndex == index
+                                              ? Color(0xFF17BEBB)
+                                              : Color(0xFFDBD8D8),
+                                        ),
+                                      ),
+                                      // Tab Indicator
+                                      SizedBox(
+                                          width:
+                                              10), // Gap between text and bar
+                                      Container(
+                                        // width: 164, // Width of the bar
+                                        height: 4, // Fixed height of the bar
+                                        color: prevIndex == index
+                                            ? Color(0xFF17BEBB)
+                                            : Color(0xFFDBD8D8),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).expand((widget) sync* {
+                              yield widget;
+                              yield SizedBox(width: 10); // Gap between tabs
+                            }).toList()
+                              ..removeLast(), // Remove the last gap,
+                          ),
+                        ),
+                        // Content Section
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Center(
+                                child: Text(
+                                  "Tell Us About Your Business",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18,
+                                      color: red),
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              prevIndex == 0 ? Text("Tab 1") : Text("Tab 2")
+                            ],
+                          ),
+                        )
+                        // ),
+                      ],
+                    ),
                     // TabBar
                     TabBar(
                       controller: _tabController,
@@ -174,32 +270,100 @@ class _SetupBusinessProfilePageState
                                       setupProfileWatch.businessNameController,
                                   labelText: "Business name",
                                   hintText: "Enter Business Name",
-                                  validator: (value) => Validator.validateName(value),),
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
                                 InputField(
                                   controller: setupProfileWatch
                                       .describeYourBusinessController,
                                   labelText: "Describe your business",
                                   hintText:
                                       "Short Sentence about your business",
-                                  validator: (value) => Validator.validateName(value),),
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(),
+                                  child: Row(
+                                      // Expanded(child: Text("upload image"),)
+                                      ),
+                                ),
                                 Text("Upload Logo"),
+                                // image start
+                                // Display uploaded image with a delete option
+                                // if (_image)
+                                _image != null
+                                    ? Stack(
+                                        children: [
+                                          Image.file(
+                                            _image!,
+                                            height: 200,
+                                            width: 200,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () => _deleteImage(),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    :
+                                    // else
+                                    Container(
+                                        height: 200,
+                                        width: 200,
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: Text("No image selected"),
+                                        ),
+                                      ),
+                                SizedBox(height: 20),
+                                // Buttons for selecting image
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          _pickImage(ImageSource.gallery),
+                                      child: Text('Gallery'),
+                                    ),
+                                  ],
+                                ),
+
+                                // image end
                                 InputField(
                                   controller: setupProfileWatch
                                       .businessCategoryController,
                                   labelText: "Business Category*",
                                   hintText: "search Business Category",
-                                  validator: (value) => Validator.validateName(value),),
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
                                 InputField(
                                   controller:
                                       setupProfileWatch.selectCountryController,
                                   labelText: "Select Country*",
                                   hintText: "select Country",
-                                  validator: (value) => Validator.validateName(value),),
+                                  validator: (value) =>
+                                      Validator.validateName(value),
+                                ),
                                 DropdownField<String>(
                                   dropdownKey: dropDownKey,
                                   labelText: "Select Category",
                                   hintText: "Choose an option",
-                                  items: const ['Category 1', 'Category 2', 'Category 3'],
+                                  items: const [
+                                    'Category 1',
+                                    'Category 2',
+                                    'Category 3'
+                                  ],
                                   selectedItem: "Category 1",
                                   onChanged: (value) {
                                     print("Selected: $value");
@@ -210,7 +374,9 @@ class _SetupBusinessProfilePageState
                                     }
                                     return null;
                                   },
-                                  dropdownIcon: const Icon(Icons.arrow_drop_down,color: grey400),
+                                  dropdownIcon: const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: grey400),
                                   // showSearchBox: true,
                                 ),
                               ],
