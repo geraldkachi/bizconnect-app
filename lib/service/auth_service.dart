@@ -69,15 +69,6 @@ class AuthService {
       throw Exception('Invalid response structure');
     }
       
-      // final responsePayload = response;
-      // debugPrint('response: $response');
-
-      // final token = response['data']['token'];
-      // debugPrint('token: $token');
-      // debugPrint('encrypted response: $responsePayload');
-      // debugPrint('decrypted response: ${response.toString()}');
-      // // _userData = AuthModel.fromJson(json.decode(responsePayload));
-      // _secureStorageService.writeAccessToken(token: token);
     } on BizException {
       rethrow;
     } catch (e) {
@@ -143,88 +134,6 @@ class AuthService {
     return userData;
   }
 
-//   Future<void> login(String email, String password) async {
-//   try {
-//     // Step 1: Create the payload
-//     final payload = {
-//       'email': email.trim(),
-//       'password': password.trim(),
-//     };
-//     debugPrint('Raw payload: $payload');
-
-//     // Step 2: Send the request to the backend
-//     final response = await _networkService.post(
-//       '/api/user/login',
-//       data: payload,
-//     );
-
-//     // Step 3: Handle the response
-//     if (response != null && response['data'] != null) {
-//       final token = response['data']['token'];
-//       debugPrint('Received token: $token');
-
-//       // Step 4: Extract the Bearer token
-//       final parts = token.split(' ');
-//       if (parts.length > 1) {
-//         final tokenString = parts[1]; // Extract Bearer token
-//         await _secureStorageService.writeAccessToken(token: tokenString);
-
-//         // Step 5: Decode the JWT payload
-//         final jwtParts = tokenString.split('.');
-//         if (jwtParts.length > 1) {
-//           final decodedPayload = utf8.decode(
-//             base64Url.decode(base64Url.normalize(jwtParts[1])),
-//           );
-//           final parsedToken = jsonDecode(decodedPayload);
-
-//           debugPrint('Decoded token payload: $parsedToken');
-
-//           // Step 6: Handle user verification and roles
-//           final verified = parsedToken['verified'] ?? false;
-//           final role = parsedToken['role'] ?? '';
-//           debugPrint('Verification status: $verified');
-//           debugPrint('User role: $role');
-
-//           final redirectUrl = getRedirectUrl();
-
-//           if (verified) {
-//             if (role == 'BUSINESS') {
-//               // Navigate to the business dashboard
-//               // context.go(redirectUrl ?? '/my-business');
-//               // context.go(redirectUrl ?? '/main_screen');
-//             } else if (role == 'CUSTOMER') {
-//               //  GoRouter.of(context).go('/forgot_password/reset_password');
-//               // final refSec = await _secureStorage.read(key: 'ref_sec');
-//               // if (redirectUrl != null) {
-//               //   // context.go(redirectUrl);
-//               // }
-//               //  else if (refSec != null && refSec == 'onboarding') {
-//               //   context.go('/business');
-//               // } else {
-//               //   // context.go('/search');
-//               // }
-//             }
-//           } else {
-//             // Navigate to account verification page
-//             // context.go('/verify-account');
-//           }
-//         } else {
-//           throw Exception('Invalid JWT token structure');
-//         }
-//       } else {
-//         throw Exception('Invalid Bearer token format');
-//       }
-
-//       // Step 7: Deserialize user data
-//       _userData = AuthModel.fromJson(response['data']['user']);
-//       debugPrint('User data: $_userData');
-//     } else {
-//       throw Exception('Invalid response structure');
-//     }
-//   } catch (BizException) {
-//     rethrow;
-//   }
-// }
 
 String? getRedirectUrl() {
   // Retrieve the redirect URL logic, or return null for defaults

@@ -57,9 +57,9 @@ class SignUpViewModel extends ChangeNotifier {
         emailController.clear();
         passController.clear();
         confirmPassController.clear();
-        router.go('/verify-account');
         isLoading = false;
         notifyListeners();
+        router.go('/verify-account');
       }
     } on BizException catch (e) {
       isLoading = false;

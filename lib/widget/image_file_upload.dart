@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class ImageUploadField extends StatefulWidget {
   final String labelText;
@@ -31,8 +32,39 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
         _selectedImage = File(image.path);
         _fileName = image.name;
       });
+
+      await _cropImage(); // Prompt user to crop immediately after selecting an image
     }
   }
+
+   Future<void> _cropImage() async {
+    if (_selectedImage == null) return;
+
+    final croppedImage = await ImageCropper().cropImage(
+      sourcePath: _selectedImage!.path,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: Colors.blue,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: Colors.blue,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(
+          title: 'Crop Image',
+        ),
+      ],
+    );
+
+    if (croppedImage != null) {
+      setState(() {
+        _selectedImage = File(croppedImage.path);
+        _fileName = croppedImage.path.split('/').last;
+      });
+    }
+  }
+
 
   void _deleteImage() {
     setState(() {
@@ -41,35 +73,57 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
     });
   }
 
- void _viewImage() {
-  // Open the image in a full-screen dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop(); // Close the dialog when tapping outside
-          },
-          child: Center(
-            heightFactor: 300,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width,
-                maxHeight: MediaQuery.of(context).size.height,
-              ),
+//  void _viewImage() {
+//     if (_selectedImage == null) return;
+
+//   // Open the image in a full-screen dialog
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return Dialog(
+//         child: GestureDetector(
+//           onTap: () {
+//             Navigator.of(context).pop(); // Close the dialog when tapping outside
+//           },
+//           child: Center(
+//             heightFactor: 300,
+//             child: ConstrainedBox(
+//               constraints: BoxConstraints(
+//                 maxWidth: MediaQuery.of(context).size.width,
+//                 maxHeight: MediaQuery.of(context).size.height,
+//               ),
+//               child: Image.file(
+//                 _selectedImage!,
+//                 fit: BoxFit.contain, // Ensure the image is contained within the available space
+//               ),
+//             ),
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }
+
+void _viewImage() {
+    if (_selectedImage == null) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Center(
               child: Image.file(
                 _selectedImage!,
-                fit: BoxFit.contain, // Ensure the image is contained within the available space
+                fit: BoxFit.cover,
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +150,7 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
             child: _selectedImage != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -123,14 +177,16 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
                         ),
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           IconButton(
                             icon: const Icon(
                               Icons
-                                  .crop_portrait, // eye icon to be able to view the image
+                                  .crop, // crop icon to be able to crop the image
                               color: Colors.grey,
                             ),
-                            onPressed: _viewImage,
+                            onPressed: _cropImage,
                           ),
                           IconButton(
                             icon: const Icon(

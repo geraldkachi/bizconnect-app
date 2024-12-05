@@ -11,7 +11,7 @@ class DropdownField<T> extends StatelessWidget {
   final GlobalKey<DropdownSearchState<T>>? dropdownKey;
   // final FutureOr<List<T>> Function(String filter, LoadProps? loadProps)? items;
   final T? selectedItem;
-  final void Function(T?) onChanged;
+  final void Function(T?)? onChanged;
   final String? Function(T?)? validator;
   final Widget? dropdownIcon;
   final bool showSearchBox;
@@ -27,7 +27,7 @@ class DropdownField<T> extends StatelessWidget {
     required this.hintText,
     required this.items,
     this.selectedItem,
-    required this.onChanged,
+    this.onChanged,
     this.validator,
     this.dropdownIcon,
     this.showSearchBox = false,

@@ -28,6 +28,7 @@ const Color grey400 = Color(0xffB8B8B8);
 const Color white200 = Color(0xffF6F8FA);
 
 // grey color
+const Color grey401 = Color(0xff989898);
 const Color grey500 = Color(0xff9090A7);
 const Color grey600 = Color(0xffA0AEC0);
 

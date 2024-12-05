@@ -225,7 +225,7 @@
 //   }
 // }
 
-// 
+//
 
 // import 'package:flutter/material.dart';
 // import 'package:bizconnect/app/theme/colors.dart';
@@ -380,36 +380,36 @@
 //                     ),
 //                   ),
 //                   const SizedBox(height: 7),
-                  // TextFormField(
-                  //   controller: closeTimeController,
-                  //   readOnly: true,
-                  //   decoration: InputDecoration(
-                  //     hintText: "Select Closing Time",
-                  //     contentPadding: const EdgeInsets.symmetric(
-                  //       vertical: 10.0,
-                  //       horizontal: 15.0,
-                  //     ),
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(12.0),
-                  //       borderSide:
-                  //           const BorderSide(color: grey100, width: 1.0),
-                  //     ),
-                  //     enabledBorder: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(12.0),
-                  //       borderSide:
-                  //           const BorderSide(color: grey100, width: 1.0),
-                  //     ),
-                  //     focusedBorder: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(12.0),
-                  //       borderSide: const BorderSide(color: black, width: 1.0),
-                  //     ),
-                  //     suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-                  //     // suffixIcon: const Icon(Icons.access_time, color: grey400),
-                  //   ),
-                  //   onTap: () {
-                  //     // Trigger time picker logic
-                  //   },
-                  // ),
+// TextFormField(
+//   controller: closeTimeController,
+//   readOnly: true,
+//   decoration: InputDecoration(
+//     hintText: "Select Closing Time",
+//     contentPadding: const EdgeInsets.symmetric(
+//       vertical: 10.0,
+//       horizontal: 15.0,
+//     ),
+//     border: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(12.0),
+//       borderSide:
+//           const BorderSide(color: grey100, width: 1.0),
+//     ),
+//     enabledBorder: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(12.0),
+//       borderSide:
+//           const BorderSide(color: grey100, width: 1.0),
+//     ),
+//     focusedBorder: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(12.0),
+//       borderSide: const BorderSide(color: black, width: 1.0),
+//     ),
+//     suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+//     // suffixIcon: const Icon(Icons.access_time, color: grey400),
+//   ),
+//   onTap: () {
+//     // Trigger time picker logic
+//   },
+// ),
 //                 ],
 //               ),
 //             ),
@@ -460,8 +460,6 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:bizconnect/app/theme/colors.dart';
 
@@ -470,7 +468,8 @@ class DateTimeSlot {
   String openTime;
   String closeTime;
 
-  DateTimeSlot({required this.day, required this.openTime, required this.closeTime});
+  DateTimeSlot(
+      {required this.day, required this.openTime, required this.closeTime});
 }
 
 class DateTimeSlots extends StatefulWidget {
@@ -501,15 +500,30 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
   ];
 
   static const List<String> timeSlots = [
-    '09:00 AM',
-    '10:00 AM',
-    '11:00 AM',
-    '12:00 PM',
-    '01:00 PM',
-    '02:00 PM',
-    '03:00 PM',
-    '04:00 PM',
-    '05:00 PM',
+    "12:00 AM",
+    "01:00 AM",
+    "02:00 AM",
+    "03:00 AM",
+    "04:00 AM",
+    "05:00 AM",
+    "06:00 AM",
+    "07:00 AM",
+    "08:00 AM",
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "01:00 PM",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+    "05:00 PM",
+    "06:00 PM",
+    "07:00 PM",
+    "08:00 PM",
+    "09:00 PM",
+    "10:00 PM",
+    "11:00 PM",
   ];
 
   @override
@@ -517,7 +531,8 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
     super.initState();
     slots = widget.initialSlots ??
         [
-          DateTimeSlot(day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
+          DateTimeSlot(
+              day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
         ];
   }
 
@@ -525,7 +540,8 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
     if (slots.length >= 7) return;
 
     final daysWithSlots = slots.map((slot) => slot.day).toSet();
-    final nextAvailableDay = daysOfWeek.firstWhere((day) => !daysWithSlots.contains(day), orElse: () => '');
+    final nextAvailableDay = daysOfWeek
+        .firstWhere((day) => !daysWithSlots.contains(day), orElse: () => '');
 
     if (nextAvailableDay.isNotEmpty) {
       setState(() {
@@ -560,7 +576,8 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
       children: [
         const Text(
           'Setup opening hours',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: red),
+          style:
+              TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: red),
         ),
         const SizedBox(height: 8),
         ...slots.asMap().entries.map((entry) {
@@ -568,7 +585,10 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
           final slot = entry.value;
           return SlotItem(
             slot: slot,
-            availableDays: daysOfWeek.where((day) => slots.every((s) => s.day != day || s.day == slot.day)).toList(),
+            availableDays: daysOfWeek
+                .where((day) =>
+                    slots.every((s) => s.day != day || s.day == slot.day))
+                .toList(),
             timeSlots: timeSlots,
             onSlotUpdated: (updatedSlot) => updateSlot(index, updatedSlot),
             onDelete: slots.length > 1 ? () => deleteSlot(index) : null,
@@ -580,8 +600,8 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
             icon: const Icon(Icons.add_circle, color: red),
             label: const Text(
               'Add more',
-              
-              style: TextStyle(color: red, decoration:  TextDecoration.underline ),
+              style:
+                  TextStyle(color: red, decoration: TextDecoration.underline),
             ),
           ),
       ],
@@ -617,137 +637,282 @@ class SlotItem extends StatelessWidget {
         children: [
           // Day Field
           Expanded(
-            child: TextFormField(
-              controller: dayController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Day',
-                hintText: '--',
-                suffixIcon: Icon(Icons.arrow_drop_down, color: grey400),
-                border: OutlineInputBorder(),
-              ),
-              onTap: () {
-                // Show day selection dropdown
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return ListView(
-                      children: availableDays
-                          .map((day) => ListTile(
-                                title: Text(day),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  onSlotUpdated(DateTimeSlot(
-                                    day: day,
-                                    openTime: slot.openTime,
-                                    closeTime: slot.closeTime,
-                                  ));
-                                },
-                              ))
-                          .toList(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Day",
+                  style: TextStyle(
+                    color: grey401,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                TextFormField(
+                  controller: dayController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    // labelText: 'Day',
+                    hintText: '--',
+                    suffixIcon:
+                        const Icon(Icons.arrow_drop_down, color: grey400),
+                    // border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: grey100, width: 1.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: grey100, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: black, width: 1.0),
+                    ),
+                  ),
+                  onTap: () {
+                    // Show day selection dropdown
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return ListView(
+                          children: availableDays
+                              .map((day) => ListTile(
+                                    title: Text(day),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      onSlotUpdated(DateTimeSlot(
+                                        day: day,
+                                        openTime: slot.openTime,
+                                        closeTime: slot.closeTime,
+                                      ));
+                                    },
+                                  ))
+                              .toList(),
+                        );
+                      },
                     );
                   },
-                );
-              },
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 8),
           // Open Time
           Expanded(
-            child: TextFormField(
-              controller: openTimeController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Opening hour',
-                hintText: '--',
-                // suffixIcon: const Icon(Icons.access_time, color: grey400),
-                suffixIcon: Icon(Icons.arrow_drop_down, color: grey400),
-                border: OutlineInputBorder(),
-              ),
-              onTap: () {
-                // Show time selection
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return ListView(
-                      children: timeSlots
-                          .map((time) => ListTile(
-                                title: Text(time),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  onSlotUpdated(DateTimeSlot(
-                                    day: slot.day,
-                                    openTime: time,
-                                    closeTime: slot.closeTime,
-                                  ));
-                                },
-                              ))
-                          .toList(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Opening hour",
+                  style: TextStyle(
+                    color: grey401,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                TextFormField(
+                  controller: openTimeController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    // labelText: 'Opening hour',
+                    hintStyle: const TextStyle(
+                      fontSize: 10.0,
+                      color: grey400,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    hintText: '--',
+                    // suffixIcon: const Icon(Icons.access_time, color: grey400),
+                    suffixIcon:
+                        const Icon(Icons.arrow_drop_down, color: grey400),
+                    // border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: grey100, width: 1.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: grey100, width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(color: black, width: 1.0),
+                    ),
+                  ),
+                  onTap: () {
+                    // Show time selection
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return ListView(
+                          children: timeSlots
+                              .map((time) => ListTile(
+                                    title: Text(time),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      onSlotUpdated(DateTimeSlot(
+                                        day: slot.day,
+                                        openTime: time,
+                                        closeTime: slot.closeTime,
+                                      ));
+                                    },
+                                  ))
+                              .toList(),
+                        );
+                      },
                     );
                   },
-                );
-              },
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 8),
           // Close Time
+          // Expanded(
+          //   child: TextFormField(
+          //     controller: closeTimeController,
+          //     readOnly: true,
+          //     decoration:  InputDecoration(
+          //       labelText: 'Closing hour',
+          //       hintText: '--',
+          //       // suffixIcon: const Icon(Icons.access_time, color: grey400),
+          //       suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+          //       // border: OutlineInputBorder(),
+          //       border:  OutlineInputBorder(
+          //               borderRadius: BorderRadius.circular(12.0),
+          //               borderSide:
+          //                   const BorderSide(color: grey100, width: 1.0),
+          //             ),
+          //              enabledBorder: OutlineInputBorder(
+          //               borderRadius: BorderRadius.circular(12.0),
+          //               borderSide:
+          //                   const BorderSide(color: grey100, width: 1.0),
+          //             ),
+          //              focusedBorder: OutlineInputBorder(
+          //               borderRadius: BorderRadius.circular(12.0),
+          //               borderSide: const BorderSide(color: black, width: 1.0),
+          //             ),
+
+          //     ),
+          //     onTap: () {
+          //       // Show time selection
+          //       showModalBottomSheet(
+          //         context: context,
+          //         builder: (context) {
+          //           return ListView(
+          //             children: timeSlots
+          //                 .map((time) => ListTile(
+          //                       title: Text(time),
+          //                       onTap: () {
+          //                         Navigator.pop(context);
+          //                         onSlotUpdated(DateTimeSlot(
+          //                           day: slot.day,
+          //                           openTime: slot.openTime,
+          //                           closeTime: time,
+          //                         ));
+          //                       },
+          //                     ))
+          //                 .toList(),
+          //           );
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
+          // // Delete Button
+          // if (onDelete != null)
+          //   IconButton(
+          //     icon: const Icon(Icons.cancel_rounded, color: Colors.black),
+          //     onPressed: onDelete,
+          //   ),
+
           Expanded(
-            child: TextFormField(
-              controller: closeTimeController,
-              readOnly: true,
-              decoration:  InputDecoration(
-                labelText: 'Closing hour',
-                hintText: '--',
-                // suffixIcon: const Icon(Icons.access_time, color: grey400),
-                suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-                // border: OutlineInputBorder(),
-                border:  OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide:
-                            const BorderSide(color: grey100, width: 1.0),
+            child: Stack(
+              clipBehavior: Clip.none, // Allows the icon to overflow the bounds
+              children: [
+                // Closing Hour Input Field
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Closing hour",
+                      style: TextStyle(
+                        color: grey401,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
                       ),
-                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide:
-                            const BorderSide(color: grey100, width: 1.0),
+                    ),
+                    const SizedBox(height: 7),
+                    TextFormField(
+                      controller: closeTimeController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        // labelText: 'Closing hour',
+                        hintText: '--',
+                        suffixIcon:
+                            const Icon(Icons.arrow_drop_down, color: grey400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide:
+                              const BorderSide(color: grey100, width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide:
+                              const BorderSide(color: grey100, width: 1.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide:
+                              const BorderSide(color: black, width: 1.0),
+                        ),
                       ),
-                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: const BorderSide(color: black, width: 1.0),
-                      ),
-                      
-              ),
-              onTap: () {
-                // Show time selection
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return ListView(
-                      children: timeSlots
-                          .map((time) => ListTile(
-                                title: Text(time),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  onSlotUpdated(DateTimeSlot(
-                                    day: slot.day,
-                                    openTime: slot.openTime,
-                                    closeTime: time,
-                                  ));
-                                },
-                              ))
-                          .toList(),
-                    );
-                  },
-                );
-              },
+                      onTap: () {
+                        // Show time selection
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return ListView(
+                              children: timeSlots
+                                  .map((time) => ListTile(
+                                        title: Text(time),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          onSlotUpdated(DateTimeSlot(
+                                            day: slot.day,
+                                            openTime: slot.openTime,
+                                            closeTime: time,
+                                          ));
+                                        },
+                                      ))
+                                  .toList(),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                // Delete Icon Positioned at the Top-Right Corner
+                if (onDelete != null)
+                  Positioned(
+                    top: -20,
+                    right: -20,
+                    child: IconButton(
+                      icon:
+                          const Icon(Icons.cancel_rounded, color: Colors.black),
+                      onPressed: onDelete,
+                      constraints:
+                          const BoxConstraints(), // Removes extra padding
+                      padding:
+                          EdgeInsets.zero, // Ensures the icon aligns correctly
+                    ),
+                  ),
+              ],
             ),
           ),
-          // Delete Button
-          if (onDelete != null)
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: onDelete,
-            ),
         ],
       ),
     );

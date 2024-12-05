@@ -47,11 +47,12 @@ dependencies:
   path_provider: ^2.1.5
   share_plus: ^10.1.2
   pull_to_refresh: ^2.0.0
-  image_picker: ^1.1.2
   dio: ^5.7.0
   flutter_secure_storage: ^9.2.2
   riverpod: ^2.6.1
   dropdown_search: ^5.0.3
+  image_picker: ^1.1.2
+  image_cropper: ^8.0.2
 
 dev_dependencies:
   flutter_test:
