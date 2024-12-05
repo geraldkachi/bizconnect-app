@@ -445,7 +445,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       'businessEmail': businessEmailController.text.trim(),
       'operationDays': slots.map((slot) => slot.toJson()).toList(),
       'websiteUrl': websiteController.text.trim(),
-      'linkedinUrl': linkedinUrlController.text.trim(), // Add logic if needed
+      'linkedinUrl': linkedinUrlController.text.trim(),
       'instagramUrl': instagramController.text.trim(),
       'facebookUrl': facebookController.text.trim(),
       'image': null, 
@@ -462,8 +462,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       clearAllFields();
       router.go('/main_screen');
     } on BizException catch (e) {
+      debugPrint(e.message);
       _toastService.showToast(context, title: 'Error', subTitle: e.message ?? 'Unknown error');
     } catch (e) {
+      // debugPrint(e);
       _toastService.showToast(context, title: 'Error', subTitle: 'Something went wrong.');
     } finally {
       isLoading = false;
