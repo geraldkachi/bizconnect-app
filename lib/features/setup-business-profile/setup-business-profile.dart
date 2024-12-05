@@ -170,8 +170,8 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                         const SizedBox(height: 10),
                                         ImageUploadField(
                                           labelText: "Upload Image",
-                                          hintText:
-                                              "Upload logo or business flyer",
+                                          hintText: "Upload logo or business flyer",
+                                          setupProfileWatch: setupProfileWatch
                                         ),
                                         const SizedBox(height: 10),
                                         // InputField(
@@ -413,22 +413,22 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                       const SizedBox(height: 20),
           
                             // Display Slots
-                            if (setupProfileWatch.slots.isNotEmpty)
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: setupProfileWatch.slots.length,
-                                itemBuilder: (context, index) {
-                                  final slot = setupProfileWatch.slots[index];
-                                  return ListTile(
-                                    title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
-                                    trailing: IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
-                                      onPressed: () => setupProfileRead.deleteSlot(slot),
-                                    ),
-                                  );
-                                },
-                              ),
+                            // if (setupProfileWatch.slots.isNotEmpty)
+                            //   ListView.builder(
+                            //     shrinkWrap: true,
+                            //     physics: const NeverScrollableScrollPhysics(),
+                            //     itemCount: setupProfileWatch.slots.length,
+                            //     itemBuilder: (context, index) {
+                            //       final slot = setupProfileWatch.slots[index];
+                            //       return ListTile(
+                            //         title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
+                            //         trailing: IconButton(
+                            //           icon: const Icon(Icons.delete, color: Colors.red),
+                            //           onPressed: () => setupProfileRead.deleteSlot(slot),
+                            //         ),
+                            //       );
+                            //     },
+                            //   ),
           
                                         const SizedBox(height: 20),
                                         HorizontalDottedLine(),

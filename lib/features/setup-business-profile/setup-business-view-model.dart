@@ -203,35 +203,41 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/app/router.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:bizconnect/service/toast_service.dart';
+import 'package:bizconnect/utils/business_profile_data.dart';
+import 'package:bizconnect/widget/datetime_slot.dart';
 // import 'package:bizconnect/service/profile_business_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
-class Slot {
-  String day;
-  String openTime;
-  String closeTime;
+// class Slot {
+//   String day;
+//   String openTime;
+//   String closeTime;
 
-  Slot({required this.day, required this.openTime, required this.closeTime});
+//   Slot({required this.day, required this.openTime, required this.closeTime});
 
-  Map<String, String> toJson() => {
-        'day': day,
-        'openTime': openTime,
-        'closeTime': closeTime,
-      };
-}
+//   Map<String, String> toJson() => {
+//         'day': day,
+//         'openTime': openTime,
+//         'closeTime': closeTime,
+//       };
+// }
 
 final setupBusinessProfileViewModelProvider =
     ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>(
         (ref) => SetupBusinessProfileViewModel());
 
 class SetupBusinessProfileViewModel extends ChangeNotifier {
-  // final ProfileBusinessService _profileBusinessServiceProfileBusinessService = getIt<ProfileBusinessService>();
+  final ProfileBusinessService _profileBusinessServiceProfileBusinessService = getIt<ProfileBusinessService>();
   final ToastService _toastService = getIt<ToastService>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -249,54 +255,150 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController zipCodePostalCodeController = TextEditingController();
   TextEditingController instagramController = TextEditingController();
   TextEditingController websiteController = TextEditingController();
+  TextEditingController linkedinUrlController = TextEditingController();
   TextEditingController tiktokController = TextEditingController();
   TextEditingController facebookController = TextEditingController();
 
   // Slot-related
-  List<Slot> slots = [];
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
   TextEditingController closeTimeController = TextEditingController();
+
   int prevIndex = 0;
   bool obscureText = true;
   bool isLoading = false;
 
-  void addSlot(Slot slot) {
-    slots.add(slot);
-    notifyListeners();
-  }
+  // List<Slot> slots = [];
+  // void addSlot(Slot slot) {
+  //   slots.add(slot);
+  //   notifyListeners();
+  // }
 
-  void deleteSlot(Slot slot) {
-    slots.remove(slot);
-    notifyListeners();
-  }
+  // void deleteSlot(Slot slot) {
+  //   slots.remove(slot);
+  //   notifyListeners();
+  // }
 
   void togglePassword() {
     obscureText = !obscureText;
     notifyListeners();
   }
 
-  void handleAddSlot(BuildContext context) {
-    if (dayController.text.isEmpty || openTimeController.text.isEmpty || closeTimeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All fields are required')),
-      );
-      return;
-    }
+  // void handleAddSlot(BuildContext context) {
+  //   if (dayController.text.isEmpty || openTimeController.text.isEmpty || closeTimeController.text.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('All fields are required')),
+  //     );
+  //     return;
+  //   }
 
-    final slot = Slot(
-      day: dayController.text,
-      openTime: openTimeController.text,
-      closeTime: closeTimeController.text,
+  //   final slot = Slot(
+  //     day: dayController.text,
+  //     openTime: openTimeController.text,
+  //     closeTime: closeTimeController.text,
+  //   );
+
+  //   addSlot(slot);
+
+  //   // Clear fields
+  //   dayController.clear();
+  //   openTimeController.clear();
+  //   closeTimeController.clear();
+  // }
+
+  // image 
+  File? selectedImage;
+  String? fileName;
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+        selectedImage = File(image.path);
+        fileName = image.name;
+        notifyListeners();
+      await cropImage(); // Prompt user to crop immediately after selecting an image
+    }
+  }
+
+   Future<void> cropImage() async {
+    if (selectedImage == null) return;
+     notifyListeners();
+
+    final croppedImage = await ImageCropper().cropImage(
+      sourcePath: selectedImage!.path,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: Colors.blue,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: Colors.blue,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(
+          title: 'Crop Image',
+        ),
+      ],
     );
 
-    addSlot(slot);
-
-    // Clear fields
-    dayController.clear();
-    openTimeController.clear();
-    closeTimeController.clear();
+    if (croppedImage != null) {
+        selectedImage = File(croppedImage.path);
+        fileName = croppedImage.path.split('/').last;
+    }
+     notifyListeners();
   }
+
+
+  void deleteImage() {
+      selectedImage = null;
+      fileName = null;
+      notifyListeners();
+  }
+
+// for Slot and DateTime 
+   List<DateTimeSlot> slots = [
+          DateTimeSlot(
+              day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
+        ];
+
+  void addSlot() {
+    if (slots.length >= 7) return;
+
+    final daysWithSlots = slots.map((slot) => slot.day).toSet();
+    final nextAvailableDay = BusinessProfileData.daysOfWeek
+        .firstWhere((day) => !daysWithSlots.contains(day), orElse: () => '');
+
+    if (nextAvailableDay.isNotEmpty) {
+      // setState(() {
+        slots.add(DateTimeSlot(
+          day: nextAvailableDay,
+          openTime: '09:00 AM',
+          closeTime: '05:00 PM',
+        ));
+      // });
+      // widget.onSlotsUpdated?.call(slots);
+      notifyListeners();
+    }
+  }
+
+  void deleteSlot(int index) {
+    // setState(() {
+      slots.removeAt(index);
+    // });
+    // widget.onSlotsUpdated?.call(slots);
+     notifyListeners();
+  }
+
+  void updateSlot(int index, DateTimeSlot updatedSlot) {
+    // setState(() {
+      slots[index] = updatedSlot;
+    // });
+    // widget.onSlotsUpdated?.call(slots);
+    notifyListeners();
+  }
+
 
   Future<void> setupProfileBusiness(BuildContext context) async {
     if (slots.isEmpty) {
@@ -310,27 +412,51 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      final payload = {
-        'businessName': businessNameController.text.trim(),
-        'businessEmail': businessEmailController.text.trim(),
-        'businessPhoneNumber': businessPhoneNumberController.text.trim(),
-        'businessCategory': businessCategoryController.text.trim(),
-        'description': describeYourBusinessController.text.trim(),
-        'country': selectCountryController.text.trim(),
-        'state': stateAndProvinceController.text.trim(),
-        'city': cityController.text.trim(),
-        'street': streetController.text.trim(),
-        'zipCode': zipCodePostalCodeController.text.trim(),
-        'socialLinks': {
-          'instagram': instagramController.text.trim(),
-          'website': websiteController.text.trim(),
-          'tiktok': tiktokController.text.trim(),
-          'facebook': facebookController.text.trim(),
-        },
-        'slots': slots.map((slot) => slot.toJson()).toList(),
-      };
+      // final payload = {
+      //   'businessName': businessNameController.text.trim(),
+      //   'businessEmail': businessEmailController.text.trim(),
+      //   'businessPhoneNumber': businessPhoneNumberController.text.trim(),
+      //   'businessCategory': businessCategoryController.text.trim(),
+      //   'description': describeYourBusinessController.text.trim(),
+      //   'country': selectCountryController.text.trim(),
+      //   'state': stateAndProvinceController.text.trim(),
+      //   'city': cityController.text.trim(),
+      //   'street': streetController.text.trim(),
+      //   'zipCode': zipCodePostalCodeController.text.trim(),
+      //   'socialLinks': {
+      //     'instagram': instagramController.text.trim(),
+      //     'website': websiteController.text.trim(),
+      //     'tiktok': tiktokController.text.trim(),
+      //     'facebook': facebookController.text.trim(),
+      //   },
+      //   'slots': slots.map((slot) => slot.toJson()).toList(),
+      // };
 
-      // await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
+       final payload = {
+      'name': businessNameController.text.trim(),
+      'description': describeYourBusinessController.text.trim(),
+      'businessCategoryUuid': businessCategoryController.text.trim(),
+      'country': selectCountryController.text.trim(),
+      'stateAndProvince': stateAndProvinceController.text.trim(),
+      'city': cityController.text.trim(),
+      'street': streetController.text.trim(),
+      'postalCode': zipCodePostalCodeController.text.trim(),
+      'phoneNumber': businessPhoneNumberController.text.trim(),
+      'businessEmail': businessEmailController.text.trim(),
+      'operationDays': slots.map((slot) => slot.toJson()).toList(),
+      'websiteUrl': websiteController.text.trim(),
+      'linkedinUrl': linkedinUrlController.text.trim(), // Add logic if needed
+      'instagramUrl': instagramController.text.trim(),
+      'facebookUrl': facebookController.text.trim(),
+      'image': null, 
+      'cloudinaryConfig': null, 
+      'streetCoordinates': {
+        'lat': 0.0, 
+        'lng': 0.0,
+      },
+    };
+
+      await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
 
       // Clear all fields
       clearAllFields();
@@ -359,6 +485,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       zipCodePostalCodeController,
       instagramController,
       websiteController,
+      linkedinUrlController,
       tiktokController,
       facebookController,
     ]) {

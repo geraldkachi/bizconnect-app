@@ -460,8 +460,11 @@
 //   }
 // }
 
+import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
+import 'package:bizconnect/utils/business_profile_data.dart';
 import 'package:flutter/material.dart';
 import 'package:bizconnect/app/theme/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DateTimeSlot {
   String day;
@@ -470,9 +473,17 @@ class DateTimeSlot {
 
   DateTimeSlot(
       {required this.day, required this.openTime, required this.closeTime});
+  // Convert the DateTimeSlot instance to a JSON-compatible map
+  Map<String, String> toJson() {
+    return {
+      'day': day,
+      'openTime': openTime,
+      'closeTime': closeTime,
+    };
+  }
 }
 
-class DateTimeSlots extends StatefulWidget {
+class DateTimeSlots extends  ConsumerStatefulWidget {
   final List<DateTimeSlot>? initialSlots;
   final void Function(List<DateTimeSlot>)? onSlotsUpdated;
 
@@ -486,91 +497,12 @@ class DateTimeSlots extends StatefulWidget {
   _DateTimeSlotsState createState() => _DateTimeSlotsState();
 }
 
-class _DateTimeSlotsState extends State<DateTimeSlots> {
-  late List<DateTimeSlot> slots;
-
-  static const List<String> daysOfWeek = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
-
-  static const List<String> timeSlots = [
-    "12:00 AM",
-    "01:00 AM",
-    "02:00 AM",
-    "03:00 AM",
-    "04:00 AM",
-    "05:00 AM",
-    "06:00 AM",
-    "07:00 AM",
-    "08:00 AM",
-    "09:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
-    "05:00 PM",
-    "06:00 PM",
-    "07:00 PM",
-    "08:00 PM",
-    "09:00 PM",
-    "10:00 PM",
-    "11:00 PM",
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    slots = widget.initialSlots ??
-        [
-          DateTimeSlot(
-              day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
-        ];
-  }
-
-  void addSlot() {
-    if (slots.length >= 7) return;
-
-    final daysWithSlots = slots.map((slot) => slot.day).toSet();
-    final nextAvailableDay = daysOfWeek
-        .firstWhere((day) => !daysWithSlots.contains(day), orElse: () => '');
-
-    if (nextAvailableDay.isNotEmpty) {
-      setState(() {
-        slots.add(DateTimeSlot(
-          day: nextAvailableDay,
-          openTime: '09:00 AM',
-          closeTime: '05:00 PM',
-        ));
-      });
-      widget.onSlotsUpdated?.call(slots);
-    }
-  }
-
-  void deleteSlot(int index) {
-    setState(() {
-      slots.removeAt(index);
-    });
-    widget.onSlotsUpdated?.call(slots);
-  }
-
-  void updateSlot(int index, DateTimeSlot updatedSlot) {
-    setState(() {
-      slots[index] = updatedSlot;
-    });
-    widget.onSlotsUpdated?.call(slots);
-  }
+class _DateTimeSlotsState extends ConsumerState<DateTimeSlots> {
 
   @override
   Widget build(BuildContext context) {
+    final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -580,23 +512,23 @@ class _DateTimeSlotsState extends State<DateTimeSlots> {
               TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: red),
         ),
         const SizedBox(height: 8),
-        ...slots.asMap().entries.map((entry) {
+        ...setupProfileWatch.slots.asMap().entries.map((entry) {
           final index = entry.key;
           final slot = entry.value;
           return SlotItem(
             slot: slot,
-            availableDays: daysOfWeek
+            availableDays:BusinessProfileData.daysOfWeek
                 .where((day) =>
-                    slots.every((s) => s.day != day || s.day == slot.day))
+                    setupProfileWatch.slots.every((s) => s.day != day || s.day == slot.day))
                 .toList(),
-            timeSlots: timeSlots,
-            onSlotUpdated: (updatedSlot) => updateSlot(index, updatedSlot),
-            onDelete: slots.length > 1 ? () => deleteSlot(index) : null,
+            timeSlots: BusinessProfileData.timeSlots,
+            onSlotUpdated: (updatedSlot) => setupProfileWatch.updateSlot(index, updatedSlot),
+            onDelete: setupProfileWatch.slots.length > 1 ? () => setupProfileWatch.deleteSlot(index) : null,
           );
         }),
-        if (slots.length < 7)
+        if (setupProfileWatch.slots.length < 7)
           TextButton.icon(
-            onPressed: addSlot,
+            onPressed: setupProfileWatch.addSlot,
             icon: const Icon(Icons.add_circle, color: red),
             label: const Text(
               'Add more',

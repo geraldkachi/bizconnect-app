@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bizconnect/app/theme/colors.dart';
+import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -8,11 +9,13 @@ import 'package:image_cropper/image_cropper.dart';
 class ImageUploadField extends StatefulWidget {
   final String labelText;
   final String hintText;
+  final SetupBusinessProfileViewModel setupProfileWatch;
 
   const ImageUploadField({
     super.key,
     required this.labelText,
     required this.hintText,
+    required this.setupProfileWatch,
   });
 
   @override
@@ -20,92 +23,9 @@ class ImageUploadField extends StatefulWidget {
 }
 
 class _ImageUploadFieldState extends State<ImageUploadField> {
-  File? _selectedImage;
-  String? _fileName;
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-        _fileName = image.name;
-      });
-
-      await _cropImage(); // Prompt user to crop immediately after selecting an image
-    }
-  }
-
-   Future<void> _cropImage() async {
-    if (_selectedImage == null) return;
-
-    final croppedImage = await ImageCropper().cropImage(
-      sourcePath: _selectedImage!.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Crop Image',
-          toolbarColor: Colors.blue,
-          toolbarWidgetColor: Colors.white,
-          activeControlsWidgetColor: Colors.blue,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
-        ),
-        IOSUiSettings(
-          title: 'Crop Image',
-        ),
-      ],
-    );
-
-    if (croppedImage != null) {
-      setState(() {
-        _selectedImage = File(croppedImage.path);
-        _fileName = croppedImage.path.split('/').last;
-      });
-    }
-  }
-
-
-  void _deleteImage() {
-    setState(() {
-      _selectedImage = null;
-      _fileName = null;
-    });
-  }
-
-//  void _viewImage() {
-//     if (_selectedImage == null) return;
-
-//   // Open the image in a full-screen dialog
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return Dialog(
-//         child: GestureDetector(
-//           onTap: () {
-//             Navigator.of(context).pop(); // Close the dialog when tapping outside
-//           },
-//           child: Center(
-//             heightFactor: 300,
-//             child: ConstrainedBox(
-//               constraints: BoxConstraints(
-//                 maxWidth: MediaQuery.of(context).size.width,
-//                 maxHeight: MediaQuery.of(context).size.height,
-//               ),
-//               child: Image.file(
-//                 _selectedImage!,
-//                 fit: BoxFit.contain, // Ensure the image is contained within the available space
-//               ),
-//             ),
-//           ),
-//         ),
-//       );
-//     },
-//   );
-// }
-
-void _viewImage() {
-    if (_selectedImage == null) return;
+  
+  void _viewImage(File? file) {
+    if (file == null) return;
 
     showDialog(
       context: context,
@@ -115,7 +35,7 @@ void _viewImage() {
             onTap: () => Navigator.of(context).pop(),
             child: Center(
               child: Image.file(
-                _selectedImage!,
+                file,
                 fit: BoxFit.cover,
               ),
             ),
@@ -139,9 +59,9 @@ void _viewImage() {
         ),
         const SizedBox(height: 7),
         GestureDetector(
-          onTap: _pickImage,
+          onTap: widget.setupProfileWatch.pickImage,
           child: Container(
-            height: _selectedImage == null ? 50 : 50,
+            height: widget.setupProfileWatch.selectedImage == null ? 50 : 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(
@@ -151,7 +71,7 @@ void _viewImage() {
             ),
             padding:
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
-            child: _selectedImage != null
+            child: widget.setupProfileWatch.selectedImage != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,7 +79,7 @@ void _viewImage() {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
                         child: Image.file(
-                          _selectedImage!,
+                          widget.setupProfileWatch.selectedImage!,
                           width: 30,
                           height: 30,
                           fit: BoxFit.cover,
@@ -168,7 +88,7 @@ void _viewImage() {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          _fileName ?? "File selected",
+                          widget.setupProfileWatch.fileName ?? "File selected",
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.black,
@@ -186,7 +106,7 @@ void _viewImage() {
                                   .crop, // crop icon to be able to crop the image
                               color: Colors.grey,
                             ),
-                            onPressed: _cropImage,
+                            onPressed: widget.setupProfileWatch.cropImage,
                           ),
                           IconButton(
                             icon: const Icon(
@@ -194,14 +114,14 @@ void _viewImage() {
                                   .remove_red_eye, // eye icon to be able to view the image
                               color: Colors.grey,
                             ),
-                            onPressed: _viewImage,
+                            onPressed:() => _viewImage(widget.setupProfileWatch.selectedImage),
                           ),
                           IconButton(
                             icon: const Icon(
                               Icons.delete,
                               color: Colors.grey,
                             ),
-                            onPressed: _deleteImage,
+                            onPressed: widget.setupProfileWatch.deleteImage,
                           ),
                         ],
                       )

@@ -1,3 +1,4 @@
+import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:bizconnect/service/secure_storage_service.dart';
 import 'package:bizconnect/service/auth_service.dart';
@@ -11,6 +12,7 @@ void setup() {
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<NetworkService>(() => NetworkService());
   getIt.registerLazySingleton<ToastService>(() => ToastService());
+  getIt.registerLazySingleton<ProfileBusinessService>(() => ProfileBusinessService());
   getIt.registerLazySingleton<NavigatorService>(() => NavigatorService());
   getIt.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
   print('get it setup successful');
