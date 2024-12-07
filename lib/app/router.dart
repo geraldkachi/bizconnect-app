@@ -4,6 +4,7 @@ import 'package:bizconnect/features/auth/forgot_password/forgot_password.dart';
 import 'package:bizconnect/features/auth/login/login.dart';
 import 'package:bizconnect/features/auth/sign_up/sign_up.dart';
 import 'package:bizconnect/features/auth/verify-account/verify-account.dart';
+import 'package:bizconnect/features/business/business_detail.dart';
 import 'package:bizconnect/features/entry/entry.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-profile.dart';
 import 'package:bizconnect/features/splashscreen/splashscreen.dart';
@@ -49,41 +50,41 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/main_screen',
       builder: (context, state) => MainScreen(),
-      // routes: [
-      //   GoRoute(
-      //       path: 'health_details',
-      //       builder: (context, state) => HealthDetails(),
-      //       routes: [
-      //         GoRoute(
-      //           path: 'record_inflow_payment',
-      //           builder: (context, state) => RecordInflowPayment(),
-      //         ),
-      //         GoRoute(
-      //           path: 'record_expense_payment',
-      //           builder: (context, state) => RecordExpensePayment(),
-      //         ),
-      //       ]),
-      //   GoRoute(
-      //     path: 'add_admin',
-      //     builder: (context, state) => AddAdminPage(),
-      //   ),
-      //   GoRoute(
-      //     path: 'preferences',
-      //     builder: (context, state) => PreferencesPage(),
-      //   ),
-      //   GoRoute(
-      //     path: 'change_password',
-      //     builder: (context, state) => ChangePassword(),
-      //   ),
-      //   GoRoute(
-      //     path: 'line_manager',
-      //     builder: (context, state) => LineManager(),
-      //   ),
-      //   GoRoute(
-      //     path: 'privacy_policy',
-      //     builder: (context, state) => PrivacyPolicy(),
-      //   ),
-      // ]
+      routes: [
+        GoRoute(
+            path: 'business_details',
+            builder: (context, state) => BusinessDetailPage(), 
+            routes: [
+              // GoRoute(
+              //   path: 'record_inflow_payment',
+              //   builder: (context, state) => RecordInflowPayment(),
+              // ),
+              // GoRoute(
+              //   path: 'record_expense_payment',
+              //   builder: (context, state) => RecordExpensePayment(),
+              // ),
+            ]),
+        // GoRoute(
+        //   path: 'add_admin',
+        //   builder: (context, state) => AddAdminPage(),
+        // ),
+        // GoRoute(
+        //   path: 'preferences',
+        //   builder: (context, state) => PreferencesPage(),
+        // ),
+        // GoRoute(
+        //   path: 'change_password',
+        //   builder: (context, state) => ChangePassword(),
+        // ),
+        // GoRoute(
+        //   path: 'line_manager',
+        //   builder: (context, state) => LineManager(),
+        // ),
+        // GoRoute(
+        //   path: 'privacy_policy',
+        //   builder: (context, state) => PrivacyPolicy(),
+        // ),
+      ]
       ),
   ],
 );

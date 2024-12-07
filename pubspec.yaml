@@ -53,6 +53,7 @@ dependencies:
   dropdown_search: ^5.0.3
   image_picker: ^1.1.2
   image_cropper: ^8.0.2
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

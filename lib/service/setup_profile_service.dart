@@ -69,6 +69,7 @@
 
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
+import 'package:bizconnect/models/business_category.dart';
 import 'package:bizconnect/service/network_service.dart';
 import 'package:bizconnect/service/secure_storage_service.dart';
 // import 'package:bizconnect/service/secure_storage_service.dart';
@@ -78,6 +79,8 @@ class ProfileBusinessService {
  final NetworkService _networkService = getIt<NetworkService>();
   // final SecureStorageService _secureStorageService =
   //     getIt<SecureStorageService>();
+    // CategoriesModel? _transactionList;
+
       
 Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
     try {
@@ -142,6 +145,36 @@ Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
     }
     return;
     // return userData;
+  }
+
+
+    Future<void> allBusinessCategories() async {
+    // Send the request to the backend
+    try {
+      final response = await _networkService.get(
+        '/api/business-profile/categories',
+      );
+
+      debugPrint('decrypted response: ${response}');
+      List jsonDecodedPayload = json.decode(response);
+
+    //   List<dynamic> jsonDecodedPayload = json.decode(response);
+    // final categories = jsonDecodedPayload
+    //     .map((value) => BusinessCategoriesModel.fromJson(value))
+    //     .toList();
+
+    //     print(categories);
+
+    // debugPrint('Parsed categories: $categories');
+    // return categories;
+      // _categoriesModel = jsonDecodedPayload
+      //     .map((value) => CategoriesModel.fromJson(value))
+      //     .toList();
+    } on BizException {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
   }
 
 }

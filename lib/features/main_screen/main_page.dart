@@ -28,6 +28,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           mainWatch.currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
         fixedColor: cyan100,
         selectedFontSize: 12,
         unselectedFontSize: 12,
@@ -45,24 +46,25 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: mainRead.getIcon(
-              'assets/svg/selected_facilities.svg',
-              'assets/svg/unselected_facilities.svg',
+              'assets/svg/selected_discovery_business.svg',
+              'assets/svg/unselected_discovery_business.svg',
               1,
             ),
-            label: 'Discover Businesses',
+            label: '  Discover \nBusinesses',
+            
           ),
           BottomNavigationBarItem(
             icon: mainRead.getIcon(
-              'assets/svg/selected_admin.svg',
-              'assets/svg/unselected_admin.svg',
+              'assets/svg/explore_business.svg',
+              'assets/svg/explore_business.svg',
               2,
             ),
             label: 'Explore Business',
           ),
           BottomNavigationBarItem(
             icon: mainRead.getIcon(
-              'assets/svg/selected_profile.svg',
-              'assets/svg/unselected_profile.svg',
+              'assets/svg/more.svg',
+              'assets/svg/more.svg',
               2,
             ),
             label: 'More',

@@ -217,6 +217,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // class Slot {
 //   String day;
@@ -242,6 +243,12 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+      //  RefreshController(initialRefresh: false);
+      //  RefreshController refreshController = RefreshController(initialRefresh: false);
+
+    // AdminModel get userData => _authService.userData ?? AdminModel();
+
+
   // Text controllers
   TextEditingController businessNameController = TextEditingController();
   TextEditingController businessEmailController = TextEditingController();
@@ -258,7 +265,8 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController linkedinUrlController = TextEditingController();
   TextEditingController tiktokController = TextEditingController();
   TextEditingController facebookController = TextEditingController();
-
+  String? selectedBusinessCategory;
+  String? selectStateAndProvinceController;
   // Slot-related
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
@@ -401,6 +409,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
 
 
   Future<void> setupProfileBusiness(BuildContext context) async {
+      router.go('/main_screen');
     if (slots.isEmpty) {
       _toastService.showToast(context, title: 'Error', subTitle: 'You must add at least one slot.');
       return;
@@ -492,6 +501,31 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       facebookController,
     ]) {
       controller.clear();
+    }
+  }
+
+
+
+   Future<void> fetchCategories(context) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
+      // searchFacilities = _healthFacilitiesService.facilitiesModel!;
+      isLoading = false;
+      // onInit = true;
+      notifyListeners();
+    } on BizException catch (e) {
+      isLoading = false;
+      notifyListeners();
+      _toastService.showToast(context,
+          title: 'Error', subTitle: e.message ?? '');
+    } catch (e, stack) {
+      isLoading = false;
+      notifyListeners();
+      _toastService.showToast(context,
+          title: 'Error', subTitle: 'Something went wrong.');
+      debugPrint('fetch categories error: $e\ns$stack');
     }
   }
 }

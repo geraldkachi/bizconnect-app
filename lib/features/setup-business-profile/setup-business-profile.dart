@@ -22,16 +22,21 @@ class SetupBusinessProfilePage extends ConsumerStatefulWidget {
       _SetupBusinessProfilePageState();
 }
 
-class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfilePage>
+const List<String> countryItems = ["Item 1", "Item 2", "Item 3", "Item 4"];
+
+class _SetupBusinessProfilePageState
+    extends ConsumerState<SetupBusinessProfilePage>
     with SingleTickerProviderStateMixin {
- 
   final currentYear = DateTime.now().year;
-  final dropDownKey = GlobalKey<DropdownSearchState<String>>();
+  // final dropDownKey = GlobalKey<DropdownSearchState<String>>();
+  final GlobalKey<DropdownSearchState<String>> dropDownKey =
+      GlobalKey<DropdownSearchState<String>>();
 
   @override
   Widget build(BuildContext context) {
     final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
-    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final setupProfileRead =
+        ref.read(setupBusinessProfileViewModelProvider.notifier);
 
     return Scaffold(
       body: Padding(
@@ -65,10 +70,14 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                     const Spacer(),
                   ],
                 ),
-                onTap: () => context.canPop(),
+                onTap: () {
+                   if (context.canPop()) {
+                      context.pop(); // Navigate back to the previous screen
+                    }
+                },
               ),
               const SizedBox(height: 16),
-          
+
               // Tab bar and Tab content in a single container
               Expanded(
                 child: Container(
@@ -101,9 +110,10 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: setupProfileRead.prevIndex == index
-                                            ? Color(0xFF17BEBB)
-                                            : Color(0xFFDBD8D8),
+                                        color:
+                                            setupProfileRead.prevIndex == index
+                                                ? Color(0xFF17BEBB)
+                                                : Color(0xFFDBD8D8),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -125,7 +135,7 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                         ),
                       ),
                       const SizedBox(height: 10),
-          
+
                       // Scrollable Content
                       Expanded(
                         child: SingleChildScrollView(
@@ -169,10 +179,11 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                         ),
                                         const SizedBox(height: 10),
                                         ImageUploadField(
-                                          labelText: "Upload Image",
-                                          hintText: "Upload logo or business flyer",
-                                          setupProfileWatch: setupProfileWatch
-                                        ),
+                                            labelText: "Upload Image",
+                                            hintText:
+                                                "Upload logo or business flyer",
+                                            setupProfileWatch:
+                                                setupProfileWatch),
                                         const SizedBox(height: 10),
                                         // InputField(
                                         //   controller: setupProfileWatch
@@ -185,31 +196,55 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                         // Business Category
                                         DropdownField<String>(
                                           dropdownKey: dropDownKey,
+                                          selectedItem: setupProfileWatch
+                                              .selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
                                           items: const [
                                             "Item 1",
-                                            'Item 2',
-                                            'Item 3',
-                                            'Item 4'
+                                            // 'Item 2',
+                                            // 'Item 3',
+                                            // 'Item 4'
                                           ],
-                                          popupProps: PopupProps.modalBottomSheet(
+                                          popupProps: PopupProps.menu(
+
                                               // disabledItemFn: (item) => item == 'Item 3',
-                                              fit: FlexFit.tight),
+                                              fit: FlexFit.tight,  isFilterOnline: true),
                                           // selectedItem: "Category 1",
                                           onChanged: (value) {
+                                            // Update the state when an item is selected
+                                            setState(() {
+                                              setupProfileWatch
+                                                      .selectedBusinessCategory =
+                                                  value;
+                                            });
+                                            dropDownKey.currentState
+                                                ?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
+
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "This field is required";
                                             }
                                             return null;
                                           },
                                           dropdownIcon: const Icon(
-                                              Icons.arrow_drop_down,
-                                              color: grey400),
-                                          // showSearchBox: true,
+                                            Icons.arrow_drop_down,
+                                            color: red,
+                                            size: 37.0,
+                                          ),
+                                          showSearchBox: true,
+                                          prefixIcon: Icon(Icons.search,weight: 24.0, size: 34.0,)
+                                          //  dropdownBuilder: (context, selectedItem) {
+                                          //     return Text(selectedItem ?? ''); // Customize as needed
+                                          //   },
+                                          // prefixIcon: SvgPicture.asset(
+                                          //   'assets/svg/search.svg',
+                                          //   width: 14.0,
+                                          //   height: 14.0,
+                                          // ),
                                         ),
                                         // Country
                                         const SizedBox(height: 10),
@@ -217,21 +252,23 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                           dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          items: const [
-                                            "Item 1",
-                                            'Item 2',
-                                            'Item 3',
-                                            'Item 4'
-                                          ],
-                                          popupProps: PopupProps.modalBottomSheet(
+                                          items: countryItems.toSet().toList(),
+                                          popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
-                                              fit: FlexFit.tight),
-                                          // selectedItem: "Category 1",
-                                          // onChanged: (value) {
-                                          //   print("Selected: $value");
-                                          // },
+                                              fit: FlexFit.tight,
+                                              isFilterOnline: true
+                                              ),
+                                          selectedItem: setupProfileWatch
+                                              .selectStateAndProvinceController,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              setupProfileWatch.selectStateAndProvinceController =value;});
+                                            dropDownKey.currentState?.changeSelectedItem(value);
+                                            print("Selected: $value");
+                                          },
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "This field is required";
                                             }
                                             return null;
@@ -239,7 +276,7 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
-                                          // showSearchBox: true,
+                                          showSearchBox: true,
                                         ),
                                         // State and Province
                                         const SizedBox(height: 10),
@@ -253,15 +290,16 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                             'Item 3',
                                             'Item 4'
                                           ],
-                                          popupProps: PopupProps.modalBottomSheet(
+                                          popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
-                                              fit: FlexFit.tight),
+                                              fit: FlexFit.tight, isFilterOnline: true),
                                           // selectedItem: "Category 1",
                                           onChanged: (value) {
                                             print("Selected: $value");
                                           },
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "This field is required";
                                             }
                                             return null;
@@ -285,17 +323,19 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                           ],
                                           popupProps: PopupProps.modalBottomSheet(
                                               // disabledItemFn: (item) => item == 'Item 3',
-                                              fit: FlexFit.tight),
+                                              fit: FlexFit.tight,  isFilterOnline: true,),
                                           // selectedItem: "Category 1",
                                           onChanged: (value) {
                                             print("Selected: $value");
                                           },
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "This field is required";
                                             }
                                             return null;
                                           },
+
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
@@ -320,7 +360,7 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                               Validator.validateName(value),
                                         ),
                                         const SizedBox(height: 10),
-          
+
                                         const SizedBox(height: 20),
                                         Button(
                                           text: "Next",
@@ -354,7 +394,8 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                           labelText: "Enter phone number",
                                           hintText: "Enter Phone Number",
                                           validator: (value) =>
-                                              Validator.validatePhoneNumber(value),
+                                              Validator.validatePhoneNumber(
+                                                  value),
                                         ),
                                         const SizedBox(height: 10),
                                         InputField(
@@ -378,16 +419,19 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                         const SizedBox(height: 20),
                                         HorizontalDottedLine(),
                                         const SizedBox(height: 20),
-                                            DateTimeSlots(
+                                        DateTimeSlots(
                                           initialSlots: [
-                                            DateTimeSlot(day: 'Monday', openTime: '09:00 AM', closeTime: '05:00 PM'),
+                                            DateTimeSlot(
+                                                day: 'Monday',
+                                                openTime: '09:00 AM',
+                                                closeTime: '05:00 PM'),
                                           ],
                                           onSlotsUpdated: (updatedSlots) {
-                                            print('Updated Slots: $updatedSlots');
+                                            print(
+                                                'Updated Slots: $updatedSlots');
                                           },
                                         ),
-                                       
-          
+
                                         //  DateTimeSlot(
                                         //   dayLabel: "Day",
                                         //   openTimeLabel: "Opening Time",
@@ -398,40 +442,40 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                         //   onAddSlot: setupProfileWatch.handleAddSlot,
                                         //   onDeleteSlot: setupProfileWatch.handleDeleteSlot,
                                         // ),
-          
-                                      //    DateTimeSlot(
-                                      //   dayLabel: "Day",
-                                      //   openTimeLabel: "Opening Time",
-                                      //   closeTimeLabel: "Closing Time",
-                                      //   dayController: setupProfileWatch.dayController,
-                                      //   openTimeController: setupProfileWatch.openTimeController,
-                                      //   closeTimeController: setupProfileWatch.closeTimeController,
-                                      //   onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
-                                      //   onDeleteSlot: () {}, // Empty here for individual slots
-                                      //   isDeleteButtonVisible: false,
-                                      // ),
-                                      const SizedBox(height: 20),
-          
-                            // Display Slots
-                            // if (setupProfileWatch.slots.isNotEmpty)
-                            //   ListView.builder(
-                            //     shrinkWrap: true,
-                            //     physics: const NeverScrollableScrollPhysics(),
-                            //     itemCount: setupProfileWatch.slots.length,
-                            //     itemBuilder: (context, index) {
-                            //       final slot = setupProfileWatch.slots[index];
-                            //       return ListTile(
-                            //         title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
-                            //         trailing: IconButton(
-                            //           icon: const Icon(Icons.delete, color: Colors.red),
-                            //           onPressed: () => setupProfileRead.deleteSlot(slot),
-                            //         ),
-                            //       );
-                            //     },
-                            //   ),
-          
+
+                                        //    DateTimeSlot(
+                                        //   dayLabel: "Day",
+                                        //   openTimeLabel: "Opening Time",
+                                        //   closeTimeLabel: "Closing Time",
+                                        //   dayController: setupProfileWatch.dayController,
+                                        //   openTimeController: setupProfileWatch.openTimeController,
+                                        //   closeTimeController: setupProfileWatch.closeTimeController,
+                                        //   onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
+                                        //   onDeleteSlot: () {}, // Empty here for individual slots
+                                        //   isDeleteButtonVisible: false,
+                                        // ),
+
+                                        // Display Slots
+                                        // if (setupProfileWatch.slots.isNotEmpty)
+                                        //   ListView.builder(
+                                        //     shrinkWrap: true,
+                                        //     physics: const NeverScrollableScrollPhysics(),
+                                        //     itemCount: setupProfileWatch.slots.length,
+                                        //     itemBuilder: (context, index) {
+                                        //       final slot = setupProfileWatch.slots[index];
+                                        //       return ListTile(
+                                        //         title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
+                                        //         trailing: IconButton(
+                                        //           icon: const Icon(Icons.delete, color: Colors.red),
+                                        //           onPressed: () => setupProfileRead.deleteSlot(slot),
+                                        //         ),
+                                        //       );
+                                        //     },
+                                        //   ),
+
                                         const SizedBox(height: 20),
                                         HorizontalDottedLine(),
+                                        const SizedBox(height: 20),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -526,13 +570,15 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                                           inputPaddingH: 28.0,
                                           inputPaddingV: 15.0,
                                         ),
-          
+
                                         const SizedBox(height: 20),
                                         Button(
-                                          text: "Submit",
-                                          isLoading: false,
+                                          text: "Submit Profile",
+                                          isLoading:
+                                              setupProfileWatch.isLoading,
                                           onPressed: () async {
-                                            setupProfileRead.setupProfileBusiness(context);
+                                            setupProfileRead
+                                                .setupProfileBusiness(context);
                                             // setState(() {
                                             //   // prevIndex = 2;
                                             // });
@@ -548,7 +594,7 @@ class _SetupBusinessProfilePageState extends ConsumerState<SetupBusinessProfileP
                   ),
                 ),
               ),
-          
+
               // Footer
               Padding(
                 padding: const EdgeInsets.all(36.0),

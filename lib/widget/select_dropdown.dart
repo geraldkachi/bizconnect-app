@@ -15,6 +15,7 @@ class DropdownField<T> extends StatelessWidget {
   final String? Function(T?)? validator;
   final Widget? dropdownIcon;
   final bool showSearchBox;
+  final Widget? prefixIcon;
   final PopupProps<T>? popupProps; // Add this to allow custom PopupProps
 
   // asyncItems FutureOr<List<T>>;
@@ -31,6 +32,7 @@ class DropdownField<T> extends StatelessWidget {
     this.validator,
     this.dropdownIcon,
     this.showSearchBox = false,
+     this.prefixIcon,
     // this.asyncItems,
     this.popupProps // Add this to allow custom PopupProps
 
@@ -130,6 +132,7 @@ class DropdownField<T> extends StatelessWidget {
                 color: grey400,
                 fontWeight: FontWeight.w400,
               ),
+              prefixIcon: prefixIcon,
               suffixIcon: dropdownIcon,
             ),
           ),

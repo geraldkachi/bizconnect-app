@@ -125,6 +125,11 @@ class SlotItem extends StatelessWidget {
                   decoration: InputDecoration(
                     // labelText: 'Day',
                     hintText: '--',
+                    hintStyle: const TextStyle(
+                      fontSize: 6.0,
+                      color: grey400,
+                      fontWeight: FontWeight.w400,
+                    ),
                     suffixIcon:
                         const Icon(Icons.arrow_drop_down, color: grey400),
                     // border: OutlineInputBorder(),
@@ -179,6 +184,7 @@ class SlotItem extends StatelessWidget {
                   style: TextStyle(
                     color: grey401,
                     fontSize: 12,
+                    // fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -189,7 +195,7 @@ class SlotItem extends StatelessWidget {
                   decoration: InputDecoration(
                     // labelText: 'Opening hour',
                     hintStyle: const TextStyle(
-                      fontSize: 10.0,
+                      fontSize: 6.0,
                       color: grey400,
                       fontWeight: FontWeight.w400,
                     ),
@@ -321,6 +327,11 @@ class SlotItem extends StatelessWidget {
                       decoration: InputDecoration(
                         // labelText: 'Closing hour',
                         hintText: '--',
+                        hintStyle: const TextStyle(
+                      fontSize: 6.0,
+                      color: grey400,
+                      fontWeight: FontWeight.w400,
+                    ),
                         suffixIcon:
                             const Icon(Icons.arrow_drop_down, color: grey400),
                         border: OutlineInputBorder(

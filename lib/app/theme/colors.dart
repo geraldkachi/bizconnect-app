@@ -34,3 +34,6 @@ const Color grey600 = Color(0xffA0AEC0);
 
 // cyan green color
 const Color cyan100 = Color(0xff1E9A8D);
+
+// light blue 
+const Color lightBlue100 = Color(0xff67A2F1);
