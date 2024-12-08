@@ -32,6 +32,21 @@ class _SetupBusinessProfilePageState
   final GlobalKey<DropdownSearchState<String>> dropDownKey =
       GlobalKey<DropdownSearchState<String>>();
 
+        List<String> categoryItems = [];
+        bool isLoading = true;
+
+
+       Future<void> _loadCategories() async {
+    final setupProfileRead =
+        ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final fetchedCategories =
+        await setupProfileRead.fetchCategories(context);
+    setState(() {
+      categoryItems = fetchedCategories.map((e) => e.description).toList();
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
@@ -196,16 +211,19 @@ class _SetupBusinessProfilePageState
                                         // Business Category
                                         DropdownField<String>(
                                           dropdownKey: dropDownKey,
-                                          selectedItem: setupProfileWatch
-                                              .selectedBusinessCategory,
+                                          selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,
+                                          // selectedItem: setupProfileWatch.selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
-                                          items: const [
-                                            "Item 1",
-                                            // 'Item 2',
-                                            // 'Item 3',
-                                            // 'Item 4'
-                                          ],
+                                          items: setupProfileWatch.fetchCategories
+                                              .map((category) => category.description)
+                                              .toList(),
+                                          // const [
+                                          //   "Item 1",
+                                          //   'Item 2',
+                                          //   'Item 3',
+                                          //   'Item 4'
+                                          // ],
                                           popupProps: PopupProps.menu(
 
                                               // disabledItemFn: (item) => item == 'Item 3',

@@ -4,6 +4,7 @@ import 'package:bizconnect/app/theme/colors.dart';
 import 'package:bizconnect/features/business/widget/read_more_text.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BusinessDetailsInfo extends StatelessWidget {
   final BusinessProfile? businessDetails;
@@ -20,10 +21,11 @@ class BusinessDetailsInfo extends StatelessWidget {
 
     List<Map<String, String?>> constructSocialLinks() {
       return [
-        {'name': 'facebook', 'url': businessDetails?.facebookUrl},
-        {'name': 'instagram', 'url': businessDetails?.instagramUrl},
-        {'name': 'twitter', 'url': businessDetails?.twitterUrl},
-        {'name': 'website', 'url': businessDetails?.websiteUrl},
+        {'name': 'instagram-social', 'url': businessDetails?.instagramUrl},
+        {'name': 'website-social', 'url': businessDetails?.websiteUrl},
+        {'name': 'tiktok-social', 'url': businessDetails?.twitterUrl},
+        {'name': 'facebook-social', 'url': businessDetails?.facebookUrl},
+        {'name': 'linkedin-social', 'url': businessDetails?.facebookUrl},
       ];
     }
 
@@ -70,10 +72,8 @@ class BusinessDetailsInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Business Details", style: TextStyle(color: red, fontSize: 15, fontWeight: FontWeight.w700)),
-         
             // BusinessHoursStatus(isOpen: hasBusinessClosed.isOpened, closingTime: hasBusinessClosed.closingTime),
             SizedBox(height: 16),
-            // SocialLinks(socialLinks: socialLinks),
             Text(
               'Description',
               style: TextStyle(fontSize: 15, color: grey500),
@@ -115,8 +115,8 @@ class BusinessDetailsInfo extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16),
-            Text('Follow our social media', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
+            Text('Follow our social media', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: red)),
+            SizedBox(height: 4),
             SocialLinks(socialLinks: socialLinks),
           ],
         ),
@@ -164,7 +164,7 @@ class BusinessHoursStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(isOpen ? 'Open till $closingTime' : 'Closed');
+    return Text(isOpen ? 'Open * $closingTime' : 'Closed',);
   }
 }
 
@@ -177,12 +177,31 @@ class SocialLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: socialLinks.map((link) {
-        if (link['url'] != null) {
-          return IconButton(
-            icon: Icon(Icons.link),
-            onPressed: () => _launchURL(link['url']!),
+        final String? platform = link['name'];
+        final String? url = link['url'];
+
+        if (url != null) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              // color: Colors.blue,
+            ),
+            child: IconButton(
+              icon: SvgPicture.asset(
+                'assets/svg/$platform.svg', // Ensure the SVG exists in the assets
+                height:34,
+                width:34,
+              ),
+              onPressed: () => _launchURL(url),
+            ),
           );
         }
+        // if (link['url'] != null) {
+        //   return IconButton(
+        //     icon: Icon(Icons.link),
+        //     onPressed: () => _launchURL(link['url']!),
+        //   );
+        // }
         return SizedBox.shrink();
       }).toList(),
     );

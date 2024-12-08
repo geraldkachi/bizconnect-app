@@ -514,6 +514,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       // searchFacilities = _healthFacilitiesService.facilitiesModel!;
       isLoading = false;
       // onInit = true;
+      
       notifyListeners();
     } on BizException catch (e) {
       isLoading = false;

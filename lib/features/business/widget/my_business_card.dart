@@ -1,6 +1,7 @@
 import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class MyBusinessDetailsCard extends StatelessWidget {
   final String? businessName;
@@ -107,7 +108,7 @@ class MyBusinessDetailsCard extends StatelessWidget {
                 onPressed: () => onShare(context),
                 icon: SvgPicture.asset(
                       "assets/svg/share.svg",
-                      height: 20,
+                      height: 16,
                     ),
                 // Image.asset(
                 //   "assets/svg/share.svg",
@@ -153,10 +154,14 @@ class MyBusinessDetailsCard extends StatelessWidget {
               ],),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(
-                    context,
+                  // Navigator.pushNamed(
+                  //   context,
+                  //   '/register-business',
+                  //   arguments: {'update': businessName},
+                  // );
+                   context.go(
                     '/register-business',
-                    arguments: {'update': businessName},
+                    extra: {'update': businessName}, // Pass arguments with 'extra'
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -173,28 +178,6 @@ class MyBusinessDetailsCard extends StatelessWidget {
               ),
             ],
           ),
-
-          // Dropdown Section (if visible)
-          // if (isDropdownVisible)
-          //   Container(
-          //     margin: const EdgeInsets.only(top: 8),
-          //     padding: const EdgeInsets.all(16),
-          //     decoration: BoxDecoration(
-          //       color: Colors.white,
-          //       borderRadius: BorderRadius.circular(10),
-          //       boxShadow: [
-          //         BoxShadow(
-          //           color: Colors.grey.withOpacity(0.3),
-          //           blurRadius: 6,
-          //           offset: const Offset(0, 2),
-          //         ),
-          //       ],
-          //     ),
-          //     child: Text(
-          //       orderedDays.join(', '),
-          //       style: const TextStyle(fontSize: 14, color: Colors.black),
-          //     ),
-          //   ),
         ],
       ),
     );

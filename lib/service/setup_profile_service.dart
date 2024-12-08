@@ -66,6 +66,7 @@
 
   // Future<AuthModel?> login(String email, String password) async {
   import 'dart:convert';
+import 'dart:developer';
 
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
@@ -120,19 +121,6 @@ Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
     if (response != null && response['data'] != null) {
       // final token = response['data']['token']; // Extract token
       // // debugPrint('Received token: $token');
-
-      // // Optional: Decode JWT to get user details
-      // final parts = token.split('.');
-      // if (parts.length > 1) {
-      //   final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
-      //   debugPrint('Decoded token payload: $payload');
-      //   // _userData = ProfileBusinesService.fromJson(jsonDecode(payload)); 
-      // }
-
-      // // Save token securely
-      // // await _secureStorage.write(key: 'accessToken', value: token);
-      // await _secureStorageService.writeAccessToken(token: token);
-
     } else {
       throw Exception('Invalid response structure');
     }
@@ -156,14 +144,16 @@ Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
       );
 
       debugPrint('decrypted response: ${response}');
-      List jsonDecodedPayload = json.decode(response);
+      // List jsonDecodedPayload = json.decode(response);
 
-    //   List<dynamic> jsonDecodedPayload = json.decode(response);
-    // final categories = jsonDecodedPayload
-    //     .map((value) => BusinessCategoriesModel.fromJson(value))
-    //     .toList();
+      List<dynamic> jsonDecodedPayload = json.decode(response);
+      log('log data list $jsonDecodedPayload');
+    final categories = jsonDecodedPayload
+        .map((value) => BusinessCategoriesModel.fromJson(value))
+        .toList();
 
-    //     print(categories);
+        print(categories);
+      log('log data categories $categories');
 
     // debugPrint('Parsed categories: $categories');
     // return categories;
