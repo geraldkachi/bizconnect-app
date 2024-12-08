@@ -24,7 +24,7 @@ mixin ErrorHandling {
     }
 
     if (e.response!.statusCode! >= 400) {
-      throw BizException(message: e.response?.data['message']);
+      throw BizException(message: e.response?.data['message']['desc']);
     }
   }
 }

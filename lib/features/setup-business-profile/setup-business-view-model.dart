@@ -203,10 +203,12 @@
 
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/app/router.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
+import 'package:bizconnect/models/business_category.dart';
 import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:bizconnect/service/toast_service.dart';
 import 'package:bizconnect/utils/business_profile_data.dart';
@@ -242,6 +244,9 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   final ToastService _toastService = getIt<ToastService>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // List<Map<String, dynamic>> get businessCategories => _profileBusinessServiceProfileBusinessService.businessCategories;
+  BusinessCategoriesModel categories = BusinessCategoriesModel();
+  List<String> categoryData = [];
 
       //  RefreshController(initialRefresh: false);
       //  RefreshController refreshController = RefreshController(initialRefresh: false);
@@ -266,7 +271,9 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController tiktokController = TextEditingController();
   TextEditingController facebookController = TextEditingController();
   String? selectedBusinessCategory;
+  String? selectedBusinessCountry;
   String? selectStateAndProvinceController;
+  String? selectCity;
   // Slot-related
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
@@ -276,16 +283,16 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   bool obscureText = true;
   bool isLoading = false;
 
-  // List<Slot> slots = [];
-  // void addSlot(Slot slot) {
-  //   slots.add(slot);
-  //   notifyListeners();
-  // }
 
-  // void deleteSlot(Slot slot) {
-  //   slots.remove(slot);
-  //   notifyListeners();
-  // }
+//   Future<void> loadCategories() async {
+//   final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+//   await setupProfileRead.fetchCategories(context);
+  
+//     // categoryItems = fetchedCategories.map((e) => e.description).toList();
+//    // Print the categories to check if they're being populated correctly
+// }
+
+
 
   void togglePassword() {
     obscureText = !obscureText;
@@ -409,7 +416,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
 
 
   Future<void> setupProfileBusiness(BuildContext context) async {
-      router.go('/main_screen');
+      // router.go('/main_screen');
     if (slots.isEmpty) {
       _toastService.showToast(context, title: 'Error', subTitle: 'You must add at least one slot.');
       return;
@@ -505,28 +512,53 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   }
 
 
-
-   Future<void> fetchCategories(context) async {
-    try {
-      isLoading = true;
-      notifyListeners();
-      await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
-      // searchFacilities = _healthFacilitiesService.facilitiesModel!;
-      isLoading = false;
-      // onInit = true;
-      
-      notifyListeners();
-    } on BizException catch (e) {
-      isLoading = false;
-      notifyListeners();
-      _toastService.showToast(context,
-          title: 'Error', subTitle: e.message ?? '');
-    } catch (e, stack) {
-      isLoading = false;
-      notifyListeners();
-      _toastService.showToast(context,
-          title: 'Error', subTitle: 'Something went wrong.');
-      debugPrint('fetch categories error: $e\ns$stack');
-    }
+Future<void> fetchCategories(BuildContext context) async {
+  try {
+    isLoading = true;
+    notifyListeners();
+    categories = await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
+    categoryData = categories.data!.businessCategories.map((e) => e.description).toList(); 
+    log('category ${categories.data!.businessCategories.map((e) => e.description) }');
+    isLoading = false;
+    notifyListeners();
+    // return categories;
+  } on BizException catch (e) { 
+    isLoading = false;
+    notifyListeners();
+    _toastService.showToast(context, title: 'Error', subTitle: e.message ?? '');
+    // return [];
+  } catch (e, stack) {
+    isLoading = false;
+    notifyListeners();
+    _toastService.showToast(context, title: 'Error', subTitle: 'Something went wrong.');
+    debugPrint('fetch categories error: $e\n$stack');
+    // return [];
   }
+}
+
+
+
+  //  Future<void> fetchCategories(context) async {
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+  //     await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
+  //     // searchFacilities = _healthFacilitiesService.facilitiesModel!;
+  //     isLoading = false;
+  //     // onInit = true;
+      
+  //     notifyListeners();
+  //   } on BizException catch (e) {
+  //     isLoading = false;
+  //     notifyListeners();
+  //     _toastService.showToast(context,
+  //         title: 'Error', subTitle: e.message ?? '');
+  //   } catch (e, stack) {
+  //     isLoading = false;
+  //     notifyListeners();
+  //     _toastService.showToast(context,
+  //         title: 'Error', subTitle: 'Something went wrong.');
+  //     debugPrint('fetch categories error: $e\ns$stack');
+  //   }
+  // }
 }

@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:bizconnect/data/country_data.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:bizconnect/utils/validator.dart';
 import 'package:bizconnect/widget/button.dart';
@@ -32,18 +33,14 @@ class _SetupBusinessProfilePageState
   final GlobalKey<DropdownSearchState<String>> dropDownKey =
       GlobalKey<DropdownSearchState<String>>();
 
-        List<String> categoryItems = [];
-        bool isLoading = true;
-
-
-       Future<void> _loadCategories() async {
-    final setupProfileRead =
-        ref.read(setupBusinessProfileViewModelProvider.notifier);
-    final fetchedCategories =
-        await setupProfileRead.fetchCategories(context);
-    setState(() {
-      categoryItems = fetchedCategories.map((e) => e.description).toList();
-      isLoading = false;
+     @override
+  void initState() {
+    super.initState();
+    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This will run after the build method is completed     
+        setupProfileRead.fetchCategories(context);
+    // _loadCategories();
     });
   }
 
@@ -209,35 +206,26 @@ class _SetupBusinessProfilePageState
                                         //       Validator.validateName(value),
                                         // ),
                                         // Business Category
+                                        // if (categoryItems.isEmpty) 
+                                        //    Center(child: CircularProgressIndicator())
+                                        // else
                                         DropdownField<String>(
                                           dropdownKey: dropDownKey,
-                                          selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,
-                                          // selectedItem: setupProfileWatch.selectedBusinessCategory,
+                                          // selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,
+                                          selectedItem: setupProfileWatch.selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
-                                          items: setupProfileWatch.fetchCategories
-                                              .map((category) => category.description)
-                                              .toList(),
-                                          // const [
-                                          //   "Item 1",
-                                          //   'Item 2',
-                                          //   'Item 3',
-                                          //   'Item 4'
-                                          // ],
+                                          items: setupProfileRead.categoryData,
                                           popupProps: PopupProps.menu(
-
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true),
                                           // selectedItem: "Category 1",
                                           onChanged: (value) {
                                             // Update the state when an item is selected
                                             setState(() {
-                                              setupProfileWatch
-                                                      .selectedBusinessCategory =
-                                                  value;
+                                              setupProfileWatch.selectedBusinessCategory = value;
                                             });
-                                            dropDownKey.currentState
-                                                ?.changeSelectedItem(value);
+                                            dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
 
@@ -270,17 +258,17 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          items: countryItems.toSet().toList(),
+                                          items: countryData.map((e) => e['name'].toString()).toList(),
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,
                                               isFilterOnline: true
                                               ),
                                           selectedItem: setupProfileWatch
-                                              .selectStateAndProvinceController,
+                                              .selectedBusinessCountry,
                                           onChanged: (value) {
                                             setState(() {
-                                              setupProfileWatch.selectStateAndProvinceController =value;});
+                                              setupProfileWatch.selectedBusinessCountry =value;});
                                             dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
@@ -302,17 +290,16 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "State and Province",
                                           hintText: "State and Province",
-                                          items: const [
-                                            "Item 1",
-                                            'Item 2',
-                                            'Item 3',
-                                            'Item 4'
-                                          ],
+                                          items: countryData.map((e) => e['name'].toString()).toList(),
+                                          selectedItem: setupProfileWatch.selectStateAndProvinceController,
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight, isFilterOnline: true),
                                           // selectedItem: "Category 1",
                                           onChanged: (value) {
+                                            setState(() {
+                                              setupProfileWatch.selectStateAndProvinceController =value;});
+                                            dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
                                           validator: (value) {
@@ -333,17 +320,15 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "City",
                                           hintText: "Select city",
-                                          items: const [
-                                            "Item 1",
-                                            'Item 2',
-                                            'Item 3',
-                                            'Item 4'
-                                          ],
+                                          items: countryData.map((e) => e['name'].toString()).toList(),
                                           popupProps: PopupProps.modalBottomSheet(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true,),
-                                          // selectedItem: "Category 1",
-                                          onChanged: (value) {
+                                          selectedItem: setupProfileWatch.selectCity,
+                                         onChanged: (value) {
+                                            setState(() {
+                                              setupProfileWatch.selectCity =value;});
+                                            dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
                                           validator: (value) {
@@ -362,7 +347,7 @@ class _SetupBusinessProfilePageState
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch
-                                              .stateAndProvinceController,
+                                              .streetController,
                                           labelText: "Street",
                                           hintText: "Enter Street name",
                                           validator: (value) =>

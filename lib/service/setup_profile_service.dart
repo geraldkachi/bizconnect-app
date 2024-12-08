@@ -81,7 +81,9 @@ class ProfileBusinessService {
   // final SecureStorageService _secureStorageService =
   //     getIt<SecureStorageService>();
     // CategoriesModel? _transactionList;
-
+    
+List<Map<String, dynamic>> _businessCategories = [];
+List<Map<String, dynamic>> get businessCategories => _businessCategories;
       
 Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
     try {
@@ -135,36 +137,128 @@ Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
     // return userData;
   }
 
+Future<BusinessCategoriesModel> allBusinessCategories() async {
+  try {
+    final response = await _networkService.get('/api/business-profile/categories');
+    
+    // Decode the response into a JSON map
+    final Map<String, dynamic> jsonDecodedPayload = response;
 
-    Future<void> allBusinessCategories() async {
-    // Send the request to the backend
-    try {
-      final response = await _networkService.get(
-        '/api/business-profile/categories',
-      );
+    // Validate that 'data' and 'businessCategories' exist and are of the correct type
+    if (jsonDecodedPayload['data'] != null) {
+      //  _businessCategories = jsonDecodedPayload['data']['businessCategories'];
 
-      debugPrint('decrypted response: ${response}');
-      // List jsonDecodedPayload = json.decode(response);
+      // Debugging output
+      print('Fetched Categories: $jsonDecodedPayload');
 
-      List<dynamic> jsonDecodedPayload = json.decode(response);
-      log('log data list $jsonDecodedPayload');
-    final categories = jsonDecodedPayload
-        .map((value) => BusinessCategoriesModel.fromJson(value))
-        .toList();
-
-        print(categories);
-      log('log data categories $categories');
-
-    // debugPrint('Parsed categories: $categories');
-    // return categories;
-      // _categoriesModel = jsonDecodedPayload
-      //     .map((value) => CategoriesModel.fromJson(value))
+      // Map the JSON to BusinessCategoriesModel objects
+      return BusinessCategoriesModel.fromJson(jsonDecodedPayload);
+      
+      // businessCategories
+      //     .map((json) => BusinessCategoriesModel.fromJson(json))
       //     .toList();
-    } on BizException {
-      rethrow;
-    } catch (e) {
-      rethrow;
+    } else {
+      throw BizException(message: 'Invalid response structure');
     }
+  } catch (e, stackTrace) {
+    debugPrint('Error fetching categories: $e\n$stackTrace');
+    throw BizException(message: 'Unable to fetch categories');
   }
+}
+
+
+//   Future<List<BusinessCategoriesModel>> allBusinessCategories() async {
+//   try {
+//     final response = await _networkService.get('/api/business-profile/categories');
+    
+//     // Decode the response into a JSON map
+//     final Map<String, dynamic> jsonDecodedPayload = json.decode(response);
+
+//     // Validate that 'data' and 'businessCategories' exist and are of the correct type
+//     if (jsonDecodedPayload['data'] != null &&
+//         jsonDecodedPayload['data']['businessCategories'] is List) {
+//       final List<dynamic> businessCategories = jsonDecodedPayload['data']['businessCategories'];
+
+//       // Debugging output
+//       debugPrint('Fetched Categories: $businessCategories');
+
+//       // Map the JSON to BusinessCategoriesModel objects
+//       return businessCategories
+//           .map((json) => BusinessCategoriesModel.fromJson(json))
+//           .toList();
+//     } else {
+//       throw BizException(message: 'Invalid response structure');
+//     }
+//   } catch (e, stackTrace) {
+//     debugPrint('Error fetching categories: $e\n$stackTrace');
+//     throw BizException(message: 'Unable to fetch categories');
+//   }
+// }
+
+
+// Future<List<BusinessCategoriesModel>> allBusinessCategories() async {
+//   try {
+//     final response = await _networkService.get('/api/business-profile/categories');
+//     final Map<String, dynamic> jsonDecodedPayload = json.decode(response);
+
+//     // Access the businessCategories array within the data object
+//     final List<dynamic> businessCategories = jsonDecodedPayload['data']['businessCategories'];
+
+//     // Print out the categories for debugging purposes
+//     debugPrint('Fetched Categories: $businessCategories');
+//     // Map each JSON object to a BusinessCategoriesModel
+//     return businessCategories
+//         .map((json) => BusinessCategoriesModel.fromJson(json))
+//         .toList();
+//   } catch (e) {
+//     debugPrint('Error fetching categories: $e');
+//     throw BizException(message: 'Unable to fetch categories');
+//   }
+// }
+
+// Future<List<BusinessCategoriesModel>> allBusinessCategories() async {
+//   try {
+//     final response = await _networkService.get('/api/business-profile/categories');
+//     final List<dynamic> jsonDecodedPayload = json.decode(response);
+//     return jsonDecodedPayload
+//         .map((json) => BusinessCategoriesModel.fromJson(json))
+//         .toList();
+//         debugPrint(jsonDecodedPayload.data.businessCategories);
+//   } catch (e) {
+//     debugPrint('Error fetching categories: $e');
+//     throw BizException(message: 'Unable to fetch categories');
+//   }
+// }
+
+  //   Future<void> allBusinessCategories() async {
+  //   // Send the request to the backend
+  //   try {
+  //     final response = await _networkService.get(
+  //       '/api/business-profile/categories',
+  //     );
+
+  //     debugPrint('decrypted response: ${response}');
+  //     // List jsonDecodedPayload = json.decode(response);
+
+  //     List<dynamic> jsonDecodedPayload = json.decode(response);
+  //     log('log data list $jsonDecodedPayload');
+  //   final categories = jsonDecodedPayload
+  //       .map((value) => BusinessCategoriesModel.fromJson(value))
+  //       .toList();
+
+  //       print(categories);
+  //     log('log data categories $categories');
+
+  //   // debugPrint('Parsed categories: $categories');
+  //   // return categories;
+  //     // _categoriesModel = jsonDecodedPayload
+  //     //     .map((value) => CategoriesModel.fromJson(value))
+  //     //     .toList();
+  //   } on BizException {
+  //     rethrow;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
 }

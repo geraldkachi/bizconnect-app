@@ -67,7 +67,7 @@ class LoginViewModel extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
       _toastService.showToast(context,
-          title: 'Error', subTitle: '.message Something went wrong.');
+          title: 'Error', subTitle: '$e.message Something went wrong.');
     }
   }
 

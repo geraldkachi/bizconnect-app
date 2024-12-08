@@ -1,90 +1,111 @@
-// // To parse this JSON data, do
-// //
-// //     final BusinessCategoriesModel = BusinessCategoriesModelFromJson(jsonString);
+// To parse this JSON data, do
+//
+//     final businessCategoriesModel = businessCategoriesModelFromJson(jsonString);
 
-// import 'dart:convert';
+import 'package:meta/meta.dart';
+import 'dart:convert';
 
-// BusinessCategoriesModel BusinessCategoriesModelFromJson(String str) => BusinessCategoriesModel.fromJson(json.decode(str));
+BusinessCategoriesModel businessCategoriesModelFromJson(String str) => BusinessCategoriesModel.fromJson(json.decode(str));
 
-// String BusinessCategoriesModelToJson(BusinessCategoriesModel data) => json.encode(data.toJson());
-
-// class BusinessCategoriesModel {
-//     final String? id;
-//     final String? name;
-//     final List<SubCategory>? subCategory;
-//     final bool? display;
-//     final String? addedBy;
-//     final DateTime? createdAt;
-//     final DateTime? updatedAt;
-//     final dynamic deletedAt;
-
-//     BusinessCategoriesModel({
-//         this.id,
-//         this.name,
-//         this.subCategory,
-//         this.display,
-//         this.addedBy,
-//         this.createdAt,
-//         this.updatedAt,
-//         this.deletedAt,
-//     });
-
-//     factory BusinessCategoriesModel.fromJson(Map<String, dynamic> json) => BusinessCategoriesModel(
-//         id: json["id"],
-//         name: json["name"],
-//         subCategory: json["subCategory"] == null ? [] : List<SubCategory>.from(json["subCategory"]!.map((x) => SubCategory.fromJson(x))),
-//         display: json["display"],
-//         addedBy: json["addedBy"],
-//         createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-//         updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-//         deletedAt: json["deletedAt"],
-//     );
-
-//     Map<String, dynamic> toJson() => {
-//         "id": id,
-//         "name": name,
-//         "subCategory": subCategory == null ? [] : List<dynamic>.from(subCategory!.map((x) => x.toJson())),
-//         "display": display,
-//         "addedBy": addedBy,
-//         "createdAt": createdAt?.toIso8601String(),
-//         "updatedAt": updatedAt?.toIso8601String(),
-//         "deletedAt": deletedAt,
-//     };
-// }
-
-// class SubCategory {
-//     final String? name;
-
-//     SubCategory({
-//         this.name,
-//     });
-
-//     factory SubCategory.fromJson(Map<String, dynamic> json) => SubCategory(
-//         name: json["name"],
-//     );
-
-//     Map<String, dynamic> toJson() => {
-//         "name": name,
-//     };
-// }
-
+String businessCategoriesModelToJson(BusinessCategoriesModel data) => json.encode(data.toJson());
 
 class BusinessCategoriesModel {
-  final String uuid;
-  final String description;
+    final bool? success;
+    final Message? message;
+    final Data? data;
 
-  BusinessCategoriesModel({
-    required this.uuid,
-    required this.description,
-  });
+    BusinessCategoriesModel({
+        this.success,
+        this.message,
+        this.data,
+    });
 
-  factory BusinessCategoriesModel.fromJson(Map<String, dynamic> json) {
-    return BusinessCategoriesModel(
-      uuid: json['uuid'] as String,
-      description: json['description'] as String,
+    factory BusinessCategoriesModel.fromJson(Map<String, dynamic> json) => BusinessCategoriesModel(
+        success: json["success"],
+        message: Message.fromJson(json["message"]),
+        data: Data.fromJson(json["data"]),
     );
-  }
+
+    Map<String, dynamic> toJson() => {
+        "success": success,
+        "message": message?.toJson(),
+        "data": data?.toJson(),
+    };
 }
+
+class Data {
+    final List<BusinessCategory> businessCategories;
+
+    Data({
+        required this.businessCategories,
+    });
+
+    factory Data.fromJson(Map<String, dynamic> json) => Data(
+        businessCategories: List<BusinessCategory>.from(json["businessCategories"].map((x) => BusinessCategory.fromJson(x))),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "businessCategories": List<dynamic>.from(businessCategories.map((x) => x.toJson())),
+    };
+}
+
+class BusinessCategory {
+    final String uuid;
+    final String description;
+
+    BusinessCategory({
+        required this.uuid,
+        required this.description,
+    });
+
+    factory BusinessCategory.fromJson(Map<String, dynamic> json) => BusinessCategory(
+        uuid: json["uuid"],
+        description: json["description"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "uuid": uuid,
+        "description": description,
+    };
+}
+
+class Message {
+    final int code;
+    final String desc;
+
+    Message({
+        required this.code,
+        required this.desc,
+    });
+
+    factory Message.fromJson(Map<String, dynamic> json) => Message(
+        code: json["code"],
+        desc: json["desc"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "code": code,
+        "desc": desc,
+    };
+}
+
+
+// class BusinessCategoriesModel {
+//   final String uuid;
+//   final String description;
+
+//   BusinessCategoriesModel({
+//     required this.uuid,
+//     required this.description,
+//   });
+
+//   factory BusinessCategoriesModel.fromJson(Map<String, dynamic> json) {
+//     return BusinessCategoriesModel(
+//       uuid: json['uuid'] ?? '',  // Handle null values gracefully
+//       description: json['description'] ?? '',  // Handle null values gracefully
+//     );
+//   }
+// }
 
 class BusinessProfile {
   final String? street;
