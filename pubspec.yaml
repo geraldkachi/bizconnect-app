@@ -96,6 +96,11 @@ flutter:
     - assets/svg/
     - assets/png/
     - .env
+    - assets/data/locations/NG/states.json
+    - assets/data/locations/US/states.json
+    - assets/data/locations/CA/states.json
+    - assets/data/locations/GB/states.json
+    - assets/data/locations/DE/states.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

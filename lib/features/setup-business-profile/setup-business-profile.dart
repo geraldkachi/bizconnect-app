@@ -59,17 +59,10 @@ class _SetupBusinessProfilePageState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(height: 26),
-              // Header with back button and title
-              InkWell(
-                child: Row(
+                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/svg/back.svg',
-                      height: 24,
-                      color: const Color(0xff1B1C1E),
-                    ),
-                    const Spacer(),
+                  children: const [
+                    Spacer(),
                     Text(
                       "Setup Your Business Profile",
                       style: TextStyle(
@@ -79,15 +72,9 @@ class _SetupBusinessProfilePageState
                         letterSpacing: -.5,
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                   ],
                 ),
-                onTap: () {
-                   if (context.canPop()) {
-                      context.pop(); // Navigate back to the previous screen
-                    }
-                },
-              ),
               const SizedBox(height: 16),
 
               // Tab bar and Tab content in a single container
@@ -219,7 +206,6 @@ class _SetupBusinessProfilePageState
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true),
-                                          // selectedItem: "Category 1",
                                           onChanged: (value) {
                                             // Update the state when an item is selected
                                             setState(() {
@@ -229,13 +215,7 @@ class _SetupBusinessProfilePageState
                                             print("Selected: $value");
                                           },
 
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "This field is required";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (value) => (value == null || value.isEmpty) ? "This business category field is required" : null,
                                           dropdownIcon: const Icon(
                                             Icons.arrow_drop_down,
                                             color: red,
@@ -258,27 +238,38 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          items: countryData.map((e) => e['name'].toString()).toList(),
+                                          // items: countryData.map((e) => e['name'].toString()).toList(),
+                                          items: setupProfileWatch.countries.map((e) => e['name']!).toList(),
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,
                                               isFilterOnline: true
                                               ),
-                                          selectedItem: setupProfileWatch
-                                              .selectedBusinessCountry,
+                                          selectedItem: setupProfileWatch.selectedBusinessCountry,
                                           onChanged: (value) {
-                                            setState(() {
-                                              setupProfileWatch.selectedBusinessCountry =value;});
-                                            dropDownKey.currentState?.changeSelectedItem(value);
-                                            print("Selected: $value");
+                                            setupProfileWatch.selectedBusinessCountry = value;
+                                            setupProfileWatch.fetchStates(setupProfileWatch.countries
+                                                .firstWhere((country) => country['name'] == value)['isoCode']!);
+                                                setupProfileWatch.selectStateAndProvince = '';
+                                                setupProfileWatch.selectCity = '';
+                                            // notifyListeners();
                                           },
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "This field is required";
-                                            }
-                                            return null;
-                                          },
+                                          // onChanged: (value) async {
+                                          //   setState(() {
+                                          //     setupProfileWatch.selectedBusinessCountry =value;});
+                                          //     final selectedCountry = countryData.firstWhere((c) => c['name'] == value);
+                                          //       await setupProfileWatch.fetchStates(selectedCountry['code']);
+                                          //   dropDownKey.currentState?.changeSelectedItem(value);
+                                          //   print("Selected: $value");
+                                          // },
+                                          validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
+                                          // validator: (value) {
+                                          //   if (value == null ||
+                                          //       value.isEmpty) {
+                                          //     return "This field is required";
+                                          //   }
+                                          //   return null;
+                                          // },
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
@@ -290,25 +281,27 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "State and Province",
                                           hintText: "State and Province",
-                                          items: countryData.map((e) => e['name'].toString()).toList(),
-                                          selectedItem: setupProfileWatch.selectStateAndProvinceController,
+                                          items: setupProfileWatch.stateData,
+                                          selectedItem: setupProfileWatch.selectStateAndProvince,
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight, isFilterOnline: true),
                                           // selectedItem: "Category 1",
-                                          onChanged: (value) {
+                                          onChanged: (value) async {
                                             setState(() {
-                                              setupProfileWatch.selectStateAndProvinceController =value;});
+                                              setupProfileWatch.selectStateAndProvince =value;});
+                                              await setupProfileWatch.fetchCities(value!); // Pass state code
                                             dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "This field is required";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
+                                          // validator: (value) {
+                                          //   if (value == null ||
+                                          //       value.isEmpty) {
+                                          //     return "This field is required";
+                                          //   }
+                                          //   return null;
+                                          // },
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
@@ -320,7 +313,7 @@ class _SetupBusinessProfilePageState
                                           dropdownKey: dropDownKey,
                                           labelText: "City",
                                           hintText: "Select city",
-                                          items: countryData.map((e) => e['name'].toString()).toList(),
+                                          items: setupProfileWatch.cityData,
                                           popupProps: PopupProps.modalBottomSheet(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true,),

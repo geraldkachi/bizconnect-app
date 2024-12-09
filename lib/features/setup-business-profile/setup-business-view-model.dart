@@ -1,239 +1,59 @@
-// import 'package:bizconnect/service/network_service.dart';
-// import 'package:bizconnect/service/setup_profile_service.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:bizconnect/app/locator.dart';
-// import 'package:bizconnect/app/router.dart';
-// import 'package:bizconnect/exceptions/bizcon_exception.dart';
-// import 'package:bizconnect/models/error_model.dart';
-// import 'package:bizconnect/service/auth_service.dart';
-// import 'package:bizconnect/service/secure_storage_service.dart';
-// import 'package:bizconnect/service/toast_service.dart';
-
-// final setupBusinessProfileViewModelProvider =
-//     ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>(
-//         (ref) => SetupBusinessProfileViewModel());
-//   class Slot {
-//   String day;
-//   String openTime;
-//   String closeTime;
-
-//   Slot({required this.day, required this.openTime, required this.closeTime});
-// }
-
-// class SetupBusinessProfileViewModel extends ChangeNotifier {
-//     // final ProfileBusinessService _profileBusinessService = getIt<ProfileBusinessService>();
-//   // final AuthService _authService = getIt<AuthService>();
-//   final ToastService _toastService = getIt<ToastService>();
-  
-//     List<Slot> slots = [];
-
-//    void addSlot(Slot slot) {
-//     slots.add(slot);
-//     notifyListeners();
-//   }
-
-//   void deleteSlot(Slot slot) {
-//     slots.remove(slot);
-//     notifyListeners();
-//   }
-
-//   bool obscureText = true;
-//   bool isLoading = false;
-//   int prevIndex = 0;
-
-//   TextEditingController businessNameController = TextEditingController();
-//   TextEditingController businessEmailController = TextEditingController();
-//   TextEditingController businessPhoneNumberController = TextEditingController();
-//   TextEditingController describeYourBusinessController = TextEditingController();
-//   TextEditingController businessCategoryController = TextEditingController();
-//   // TextEditingController passController = TextEditingController();
-//   TextEditingController selectCountryController = TextEditingController();
-//   TextEditingController stateAndProvinceController = TextEditingController();
-//   TextEditingController cityController = TextEditingController();
-//   TextEditingController streetController = TextEditingController();
-//   TextEditingController zipCodePostalCodeController = TextEditingController();
-//   TextEditingController uploadImage = TextEditingController();
-
-//   TextEditingController instagramController = TextEditingController();
-//   TextEditingController websiteController = TextEditingController();
-//   TextEditingController tiktokController = TextEditingController();
-//   TextEditingController facebookController = TextEditingController();
-
-//   TextEditingController dayController = TextEditingController();
-//   TextEditingController openTimeController = TextEditingController();
-//   TextEditingController closeTimeController = TextEditingController();
-
-// void handleAddSlot(BuildContext context, SetupBusinessProfileViewModel viewModel) {
-//   if (viewModel.dayController.text.isEmpty ||
-//       viewModel.openTimeController.text.isEmpty ||
-//       viewModel.closeTimeController.text.isEmpty) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text('All fields are required')),
-//     );
-//     return;
-//   }
-
-//   final slot = Slot(
-//     day: viewModel.dayController.text,
-//     openTime: viewModel.openTimeController.text,
-//     closeTime: viewModel.closeTimeController.text,
-//   );
-
-//   viewModel.addSlot(slot);
-
-//   // Clear fields after adding
-//   viewModel.dayController.clear();
-//   viewModel.openTimeController.clear();
-//   viewModel.closeTimeController.clear();
-// }
-
-
-//   final GlobalKey<FormState> formKey = GlobalKey();
-
-//   Future<void> setupProfileBusiness(context) async {
-//       //  router.go('/verify-account');
-//        if (slots.isEmpty) {
-//       _toastService.showToast(context, title: 'Error', subTitle: 'You must add at least one slot.');
-//       return;
-//     }
-
-//     try {
-//       // if (formKey.currentState!.validate()) {
-//       //   formKey.currentState!.save();
-//       //   isLoading = true;
-//       //   notifyListeners();
-        
-//       //    await _profileBusinessService.profileBusiness(
-//       //     businessCategoryController.text.toLowerCase(),
-//       //     businessNameController.text.toLowerCase(),
-//       //     // businessEmailController.text.toLowerCase(),
-//       //     // describeYourBusinessController.text.toLowerCase(),
-//       //     // selectCountryController.text.toLowerCase(),
-//       //   );
-   
-//       //   businessCategoryController.clear();
-//       //   businessNameController.clear();
-//       //   businessEmailController.clear();
-//       //   describeYourBusinessController.clear();
-//       //   describeYourBusinessController.clear();
-//       //   selectCountryController.clear();
-//       //   stateAndProvinceController.clear();
-//       //   cityController.clear();
-//       //   streetController.clear();
-//       //   zipCodePostalCodeController.clear();
-
-//       //  notifyListeners();
-//       //  router.go('/main_screen');
-       
-//       //   isLoading = false;
-//       //   notifyListeners();
-//       // }
-
-//       isLoading = true;
-//       notifyListeners();
-
-//       final payload = {
-//         'businessName': businessNameController.text.trim(),
-//         'businessEmail': businessEmailController.text.trim(),
-//         'businessPhoneNumber': businessPhoneNumberController.text.trim(),
-//         'businessCategory': businessCategoryController.text.trim(),
-//         'description': describeYourBusinessController.text.trim(),
-//         'country': selectCountryController.text.trim(),
-//         'state': stateAndProvinceController.text.trim(),
-//         'city': cityController.text.trim(),
-//         'street': streetController.text.trim(),
-//         'zipCode': zipCodePostalCodeController.text.trim(),
-//         'socialLinks': {
-//           'instagram': instagramController.text.trim(),
-//           'website': websiteController.text.trim(),
-//           'tiktok': tiktokController.text.trim(),
-//           'facebook': facebookController.text.trim(),
-//         },
-//         // 'slots': slots.map((slot) => slot.toJson()).toList(),
-//       };
-
-//       // await _profileBusinessService.profileBusiness(payload);
-//       void clearAllFields() {
-//     for (final controller in [
-//       businessNameController,
-//       businessEmailController,
-//       businessPhoneNumberController,
-//       describeYourBusinessController,
-//       businessCategoryController,
-//       selectCountryController,
-//       stateAndProvinceController,
-//       cityController,
-//       streetController,
-//       zipCodePostalCodeController,
-//       instagramController,
-//       websiteController,
-//       tiktokController,
-//       facebookController,
-//     ]) {
-//       controller.clear();
-//     }
-//   }
-//       // Clear all fields
-//       clearAllFields();
-//       router.go('/main_screen');
-//     } on BizException catch (e) {
-//       // isLoading = false;
-//       notifyListeners();
-//       _toastService.showToast(context,
-//           title: 'Error', subTitle: e.message ?? '');
-//     } catch (e) {
-//       isLoading = false;
-//       notifyListeners();
-//       _toastService.showToast(context,
-//           title: 'Error', subTitle: 'Something went wrong.');
-//     } finally {
-//       isLoading = false;
-//       notifyListeners();
-//   }
-
-//   void togglePassword() {
-//     obscureText = !obscureText;
-//     notifyListeners();
-//   }
-//   // for imaage
-
-//   }
-// }
-
-
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/app/router.dart';
+import 'package:bizconnect/data/country_data.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/models/business_category.dart';
+import 'package:bizconnect/models/city_model.dart';
+import 'package:bizconnect/models/state_province_model.dart';
 import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:bizconnect/service/toast_service.dart';
 import 'package:bizconnect/utils/business_profile_data.dart';
 import 'package:bizconnect/widget/datetime_slot.dart';
 // import 'package:bizconnect/service/profile_business_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-// class Slot {
-//   String day;
-//   String openTime;
-//   String closeTime;
 
-//   Slot({required this.day, required this.openTime, required this.closeTime});
+class SetupBusinessProfileState {
+  final String? selectedCountry;
+  final String? selectedState;
+  final String? selectedCity;
+  final List<dynamic> states;
+  final List<dynamic> cities;
 
-//   Map<String, String> toJson() => {
-//         'day': day,
-//         'openTime': openTime,
-//         'closeTime': closeTime,
-//       };
-// }
+  SetupBusinessProfileState({
+    this.selectedCountry,
+    this.selectedState,
+    this.selectedCity,
+    this.states = const [],
+    this.cities = const [],
+  });
+
+  SetupBusinessProfileState copyWith({
+    String? selectedCountry,
+    String? selectedState,
+    String? selectedCity,
+    List<dynamic>? states,
+    List<dynamic>? cities,
+  }) {
+    return SetupBusinessProfileState(
+      selectedCountry: selectedCountry ?? this.selectedCountry,
+      selectedState: selectedState ?? this.selectedState,
+      selectedCity: selectedCity ?? this.selectedCity,
+      states: states ?? this.states,
+      cities: cities ?? this.cities,
+    );
+  }
+}
+
 
 final setupBusinessProfileViewModelProvider =
     ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>(
@@ -259,10 +79,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController businessEmailController = TextEditingController();
   TextEditingController businessPhoneNumberController = TextEditingController();
   TextEditingController describeYourBusinessController = TextEditingController();
-  TextEditingController businessCategoryController = TextEditingController();
-  TextEditingController selectCountryController = TextEditingController();
-  TextEditingController stateAndProvinceController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  
   TextEditingController streetController = TextEditingController();
   TextEditingController zipCodePostalCodeController = TextEditingController();
   TextEditingController instagramController = TextEditingController();
@@ -270,10 +87,16 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController linkedinUrlController = TextEditingController();
   TextEditingController tiktokController = TextEditingController();
   TextEditingController facebookController = TextEditingController();
+  
   String? selectedBusinessCategory;
   String? selectedBusinessCountry;
-  String? selectStateAndProvinceController;
+  String? selectStateAndProvince;
   String? selectCity;
+
+  // List<Map<String, dynamic>> countryData = []; how can i it here its on a different file
+  final List<Map<String, String?>> countries = countryData;
+  List<String> stateData = [];
+  List<String> cityData = [];
   // Slot-related
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
@@ -284,42 +107,58 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   bool isLoading = false;
 
 
-//   Future<void> loadCategories() async {
-//   final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
-//   await setupProfileRead.fetchCategories(context);
-  
-//     // categoryItems = fetchedCategories.map((e) => e.description).toList();
-//    // Print the categories to check if they're being populated correctly
-// }
-
-
-
-  void togglePassword() {
-    obscureText = !obscureText;
-    notifyListeners();
+Future<void> fetchStates(String countryCode) async {
+    try {
+      final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
+      final List<dynamic> data = json.decode(response);
+      stateData = data.map((e) => e['name'].toString()).toList();
+      notifyListeners();
+    } catch (error) {
+      print("Error fetching states: $error");
+    }
   }
 
-  // void handleAddSlot(BuildContext context) {
-  //   if (dayController.text.isEmpty || openTimeController.text.isEmpty || closeTimeController.text.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('All fields are required')),
-  //     );
-  //     return;
-  //   }
+  Future<void> fetchCities(String stateCode) async {
+    try {
+      final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
+      final List<dynamic> data = json.decode(response);
+      cityData = data.map((e) => e['name'].toString()).toList();
+      notifyListeners();
+    } catch (error) {
+      print("Error fetching cities: $error");
+    }
+  }
 
-  //   final slot = Slot(
-  //     day: dayController.text,
-  //     openTime: openTimeController.text,
-  //     closeTime: closeTimeController.text,
-  //   );
+// // 
+//   Future<List<StateProvinceModel>> fetchStates(String countryCode) async {
+//     final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
+//     final List<dynamic> data = json.decode(response);
+//     return data.map((item) => StateProvinceModel.fromJson(item)).toList();
+//   }
 
-  //   addSlot(slot);
+//    // Fetch the cities based on selected state code
+//   // Future<void> fetchCities(String stateCode) async {
+//   //   // Fetch city data (similarly you can get it from a JSON file or API)
+//   //   String jsonData = await rootBundle.loadString('assets/locations/${stateCode}_cities.json');
+//   //   List<dynamic> citiesData = jsonDecode(jsonData);
+//   //   state = state.copyWith(cities: citiesData);
+//   // }
 
-  //   // Clear fields
-  //   dayController.clear();
-  //   openTimeController.clear();
-  //   closeTimeController.clear();
-  // }
+
+// Future<void> fetchCities(String stateCode) async {
+//   // Load the city data from a JSON file based on the selected state code
+//   String jsonData = await rootBundle.loadString('assets/locations/${stateCode}/cities.json');
+//   List<dynamic> citiesData = jsonDecode(jsonData);
+//   // Convert the List<dynamic> into a List<City> using the City model
+//   List<City> cities = citiesData.map((cityJson) => City.fromJson(List<String>.from(cityJson))).toList();
+//   // Now you can use the cities list as needed, for example:
+//   print(cities);  // Just printing the cities for now
+// }
+
+void togglePassword() {
+  obscureText = !obscureText;
+  notifyListeners();
+}
 
   // image 
   File? selectedImage;
@@ -451,10 +290,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
        final payload = {
       'name': businessNameController.text.trim(),
       'description': describeYourBusinessController.text.trim(),
-      'businessCategoryUuid': businessCategoryController.text.trim(),
-      'country': selectCountryController.text.trim(),
-      'stateAndProvince': stateAndProvinceController.text.trim(),
-      'city': cityController.text.trim(),
+      // 'businessCategoryUuid': businessCategoryController.text.trim(),
+      'country': selectedBusinessCountry,
+      'stateAndProvince': selectStateAndProvince,
+      'city': selectCity,
       'street': streetController.text.trim(),
       'postalCode': zipCodePostalCodeController.text.trim(),
       'phoneNumber': businessPhoneNumberController.text.trim(),
@@ -495,10 +334,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       businessEmailController,
       businessPhoneNumberController,
       describeYourBusinessController,
-      businessCategoryController,
-      selectCountryController,
-      stateAndProvinceController,
-      cityController,
+      // businessCategoryController,
+      // selectCountryController,
+      // stateAndProvinceController,
+      // cityController,
       streetController,
       zipCodePostalCodeController,
       instagramController,
