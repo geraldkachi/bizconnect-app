@@ -8,8 +8,8 @@ class NetworkService with ErrorHandling {
 
   late final Dio? altDio;
 
-  // final String url = "https://devbackend.bizconnect24.com";
-  final String url = "https://benlab.a.pinggy.link";
+  final String url = "https://devbackend.bizconnect24.com";
+  // final String url = "https://benlab.a.pinggy.link";
 
   NetworkService() {
     dio = Dio(

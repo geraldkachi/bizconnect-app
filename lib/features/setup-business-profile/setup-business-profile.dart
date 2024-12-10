@@ -253,10 +253,16 @@ class _SetupBusinessProfilePageState
                                           selectedItem: setupProfileWatch.selectedBusinessCountry,
                                           onChanged: (value) async {
                                             setupProfileWatch.selectedBusinessCountry = value;
-                                            await setupProfileWatch.fetchStates(setupProfileWatch.countries
-                                                .firstWhere((country) => country['name'] == value)['isoCode']!);
                                                 setupProfileWatch.selectStateAndProvince = '';
                                                 setupProfileWatch.selectCity = '';
+                                                
+                                            await setupProfileWatch.fetchStates(
+                                              setupProfileWatch.countries
+                                                .firstWhere((country) => country['name'] == value)['isoCode']!);
+                                                
+                                                // if (countryIsoCode != null) {
+                                                //   await setupProfileWatch.fetchStates(countryIsoCode);
+                                                // }
                                                  print("Selected: $value");
                                                 // notifyListeners();
                                           },
@@ -277,10 +283,12 @@ class _SetupBusinessProfilePageState
                                           popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
                                           onChanged: (value) async {
                                               setupProfileWatch.selectStateAndProvince =value;
-                                              await setupProfileWatch.fetchCities(
-                                                setupProfileWatch.stateData.firstWhere((city) => city == value)[0]!,  // Pass selected state/province code
-                                              ); // Pass selected state/province code
-                                             
+                                              // await setupProfileWatch.fetchCities(
+                                              //   setupProfileWatch.stateData.firstWhere((city) => city == value)[0]!,  // Pass selected state/province code
+                                              // ); // Pass selected state/province code
+                                             if (value != null && value.isNotEmpty) {
+                                                await setupProfileWatch.fetchCities(value);
+                                              }
                                               setupProfileWatch.selectCity = ''; // Reset city selection                                              
                                             dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");

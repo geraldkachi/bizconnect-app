@@ -74,7 +74,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   bool obscureText = true;
   bool isLoading = false;
 
-
+// precious that works
 Future<void> fetchStates(String countryCode) async {
     try {
       final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
@@ -105,6 +105,33 @@ Future<void> fetchStates(String countryCode) async {
   //   }
   // }
 
+//   Future<void> fetchCities(String countryCode, String stateCode) async {
+//   try {
+//     // Construct the correct path for the cities JSON based on the country code
+//     final String response = await rootBundle.loadString('assets/data/locations/$countryCode/cities.json');
+    
+//     // Parse the JSON data
+//     final Map<String, dynamic> data = json.decode(response);
+    
+//     // Check if the state exists in the JSON file
+//     if (data.containsKey(stateCode)) {
+//       final List<dynamic> cityList = data[stateCode];
+      
+//       // Extract city names from the city list
+//       cityData = cityList.map((city) => city[0].toString()).toList();
+//     } else {
+//       cityData = []; // Clear city data if the state is not found
+//     }
+
+//     notifyListeners(); // Update the UI
+//   } catch (error) {
+//     print("Error fetching cities for $countryCode/$stateCode: $error");
+//     cityData = []; // Clear city data in case of an error
+//     notifyListeners();
+//   }
+// }
+
+// precious that
   Future<void> fetchCities(String stateCode) async {
   try {
     // Load the JSON file
@@ -242,7 +269,7 @@ void togglePassword() {
        final payload = {
       'name': businessNameController.text.trim(),
       'description': describeYourBusinessController.text.trim(),
-      'businessCategoryUuid':  selectBusinessUuid,
+      'businessCategoryUuid': selectBusinessUuid,
       'country': selectedBusinessCountry,
       'stateAndProvince': selectStateAndProvince,
       // 'city': selectCity,

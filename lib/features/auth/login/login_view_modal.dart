@@ -24,8 +24,6 @@ class LoginViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey();
 
   Future login(context) async {
-     final SecureStorageService _secureStorageService = getIt<SecureStorageService>();
-      String? token = await _secureStorageService.readAccessToken();
       //  router.go('/verify-account');
     try {
       if (formKey.currentState!.validate()) {
@@ -47,9 +45,9 @@ class LoginViewModel extends ChangeNotifier {
       print(verified);
         if (verified) {
           if (_authService.userRole == 'BUSINESS') {
-            // router.go('/setup-business-profile');
-          } else if (role == 'CUSTOMER') {
             router.go('/setup-business-profile');
+          } else if (role == 'CUSTOMER') {
+            router.go('/main_screen');
             // router.go('/main_screen');
           }
         } else {
