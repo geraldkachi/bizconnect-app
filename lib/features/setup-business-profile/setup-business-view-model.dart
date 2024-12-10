@@ -22,39 +22,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
-class SetupBusinessProfileState {
-  final String? selectedCountry;
-  final String? selectedState;
-  final String? selectedCity;
-  final List<dynamic> states;
-  final List<dynamic> cities;
-
-  SetupBusinessProfileState({
-    this.selectedCountry,
-    this.selectedState,
-    this.selectedCity,
-    this.states = const [],
-    this.cities = const [],
-  });
-
-  SetupBusinessProfileState copyWith({
-    String? selectedCountry,
-    String? selectedState,
-    String? selectedCity,
-    List<dynamic>? states,
-    List<dynamic>? cities,
-  }) {
-    return SetupBusinessProfileState(
-      selectedCountry: selectedCountry ?? this.selectedCountry,
-      selectedState: selectedState ?? this.selectedState,
-      selectedCity: selectedCity ?? this.selectedCity,
-      states: states ?? this.states,
-      cities: cities ?? this.cities,
-    );
-  }
-}
-
-
 final setupBusinessProfileViewModelProvider =
     ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>(
         (ref) => SetupBusinessProfileViewModel());
@@ -66,7 +33,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   // List<Map<String, dynamic>> get businessCategories => _profileBusinessServiceProfileBusinessService.businessCategories;
   BusinessCategoriesModel categories = BusinessCategoriesModel();
-  List<String> categoryData = [];
+  List<Map<String, dynamic>> categoryData = [];
 
       //  RefreshController(initialRefresh: false);
       //  RefreshController refreshController = RefreshController(initialRefresh: false);
@@ -92,6 +59,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   String? selectedBusinessCountry;
   String? selectStateAndProvince;
   String? selectCity;
+  String? selectBusinessUuid;
 
   // List<Map<String, dynamic>> countryData = []; how can i it here its on a different file
   final List<Map<String, String?>> countries = countryData;
@@ -118,42 +86,46 @@ Future<void> fetchStates(String countryCode) async {
     }
   }
 
+  // Future<void> fetchCities(String stateCode) async {
+  //   try {
+  //     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
+  //     final List<dynamic> data = json.decode(response);
+  //     cityData = data.map((e) => e['name'].toString()).toList();
+  //         // Check if the state/province code exists
+  //   if (data.containsKey(stateCode)) {
+  //     final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
+  //     // Extract the city names (assuming the city name is the first element in the array)
+  //     cityData = cityList.map((city) => city[0].toString()).toList();
+  //   } else {
+  //     cityData = []; // Clear city data if stateCode doesn't match
+  //   }
+  //     notifyListeners();
+  //   } catch (error) {
+  //     print("Error fetching cities: $error");
+  //   }
+  // }
+
   Future<void> fetchCities(String stateCode) async {
-    try {
-      final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-      final List<dynamic> data = json.decode(response);
-      cityData = data.map((e) => e['name'].toString()).toList();
-      notifyListeners();
-    } catch (error) {
-      print("Error fetching cities: $error");
+  try {
+    // Load the JSON file
+    final String response = await rootBundle.loadString('assets/data/locations/cities.json');
+    // Decode it into a Map
+    final Map<String, dynamic> data = json.decode(response);
+
+    // Check if the state/province code exists
+    if (data.containsKey(stateCode)) {
+      final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
+      // Extract the city names (assuming the city name is the first element in the array)
+      cityData = cityList.map((city) => city[0].toString()).toList();
+    } else {
+      cityData = []; // Clear city data if stateCode doesn't match
     }
+
+    notifyListeners(); // Notify UI to update
+  } catch (error) {
+    print("Error fetching cities for $stateCode: $error");
   }
-
-// // 
-//   Future<List<StateProvinceModel>> fetchStates(String countryCode) async {
-//     final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
-//     final List<dynamic> data = json.decode(response);
-//     return data.map((item) => StateProvinceModel.fromJson(item)).toList();
-//   }
-
-//    // Fetch the cities based on selected state code
-//   // Future<void> fetchCities(String stateCode) async {
-//   //   // Fetch city data (similarly you can get it from a JSON file or API)
-//   //   String jsonData = await rootBundle.loadString('assets/locations/${stateCode}_cities.json');
-//   //   List<dynamic> citiesData = jsonDecode(jsonData);
-//   //   state = state.copyWith(cities: citiesData);
-//   // }
-
-
-// Future<void> fetchCities(String stateCode) async {
-//   // Load the city data from a JSON file based on the selected state code
-//   String jsonData = await rootBundle.loadString('assets/locations/${stateCode}/cities.json');
-//   List<dynamic> citiesData = jsonDecode(jsonData);
-//   // Convert the List<dynamic> into a List<City> using the City model
-//   List<City> cities = citiesData.map((cityJson) => City.fromJson(List<String>.from(cityJson))).toList();
-//   // Now you can use the cities list as needed, for example:
-//   print(cities);  // Just printing the cities for now
-// }
+}
 
 void togglePassword() {
   obscureText = !obscureText;
@@ -267,33 +239,14 @@ void togglePassword() {
       isLoading = true;
       notifyListeners();
 
-      // final payload = {
-      //   'businessName': businessNameController.text.trim(),
-      //   'businessEmail': businessEmailController.text.trim(),
-      //   'businessPhoneNumber': businessPhoneNumberController.text.trim(),
-      //   'businessCategory': businessCategoryController.text.trim(),
-      //   'description': describeYourBusinessController.text.trim(),
-      //   'country': selectCountryController.text.trim(),
-      //   'state': stateAndProvinceController.text.trim(),
-      //   'city': cityController.text.trim(),
-      //   'street': streetController.text.trim(),
-      //   'zipCode': zipCodePostalCodeController.text.trim(),
-      //   'socialLinks': {
-      //     'instagram': instagramController.text.trim(),
-      //     'website': websiteController.text.trim(),
-      //     'tiktok': tiktokController.text.trim(),
-      //     'facebook': facebookController.text.trim(),
-      //   },
-      //   'slots': slots.map((slot) => slot.toJson()).toList(),
-      // };
-
        final payload = {
       'name': businessNameController.text.trim(),
       'description': describeYourBusinessController.text.trim(),
-      // 'businessCategoryUuid': businessCategoryController.text.trim(),
+      'businessCategoryUuid':  selectBusinessUuid,
       'country': selectedBusinessCountry,
       'stateAndProvince': selectStateAndProvince,
-      'city': selectCity,
+      // 'city': selectCity,
+      'city': "saint gerald",
       'street': streetController.text.trim(),
       'postalCode': zipCodePostalCodeController.text.trim(),
       'phoneNumber': businessPhoneNumberController.text.trim(),
@@ -303,8 +256,8 @@ void togglePassword() {
       'linkedinUrl': linkedinUrlController.text.trim(),
       'instagramUrl': instagramController.text.trim(),
       'facebookUrl': facebookController.text.trim(),
-      'image': null, 
-      'cloudinaryConfig': null, 
+      'image': null, // Placeholder for an uploaded business image
+      'cloudinaryConfig': null, // Placeholder for cloud storage configuration
       'streetCoordinates': {
         'lat': 0.0, 
         'lng': 0.0,
@@ -334,6 +287,8 @@ void togglePassword() {
       businessEmailController,
       businessPhoneNumberController,
       describeYourBusinessController,
+      // selectBusinessUuid,
+      // selectedBusinessCategory,
       // businessCategoryController,
       // selectCountryController,
       // stateAndProvinceController,
@@ -356,7 +311,8 @@ Future<void> fetchCategories(BuildContext context) async {
     isLoading = true;
     notifyListeners();
     categories = await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
-    categoryData = categories.data!.businessCategories.map((e) => e.description).toList(); 
+    // categoryData = categories.data!.businessCategories.map((e) => e.description).toList(); 
+    categoryData = categories.data!.businessCategories.map((e) => {'uuid': e.uuid, 'description': e.description}).toList(); 
     log('category ${categories.data!.businessCategories.map((e) => e.description) }');
     isLoading = false;
     notifyListeners();
@@ -375,29 +331,4 @@ Future<void> fetchCategories(BuildContext context) async {
   }
 }
 
-
-
-  //  Future<void> fetchCategories(context) async {
-  //   try {
-  //     isLoading = true;
-  //     notifyListeners();
-  //     await _profileBusinessServiceProfileBusinessService.allBusinessCategories();
-  //     // searchFacilities = _healthFacilitiesService.facilitiesModel!;
-  //     isLoading = false;
-  //     // onInit = true;
-      
-  //     notifyListeners();
-  //   } on BizException catch (e) {
-  //     isLoading = false;
-  //     notifyListeners();
-  //     _toastService.showToast(context,
-  //         title: 'Error', subTitle: e.message ?? '');
-  //   } catch (e, stack) {
-  //     isLoading = false;
-  //     notifyListeners();
-  //     _toastService.showToast(context,
-  //         title: 'Error', subTitle: 'Something went wrong.');
-  //     debugPrint('fetch categories error: $e\ns$stack');
-  //   }
-  // }
 }

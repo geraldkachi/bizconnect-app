@@ -118,15 +118,7 @@ Future<void> profileBusiness(Map<String, dynamic> businessPayload) async {
         '/api/business-profile/create',
         data: jsonEncode(businessPayload),
     );
-        debugPrint('response $response');
-     // Step 3: Handle the response
-    if (response != null && response['data'] != null) {
-      // final token = response['data']['token']; // Extract token
-      // // debugPrint('Received token: $token');
-    } else {
-      throw Exception('Invalid response structure');
-    }
-    
+    debugPrint('response create profile $response');  
     } on BizException {
       rethrow;
     } catch (e) {

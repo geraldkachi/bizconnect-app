@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/features/auth/login/login_view_modal.dart';
+import 'package:bizconnect/service/secure_storage_service.dart';
 import 'package:bizconnect/widget/button.dart';
 import 'package:bizconnect/widget/input.dart';
 import 'package:flutter/gestures.dart';
@@ -20,6 +22,9 @@ class LoginPage extends ConsumerStatefulWidget {
   @override
   ConsumerState<LoginPage> createState() => _LoginPageState();
 }
+
+ final SecureStorageService _secureStorageService = getIt<SecureStorageService>();
+  
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   @override
@@ -137,6 +142,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             text: "Submit",
                             isLoading: loginWatch.isLoading,
                             onPressed: () async {
+                              //  _secureStorageService.deleteAccessToken();
                               loginRead.login(context);
                             },
                           ),

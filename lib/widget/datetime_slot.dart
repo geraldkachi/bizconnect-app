@@ -26,10 +26,10 @@ class DateTimeSlots extends  ConsumerStatefulWidget {
   final void Function(List<DateTimeSlot>)? onSlotsUpdated;
 
   const DateTimeSlots({
-    Key? key,
+    super.key,
     this.initialSlots,
     this.onSlotsUpdated,
-  }) : super(key: key);
+  });
 
   @override
   _DateTimeSlotsState createState() => _DateTimeSlotsState();

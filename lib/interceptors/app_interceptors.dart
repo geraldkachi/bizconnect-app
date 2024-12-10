@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -13,6 +14,8 @@ class AppInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     String? token = await _secureStorageService.readAccessToken();
+
+    log( 'token  test $token');
 
     if (StringUtils.isNotEmpty(token)) {
       options.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';

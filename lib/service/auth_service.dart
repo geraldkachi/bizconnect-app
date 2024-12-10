@@ -94,15 +94,24 @@ class AuthService {
         debugPrint('response $response');
      // Step 3: Handle the response
     if (response != null && response['data'] != null) {
-      final token = response['data']['token']; // Extract token
+      // final token = response['data']['token']; // Extract token
       // debugPrint('Received token: $token');
+
+       String tokenWithBearer = response['data']['token']; // Extract token with "Bearer"
+      debugPrint('Received token with Bearer: $tokenWithBearer');
+
+      // Trim the "Bearer " prefix
+      String token = tokenWithBearer.replaceFirst('Bearer ', '').trim();
+      debugPrint('Trimmed token: $token');
+
+      
 
       // Optional: Decode JWT to get user details
       final parts = token.split('.');
       if (parts.length > 1) {
         final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
         debugPrint('Decoded token payload: $payload');
-        _userData = AuthModel.fromJson(jsonDecode(payload)); 
+        _userData = AuthModel.fromJson(jsonDecode(payload));
       }
 
       // Save token securely
