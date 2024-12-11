@@ -2,6 +2,7 @@
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/features/business/widget/my_business_card.dart';
 import 'package:bizconnect/features/business/widget/my_business_detail_info.dart';
+import 'package:bizconnect/features/my_business/my_buisiness_view_model.dart';
 import 'package:bizconnect/service/auth_service.dart';
 import 'package:bizconnect/widget/button.dart';
 import 'package:flutter/gestures.dart';
@@ -21,8 +22,20 @@ class BusinessDetailPage extends ConsumerStatefulWidget {
 class _BusinessDetailPageState extends ConsumerState<BusinessDetailPage> {
   final AuthService _authService = getIt<AuthService>();
 
+ @override
+  void initState() {
+    super.initState();
+    final myBusinessWatchRead = ref.read(myBusinessViewModelProvider.notifier);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // myBusinessWatchRead!.businessDetails(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final myBusinessWatch = ref.watch(myBusinessViewModelProvider);
+    final businessListData = myBusinessWatch.businessListData;
+
     final currentYear = DateTime.now().year;
 
     // Dummy Data

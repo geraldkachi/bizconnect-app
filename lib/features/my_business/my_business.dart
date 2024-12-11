@@ -166,6 +166,8 @@ class _MyBusinessPageState extends ConsumerState<MyBusinessPage> {
     final myBusinessWatch = ref.watch(myBusinessViewModelProvider);
     final businessListData = myBusinessWatch.businessListData;
 
+    print( 'businessListData $businessListData');
+
     return Scaffold(
       backgroundColor: grey50,
       body: SafeArea(
@@ -224,9 +226,14 @@ class _MyBusinessPageState extends ConsumerState<MyBusinessPage> {
                             ),
                           )
                         : ListView.builder(
+                            // reverse: true,
                             itemCount: businessListData.length,
                             itemBuilder: (context, index) {
                               final business = businessListData[index];
+
+                              print("business image ${business['croppedImageUrl']}");
+                              //  print('business items $business');
+                              //  print("business image $business['croppedImageUrl']");
                               return BusinessCard(
                                 profile: Profile(
                                   uuid: business['uuid'],

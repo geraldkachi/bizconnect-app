@@ -17,7 +17,8 @@ class DropdownField<T> extends StatelessWidget {
   final bool showSearchBox;
   final Widget? prefixIcon;
   final PopupProps<T>? popupProps; // Add this to allow custom PopupProps
-
+  // final FutureOr<List<T>> Function(String filter)? asyncItems; // Added for async filtering
+ final Future<List<T>> Function(String)? asyncItems; 
   // asyncItems FutureOr<List<T>>;
   
 
@@ -33,7 +34,7 @@ class DropdownField<T> extends StatelessWidget {
     this.dropdownIcon,
     this.showSearchBox = false,
      this.prefixIcon,
-    // this.asyncItems,
+    this.asyncItems,
     this.popupProps // Add this to allow custom PopupProps
 
   });
@@ -57,7 +58,9 @@ class DropdownField<T> extends StatelessWidget {
           // key: dropDownKey,
           popupProps: popupProps ?? PopupProps.menu(
             showSearchBox: showSearchBox,
+            isFilterOnline: true,
             searchFieldProps: TextFieldProps(
+              autofocus: true,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 10.0,
@@ -87,11 +90,11 @@ class DropdownField<T> extends StatelessWidget {
             ),
           ),
 
-           asyncItems: (String filter) async {
-            return items; // Return the list of items
-          },
-          //  asyncItems: asyncItems,
-          items: items,
+            //  items: items, // Use items if asyncItems is not provided
+             items: items.isEmpty ? [] : items, // Use items if asyncItems is not provided
+          asyncItems: asyncItems, 
+          //  asyncItems: asyncItems, // i need that type of this props 
+      //     items: items.toSet().toList(),
       //       asyncItems: (String filter) async {
       //   return items.where((item) => item.toString().contains(filter)).toList();
       // },

@@ -197,13 +197,20 @@ class _SetupBusinessProfilePageState
                                         //    Center(child: CircularProgressIndicator())
                                         // else
                                         DropdownField<String>(
-                                          dropdownKey: dropDownKey,
+                                          // dropdownKey: dropDownKey,
                                           // selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,
                                           selectedItem: setupProfileWatch.selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
-                                          // items: setupProfileRead.categoryData,
-                                          items: setupProfileRead.categoryData.map((e) => e['description'] as String).toList(),
+                                          // items: setupProfileRead.categoryData.map((e) => e['description'] as String).toList(),
+                                          items: [],
+                                          asyncItems: (String filter) async {
+                                              final filteredCategories = setupProfileRead.categoryData
+                                                  .where((category) => category['description'].toLowerCase().contains(filter.toLowerCase()))
+                                                  .map((category) => category['description'] as String)
+                                                  .toList();
+                                              return filteredCategories;  // Return the filtered list
+                                            },
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true),
@@ -240,11 +247,21 @@ class _SetupBusinessProfilePageState
                                         // Country
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          dropdownKey: dropDownKey,
+                                          // dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          // items: countryData.map((e) => e['name'].toString()).toList(),
-                                          items: setupProfileWatch.countries.map((e) => e['name'] as String).toList(),
+                                          items: [],
+                                          // items: setupProfileWatch.countries.map((e) => e['name'] as String).toList(),
+                                        asyncItems: (String filter) async {
+                                          // Dynamically fetch and filter countries
+                                          return setupProfileWatch.countries
+                                              .where((country) => country['name']
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains(filter.toLowerCase()))
+                                              .map((e) => e['name'] as String)
+                                              .toList();
+                                        },
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,
@@ -275,7 +292,7 @@ class _SetupBusinessProfilePageState
                                         // State and Province
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          dropdownKey: dropDownKey,
+                                          // dropdownKey: dropDownKey,
                                           labelText: "State and Province",
                                           hintText: "State and Province",
                                           items: setupProfileWatch.stateData,
@@ -297,12 +314,12 @@ class _SetupBusinessProfilePageState
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
-                                          // showSearchBox: true,
+                                          showSearchBox: true,
                                         ),
                                         // City
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          dropdownKey: dropDownKey,
+                                          // dropdownKey: dropDownKey,
                                           labelText: "City",
                                           hintText: "Select city",
                                           items: setupProfileWatch.cityData,
@@ -318,7 +335,7 @@ class _SetupBusinessProfilePageState
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
                                               color: grey400),
-                                          // showSearchBox: true,
+                                          showSearchBox: true,
                                         ),
                                         const SizedBox(height: 10),
                                         InputField(
@@ -488,13 +505,9 @@ class _SetupBusinessProfilePageState
                                             width: 8.0,
                                             height: 20.03,
                                           ),
-                                          controller: setupProfileWatch
-                                              .instagramController,
+                                          controller: setupProfileWatch.instagramController,
                                           labelText: "",
-                                          hintText:
-                                              "copy & paste instagram link here",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
+                                          hintText: "copy & paste instagram link here",
                                           inputPaddingH: 28.0,
                                           inputPaddingV: 15.0,
                                         ),
@@ -508,10 +521,7 @@ class _SetupBusinessProfilePageState
                                           controller: setupProfileWatch
                                               .websiteController,
                                           labelText: "",
-                                          hintText:
-                                              "copy & paste website link here. e.g personal site, storefront, etc",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
+                                          hintText: "copy & paste website link here. e.g personal site, storefront, etc",
                                           inputPaddingH: 28.0,
                                           inputPaddingV: 15.0,
                                         ),
@@ -525,10 +535,7 @@ class _SetupBusinessProfilePageState
                                           controller: setupProfileWatch
                                               .tiktokController,
                                           labelText: "",
-                                          hintText:
-                                              "copy & paste tiktok link here",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
+                                          hintText:"copy & paste tiktok link here",
                                           inputPaddingH: 28.0,
                                           inputPaddingV: 15.0,
                                         ),
@@ -542,10 +549,7 @@ class _SetupBusinessProfilePageState
                                           controller: setupProfileWatch
                                               .facebookController,
                                           labelText: "",
-                                          hintText:
-                                              "copy & paste facebook link here",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
+                                          hintText: "copy & paste facebook link here",
                                           inputPaddingH: 28.0,
                                           inputPaddingV: 15.0,
                                         ),
