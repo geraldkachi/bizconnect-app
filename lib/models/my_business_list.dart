@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 // Function to parse JSON data
-MyBusinessListModel myBusinessListModelFromJson(String str) => MyBusinessListModel.fromJson(json.decode(str));
+MyBusinessListModel myBusinessListModelFromJson(String str) =>
+    MyBusinessListModel.fromJson(json.decode(str));
 
 // Function to convert data back to JSON format
-String myBusinessListModelToJson(MyBusinessListModel data) => json.encode(data.toJson());
+String myBusinessListModelToJson(MyBusinessListModel data) =>
+    json.encode(data.toJson());
 
 class MyBusinessListModel {
   final bool? success;
@@ -17,7 +19,8 @@ class MyBusinessListModel {
     this.data,
   });
 
-  factory MyBusinessListModel.fromJson(Map<String, dynamic> json) => MyBusinessListModel(
+  factory MyBusinessListModel.fromJson(Map<String, dynamic> json) =>
+      MyBusinessListModel(
         success: json["success"],
         message: Message.fromJson(json["message"]),
         data: Data.fromJson(json["data"]),
@@ -67,6 +70,10 @@ class BusinessProfile {
   final String? openTime;
   final String? closeTime;
   final List<String> daysOfOperation;
+  final int? followersCount;
+  final int? followingCount;
+  final bool? isFollowing;
+  final bool? isOwner;
   final String? websiteUrl;
   final String? linkedinUrl;
   final String? instagramUrl;
@@ -93,6 +100,10 @@ class BusinessProfile {
     this.openTime,
     this.closeTime,
     required this.daysOfOperation,
+    this.followersCount,
+    this.followingCount,
+    this.isFollowing,
+    this.isOwner,
     this.websiteUrl,
     this.linkedinUrl,
     this.instagramUrl,
@@ -101,7 +112,8 @@ class BusinessProfile {
     this.createdUtc,
   });
 
-  factory BusinessProfile.fromJson(Map<String, dynamic> json) => BusinessProfile(
+  factory BusinessProfile.fromJson(Map<String, dynamic> json) =>
+      BusinessProfile(
         uuid: json["uuid"],
         userUuid: json["userUuid"],
         name: json["name"],
@@ -119,7 +131,8 @@ class BusinessProfile {
         businessEmail: json["businessEmail"],
         openTime: json["openTime"],
         closeTime: json["closeTime"],
-        daysOfOperation: List<String>.from(json["daysOfOperation"].map((x) => x)),
+        daysOfOperation:
+            List<String>.from(json["daysOfOperation"].map((x) => x)),
         websiteUrl: json["websiteUrl"],
         linkedinUrl: json["linkedinUrl"],
         instagramUrl: json["instagramUrl"],

@@ -2,12 +2,14 @@
 
 import 'package:bizconnect/app/theme/colors.dart';
 import 'package:bizconnect/features/business/widget/read_more_text.dart';
+import 'package:bizconnect/models/business%20details_model.dart';
+import 'package:bizconnect/models/my_business_list.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BusinessDetailsInfo extends StatelessWidget {
-  final BusinessProfile? businessDetails;
+  final BusinessProfileDetailModel? businessDetails;
 
   const BusinessDetailsInfo({super.key, this.businessDetails});
 
@@ -17,7 +19,7 @@ class BusinessDetailsInfo extends StatelessWidget {
         ? '${businessDetails?.street}, ${businessDetails?.city}, ${businessDetails?.stateAndProvince}'
         : '${businessDetails?.city}, ${businessDetails?.stateAndProvince}';
 
-    final hasBusinessClosed = determineBusOpTime(businessDetails?.operationDays ?? []);
+    final hasBusinessClosed = determineBusOpTime(businessDetails?.operationDays?.map((e) => e.day).toList() ?? []);
 
     List<Map<String, String?>> constructSocialLinks() {
       return [
@@ -125,35 +127,35 @@ class BusinessDetailsInfo extends StatelessWidget {
   }
 }
 
-class BusinessProfile {
-  final String? street;
-  final String? city;
-  final String? stateAndProvince;
-  final String? facebookUrl;
-  final String? instagramUrl;
-  final String? twitterUrl;
-  final String? websiteUrl;
-  final String? phoneNumber;
-  final String? businessEmail;
-  final String? description;
-  final bool? isOpened;
-  final List<String>? operationDays;
+// class BusinessProfile {
+//   final String? street;
+//   final String? city;
+//   final String? stateAndProvince;
+//   final String? facebookUrl;
+//   final String? instagramUrl;
+//   final String? twitterUrl;
+//   final String? websiteUrl;
+//   final String? phoneNumber;
+//   final String? businessEmail;
+//   final String? description;
+//   final bool? isOpened;
+//   final List<String>? operationDays;
 
-  BusinessProfile({
-    this.street,
-    this.city,
-    this.stateAndProvince,
-    this.facebookUrl,
-    this.instagramUrl,
-    this.twitterUrl,
-    this.websiteUrl,
-    this.phoneNumber,
-    this.businessEmail,
-    this.description,
-    this.operationDays,
-    this.isOpened,
-  });
-}
+//   BusinessProfile({
+//     this.street,
+//     this.city,
+//     this.stateAndProvince,
+//     this.facebookUrl,
+//     this.instagramUrl,
+//     this.twitterUrl,
+//     this.websiteUrl,
+//     this.phoneNumber,
+//     this.businessEmail,
+//     this.description,
+//     this.operationDays,
+//     this.isOpened,
+//   });
+// }
 
 
 class BusinessHoursStatus extends StatelessWidget {

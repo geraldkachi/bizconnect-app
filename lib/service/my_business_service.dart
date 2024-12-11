@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
+import 'package:bizconnect/models/business%20details_model.dart';
 import 'package:bizconnect/models/my_business_list.dart';
 import 'package:bizconnect/models/profile_business.dart';
 import 'package:bizconnect/service/network_service.dart';
@@ -39,19 +40,20 @@ class MyBusinessService {
   }
 // single business 
 // Fetches single business details by ID
-  Future<ProfileBusinessModel> getBusinessDetails(String id,) async {
+  Future<BusinessProfileDetailModel> getBusinessDetails(String id,) async {
     try {
       final response = await _networkService
           .get('/api/business-profile/list/$id?tid=${DateTime.now().millisecondsSinceEpoch}');
 
       // Decode the response into a JSON map
       final Map<String, dynamic> jsonDecodedPayload = response;
-      log('business details $response');
+
+      // log('business details $response');
       // Validate that 'data' and 'details' exist and are of the correct type
       if (jsonDecodedPayload['data'] != null &&
           jsonDecodedPayload['data']['details'] != null) {
-        log('Fetched Business Details: ${jsonDecodedPayload['data']['details']}');
-        return ProfileBusinessModel.fromJson(jsonDecodedPayload['data']['details']);
+        // log('Fetched Business Details: ${jsonDecodedPayload['data']['details']}');
+        return BusinessProfileDetailModel.fromJson(jsonDecodedPayload['data']['details']);
       } else {
         throw BizException(message: 'Invalid response structure');
       }

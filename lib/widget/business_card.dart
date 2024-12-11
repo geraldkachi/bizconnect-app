@@ -42,7 +42,10 @@ class BusinessCard extends StatelessWidget {
             Stack(
               children: [
                 InkWell(
-                  onTap: () => context.go('/main_screen/business_details'),
+                  onTap: () => {
+                    context.go('/main_screen/business_details/${profile.uuid}',)
+                    // context.go('/main_screen/business_details', extra:  profile )
+                    },
                   child: Container(
                     height: 324,
                     decoration: BoxDecoration(
@@ -138,7 +141,9 @@ class BusinessCard extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      context.go('/main_screen/business_details');
+                       final uuid = profile.uuid;
+                        context.go('/main_screen/business_details/$uuid');
+                      // context.go('/main_screen/business_details');
                       // Navigator.pushNamed(
                       //   context,
                       //   '/register-business',

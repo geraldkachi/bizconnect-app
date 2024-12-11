@@ -54,12 +54,21 @@ class MyBusinessDetailsCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  croppedImageUrl ?? '',
+                'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg',
                   width: 66,
                   height: 66,
                   fit: BoxFit.cover,
-                ),
+                )
               ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(10),
+              //   child: croppedImageUrl != null ? Image.network(
+              //     croppedImageUrl ?? 'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg',
+              //     width: 66,
+              //     height: 66,
+              //     fit: BoxFit.cover,
+              //   )  : Icon(Icons.people),
+              // ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(

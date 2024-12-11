@@ -5,10 +5,12 @@ import 'package:bizconnect/features/auth/login/login.dart';
 import 'package:bizconnect/features/auth/sign_up/sign_up.dart';
 import 'package:bizconnect/features/auth/verify-account/verify-account.dart';
 import 'package:bizconnect/features/business/business_detail.dart';
+import 'package:bizconnect/features/business/widget/my_business_detail_info.dart';
 import 'package:bizconnect/features/entry/entry.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-profile.dart';
 import 'package:bizconnect/features/splashscreen/splashscreen.dart';
 import 'package:bizconnect/features/main_screen/main_page.dart';
+import 'package:bizconnect/models/my_business_list.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
@@ -52,8 +54,13 @@ final GoRouter router = GoRouter(
       builder: (context, state) => MainScreen(),
       routes: [
         GoRoute(
-            path: 'business_details',
-            builder: (context, state) => BusinessDetailPage(), 
+            path: 'business_details/:id',
+            // builder: (context, state) => BusinessDetailPage(), 
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';  
+              // final profile = state.extra as BusinessProfile;  
+              return BusinessDetailPage(id: id);  
+            }, 
             routes: [
               // GoRoute(
               //   path: 'record_inflow_payment',

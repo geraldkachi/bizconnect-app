@@ -179,23 +179,10 @@ class _SetupBusinessProfilePageState
                                         const SizedBox(height: 10),
                                         ImageUploadField(
                                             labelText: "Upload Image",
-                                            hintText:
-                                                "Upload logo or business flyer",
-                                            setupProfileWatch:
-                                                setupProfileWatch),
+                                            hintText: "Upload logo or business flyer",
+                                            setupProfileWatch:setupProfileWatch),
                                         const SizedBox(height: 10),
-                                        // InputField(
-                                        //   controller: setupProfileWatch
-                                        //       .businessCategoryController,
-                                        //   labelText: "Business Category",
-                                        //   hintText: "Search Business Category",
-                                        //   validator: (value) =>
-                                        //       Validator.validateName(value),
-                                        // ),
-                                        // Business Category
-                                        // if (categoryItems.isEmpty) 
-                                        //    Center(child: CircularProgressIndicator())
-                                        // else
+                                       
                                         DropdownField<String>(
                                           // dropdownKey: dropDownKey,
                                           // selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,

@@ -74,6 +74,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   bool obscureText = true;
   bool isLoading = false;
 
+  // image 
+  File? selectedImage;
+  String? fileName;
+
 // precious that works
 Future<void> fetchStates(String countryCode) async {
     try {
@@ -159,9 +163,6 @@ void togglePassword() {
   notifyListeners();
 }
 
-  // image 
-  File? selectedImage;
-  String? fileName;
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -283,7 +284,7 @@ void togglePassword() {
       'linkedinUrl': linkedinUrlController.text.trim(),
       'instagramUrl': instagramController.text.trim(),
       'facebookUrl': facebookController.text.trim(),
-      'image': null, // Placeholder for an uploaded business image
+      'image': selectedImage, // Placeholder for an uploaded business image
       'cloudinaryConfig': null, // Placeholder for cloud storage configuration
       'streetCoordinates': {
         'lat': 0.0, 
