@@ -9,6 +9,7 @@ import 'package:bizconnect/models/my_business_list.dart';
 import 'package:bizconnect/service/auth_service.dart';
 import 'package:bizconnect/widget/button.dart';
 import 'package:bizconnect/widget/croppedImage.dart';
+import 'package:bizconnect/widget/dotted_line.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,7 +47,7 @@ class _BusinessDetailPageState extends ConsumerState<BusinessDetailPage> {
 
 
 void showSocialShareModal(BuildContext context, String businessName, String shareableUrl, String imageUrl) {
-  const textConstraint = 90;
+  const textConstraint = 60;
 
   String shortenUrl(String url, int maxLength) {
     return url.length > maxLength ? '${url.substring(0, maxLength)}...' : url;
@@ -56,9 +57,7 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
     // Same as the handleSocialShare logic in the previous method
 
   String encodeUrl(String url) => Uri.encodeComponent(url);
-
   // Handles social share
-  // Future<void> handleSocialShare(String platform, String url) async {
     final socialUrls = {
       'message': 'sms:?body=Check out this business: ${encodeUrl(url)}',
       'instagram': url,
@@ -71,14 +70,26 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
     };
 
     final shareUrl = socialUrls[platform];
-    if (platform == 'instagram') {
-      Clipboard.setData(ClipboardData(text: url));
-      await launchUrl(Uri.parse('https://www.instagram.com/'));
-    } else if (shareUrl != null) {
-      await launchUrl(Uri.parse(shareUrl));
-    }
-  
-  
+    // if (platform == 'instagram') {
+    //   Clipboard.setData(ClipboardData(text: url));
+    //   await launchUrl(Uri.parse('https://www.instagram.com/'));
+    // } else if (shareUrl != null) {
+    //   await launchUrl(Uri.parse(shareUrl));
+    // }
+    // If the platform is Instagram, copy the URL to the clipboard and optionally open Instagram
+  if (platform == 'instagram') {
+    Clipboard.setData(ClipboardData(text: url));
+    await launchUrl(Uri.parse('https://www.instagram.com/'));  // Open Instagram
+  } else if (platform == 'whatsapp') {
+    // For WhatsApp, use the wa.me URL scheme for messaging
+    await launchUrl(Uri.parse(socialUrls['whatsapp']!));
+  } else if (shareUrl != null) {
+    // For other platforms, open the share URL
+    await launchUrl(Uri.parse(shareUrl));
+  } else {
+    // Fallback if the platform isn't supported
+    print("Platform not supported for sharing");
+  }
   }
 
   showModalBottomSheet(
@@ -256,7 +267,8 @@ void showShareModal(BuildContext context, String businessName, String shareableU
             ],),
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
+            HorizontalDottedLine(),
             // Copy Link Button
             ListTile(
               leading: SvgPicture.asset('assets/svg/social/get-link.svg'),
@@ -269,7 +281,8 @@ void showShareModal(BuildContext context, String businessName, String shareableU
               },
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
+            HorizontalDottedLine(),
             // Share via Social Media
             ListTile(
               leading: SvgPicture.asset('assets/svg/social/via-social.svg'),
@@ -288,6 +301,64 @@ void showShareModal(BuildContext context, String businessName, String shareableU
   );
 }
 
+// void showOpeningHoursModal(BuildContext context, List<OperationDay> orderedDays) {
+//   showModalBottomSheet(
+//     context: context,
+//     shape: const RoundedRectangleBorder(
+//       borderRadius: BorderRadius.vertical(
+//         top: Radius.circular(20.0),
+//       ),
+//     ),
+//     builder: (context) {
+//       return Container(
+//         padding: const EdgeInsets.all(16),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.max,
+//           children: [
+//              Align(
+//               alignment: Alignment.topCenter,
+//               child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//             SizedBox(width: 20),
+            
+//             Text(
+//               "Opening Hours",
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: red),
+//             ),
+//               IconButton(
+//                 onPressed: () => Navigator.pop(context),
+//                 icon: const Icon(Icons.close, size: 20),
+//               ),
+//             ],),
+//             ),
+
+            
+//             const SizedBox(height: 10),
+//             ...orderedDays.map((day) {
+//               return Text('${day.day}: ${day.openTime} - ${day.closeTime}');
+//             }).toList(),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
+
+// Helper function to map days to index (1 = Monday, 7 = Sunday)
+int _getDayIndex(String day) {
+  switch (day.toLowerCase()) {
+    case 'monday': return 1;
+    case 'tuesday': return 2;
+    case 'wednesday': return 3;
+    case 'thursday': return 4;
+    case 'friday': return 5;
+    case 'saturday': return 6;
+    case 'sunday': return 7;
+    default: return 0;
+  }
+}
 void showOpeningHoursModal(BuildContext context, List<OperationDay> orderedDays) {
   showModalBottomSheet(
     context: context,
@@ -300,29 +371,79 @@ void showOpeningHoursModal(BuildContext context, List<OperationDay> orderedDays)
       return Container(
         padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close, size: 20.0),
+             Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: 40,  // Adjust the width of the handle
+              height: 5,  // Adjust the height of the handle
+              decoration: BoxDecoration(
+                color: Colors.grey[400],  // Color of the handle
+                borderRadius: BorderRadius.circular(10),  // Rounded corners for handle
               ),
+              margin: const EdgeInsets.only(bottom: 10),  // Space below the handle
             ),
-            const Text(
-              "Opening Hours",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
+            Align(
+              alignment: Alignment.topCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 20),
+                  Text(
+                    "Opening Hours",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: red),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, size: 20),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 10),
             ...orderedDays.map((day) {
-              return Text('${day.day}: ${day.openTime} - ${day.closeTime}');
+              bool isToday = DateTime.now().weekday == _getDayIndex(day.day);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      day.day,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                        color: isToday ? cyan100 : red,
+                      ),
+                    ),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isToday ? cyan100 : red,
+                      ),
+                    ),
+                    Text(
+                      '${day.openTime} - ${day.closeTime}',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, color: isToday ? cyan100 : red),
+                    ),
+                  ],
+                ),
+              );
             }).toList(),
+             const SizedBox(height: 40),
           ],
         ),
       );
     },
   );
 }
+
 
     return Scaffold(
       backgroundColor: grey50,
