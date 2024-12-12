@@ -19,7 +19,8 @@ class BusinessDetailsInfo extends StatelessWidget {
         ? '${businessDetails?.street}, ${businessDetails?.city}, ${businessDetails?.stateAndProvince}'
         : '${businessDetails?.city}, ${businessDetails?.stateAndProvince}';
 
-    final hasBusinessClosed = determineBusOpTime(businessDetails?.operationDays?.map((e) => e.day).toList() ?? []);
+    final hasBusinessDay = determineBusOpTime(businessDetails?.operationDays?.map((e) => e.day).toList() ?? []);
+    final hasBusinessClosed = determineBusOpTime(businessDetails?.operationDays?.map((e) => e.closeTime).toList() ?? []);
 
     List<Map<String, String?>> constructSocialLinks() {
       return [
@@ -74,13 +75,15 @@ class BusinessDetailsInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Business Details", style: TextStyle(color: red, fontSize: 15, fontWeight: FontWeight.w700)),
-            // BusinessHoursStatus(isOpen: hasBusinessClosed.isOpened, closingTime: hasBusinessClosed.closingTime),
-            SizedBox(height: 16),
+            SizedBox(height: 5),
+             BusinessHoursStatus(isOpen: hasBusinessDay, closingTime: hasBusinessClosed.toString()),
+            SizedBox(height: 10),
             Text(
               'Description',
               style: TextStyle(fontSize: 15, color: grey500),
             ),
-            // ReadMoreText(text: businessDetails?.description ?? "N/A"),
+            ReadMoreText(text: businessDetails?.description ?? "N/A", textStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: red),
+              maxLength: 50, ),
             ReadMoreText(
               // text: (businessDetails?.description ?? "N/A"),
               text: "This is a very long piece of text that exceeds the maximum length. "
@@ -127,37 +130,6 @@ class BusinessDetailsInfo extends StatelessWidget {
   }
 }
 
-// class BusinessProfile {
-//   final String? street;
-//   final String? city;
-//   final String? stateAndProvince;
-//   final String? facebookUrl;
-//   final String? instagramUrl;
-//   final String? twitterUrl;
-//   final String? websiteUrl;
-//   final String? phoneNumber;
-//   final String? businessEmail;
-//   final String? description;
-//   final bool? isOpened;
-//   final List<String>? operationDays;
-
-//   BusinessProfile({
-//     this.street,
-//     this.city,
-//     this.stateAndProvince,
-//     this.facebookUrl,
-//     this.instagramUrl,
-//     this.twitterUrl,
-//     this.websiteUrl,
-//     this.phoneNumber,
-//     this.businessEmail,
-//     this.description,
-//     this.operationDays,
-//     this.isOpened,
-//   });
-// }
-
-
 class BusinessHoursStatus extends StatelessWidget {
   final bool isOpen;
   final String closingTime;
@@ -168,6 +140,15 @@ class BusinessHoursStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(isOpen ? 'Open * $closingTime' : 'Closed',);
   }
+  //  Widget build(BuildContext context) {
+  //   return Text(
+  //     isOpen ? 'Open until $closingTime' : 'Closed',
+  //     style: TextStyle(
+  //       color: isOpen ? Colors.green : Colors.red,
+  //       fontSize: 16,
+  //     ),
+  //   );
+  // }
 }
 
 class SocialLinks extends StatelessWidget {
@@ -218,36 +199,6 @@ class SocialLinks extends StatelessWidget {
     }
   }
 }
-
-// class ContactCard extends StatelessWidget {
-//   final String title;
-//   final String tagline;
-//   final IconData icon;
-//   final VoidCallback onClick;
-
-//   const ContactCard({
-//     super.key,
-//     required this.title,
-//     required this.tagline,
-//     required this.icon,
-//     required this.onClick,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onClick,
-//       child: Card(
-//         child: ListTile(
-//           leading: Icon(icon),
-//           title: Text(title),
-//           subtitle: Text(tagline),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 
 class ContactCard extends StatelessWidget {
   final String title;

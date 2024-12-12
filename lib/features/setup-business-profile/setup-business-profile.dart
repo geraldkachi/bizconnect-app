@@ -260,15 +260,20 @@ class _SetupBusinessProfilePageState
                                                 setupProfileWatch.selectStateAndProvince = '';
                                                 setupProfileWatch.selectCity = '';
                                                 
-                                            await setupProfileWatch.fetchStates(
-                                              setupProfileWatch.countries
-                                                .firstWhere((country) => country['name'] == value)['isoCode']!);
+                                           // await setupProfileWatch.fetchStates(
+                                           //  setupProfileWatch.countries
+                                           //     .firstWhere((country) => country['name'] == value)['isoCode']!);
+                                           // Get country ISO code and fetch states
+                                              final countryISO = setupProfileWatch.countries
+                                                  .firstWhere((country) => country['name'] == value)['isoCode'];
+                                              if (countryISO != null) {
+                                                await setupProfileWatch.fetchStates(countryISO);
+                                              }
                                                 
                                                 // if (countryIsoCode != null) {
                                                 //   await setupProfileWatch.fetchStates(countryIsoCode);
                                                 // }
                                                  print("Selected: $value");
-                                                // notifyListeners();
                                           },
                                           validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
                                           dropdownIcon: const Icon(
@@ -287,13 +292,13 @@ class _SetupBusinessProfilePageState
                                           popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
                                           onChanged: (value) async {
                                               setupProfileWatch.selectStateAndProvince =value;
+                                              setupProfileWatch.selectCity = ''; // Reset city selection                                              
                                               // await setupProfileWatch.fetchCities(
                                               //   setupProfileWatch.stateData.firstWhere((city) => city == value)[0]!,  // Pass selected state/province code
                                               // ); // Pass selected state/province code
                                              if (value != null && value.isNotEmpty) {
                                                 await setupProfileWatch.fetchCities(value);
                                               }
-                                              setupProfileWatch.selectCity = ''; // Reset city selection                                              
                                             dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
@@ -415,47 +420,6 @@ class _SetupBusinessProfilePageState
                                           },
                                         ),
 
-                                        //  DateTimeSlot(
-                                        //   dayLabel: "Day",
-                                        //   openTimeLabel: "Opening Time",
-                                        //   closeTimeLabel: "Closing Time",
-                                        //   dayController: setupProfileWatch.dayController,
-                                        //   openTimeController: setupProfileWatch.openTimeController,
-                                        //   closeTimeController: setupProfileWatch.closeTimeController,
-                                        //   onAddSlot: setupProfileWatch.handleAddSlot,
-                                        //   onDeleteSlot: setupProfileWatch.handleDeleteSlot,
-                                        // ),
-
-                                        //    DateTimeSlot(
-                                        //   dayLabel: "Day",
-                                        //   openTimeLabel: "Opening Time",
-                                        //   closeTimeLabel: "Closing Time",
-                                        //   dayController: setupProfileWatch.dayController,
-                                        //   openTimeController: setupProfileWatch.openTimeController,
-                                        //   closeTimeController: setupProfileWatch.closeTimeController,
-                                        //   onAddSlot: () => setupProfileWatch.handleAddSlot(context, setupProfileRead),
-                                        //   onDeleteSlot: () {}, // Empty here for individual slots
-                                        //   isDeleteButtonVisible: false,
-                                        // ),
-
-                                        // Display Slots
-                                        // if (setupProfileWatch.slots.isNotEmpty)
-                                        //   ListView.builder(
-                                        //     shrinkWrap: true,
-                                        //     physics: const NeverScrollableScrollPhysics(),
-                                        //     itemCount: setupProfileWatch.slots.length,
-                                        //     itemBuilder: (context, index) {
-                                        //       final slot = setupProfileWatch.slots[index];
-                                        //       return ListTile(
-                                        //         title: Text("${slot.day}: ${slot.openTime} - ${slot.closeTime}"),
-                                        //         trailing: IconButton(
-                                        //           icon: const Icon(Icons.delete, color: Colors.red),
-                                        //           onPressed: () => setupProfileRead.deleteSlot(slot),
-                                        //         ),
-                                        //       );
-                                        //     },
-                                        //   ),
-
                                         const SizedBox(height: 20),
                                         HorizontalDottedLine(),
                                         const SizedBox(height: 20),
@@ -547,8 +511,9 @@ class _SetupBusinessProfilePageState
                                           isLoading:
                                               setupProfileWatch.isLoading,
                                           onPressed: () async {
-                                            setupProfileRead
-                                                .setupProfileBusiness(context);
+                                            context.go('/main_screen');
+                                            // setupProfileRead
+                                            //     .setupProfileBusiness(context);
                                           },
                                         )
                                       ],

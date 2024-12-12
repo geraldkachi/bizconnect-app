@@ -34,13 +34,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   // List<Map<String, dynamic>> get businessCategories => _profileBusinessServiceProfileBusinessService.businessCategories;
   BusinessCategoriesModel categories = BusinessCategoriesModel();
   List<Map<String, dynamic>> categoryData = [];
-
-      //  RefreshController(initialRefresh: false);
-      //  RefreshController refreshController = RefreshController(initialRefresh: false);
-
-    // AdminModel get userData => _authService.userData ?? AdminModel();
-
-
   // Text controllers
   TextEditingController businessNameController = TextEditingController();
   TextEditingController businessEmailController = TextEditingController();
@@ -84,63 +77,20 @@ Future<void> fetchStates(String countryCode) async {
       final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
       final List<dynamic> data = json.decode(response);
       stateData = data.map((e) => e['name'].toString()).toList();
+      selectStateAndProvince = null; // Reset state selection
+      selectCity = null; // Reset city selection
+      cityData = []; // Clear city dropdown data
       notifyListeners();
     } catch (error) {
       print("Error fetching states: $error");
     }
   }
 
-  // Future<void> fetchCities(String stateCode) async {
-  //   try {
-  //     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-  //     final List<dynamic> data = json.decode(response);
-  //     cityData = data.map((e) => e['name'].toString()).toList();
-  //         // Check if the state/province code exists
-  //   if (data.containsKey(stateCode)) {
-  //     final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
-  //     // Extract the city names (assuming the city name is the first element in the array)
-  //     cityData = cityList.map((city) => city[0].toString()).toList();
-  //   } else {
-  //     cityData = []; // Clear city data if stateCode doesn't match
-  //   }
-  //     notifyListeners();
-  //   } catch (error) {
-  //     print("Error fetching cities: $error");
-  //   }
-  // }
-
-//   Future<void> fetchCities(String countryCode, String stateCode) async {
-//   try {
-//     // Construct the correct path for the cities JSON based on the country code
-//     final String response = await rootBundle.loadString('assets/data/locations/$countryCode/cities.json');
-    
-//     // Parse the JSON data
-//     final Map<String, dynamic> data = json.decode(response);
-    
-//     // Check if the state exists in the JSON file
-//     if (data.containsKey(stateCode)) {
-//       final List<dynamic> cityList = data[stateCode];
-      
-//       // Extract city names from the city list
-//       cityData = cityList.map((city) => city[0].toString()).toList();
-//     } else {
-//       cityData = []; // Clear city data if the state is not found
-//     }
-
-//     notifyListeners(); // Update the UI
-//   } catch (error) {
-//     print("Error fetching cities for $countryCode/$stateCode: $error");
-//     cityData = []; // Clear city data in case of an error
-//     notifyListeners();
-//   }
-// }
-
 // precious that
   Future<void> fetchCities(String stateCode) async {
   try {
     // Load the JSON file
     final String response = await rootBundle.loadString('assets/data/locations/cities.json');
-    // Decode it into a Map
     final Map<String, dynamic> data = json.decode(response);
 
     // Check if the state/province code exists

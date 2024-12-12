@@ -1,4 +1,5 @@
 import 'package:bizconnect/app/theme/colors.dart';
+import 'package:bizconnect/models/business%20details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -8,10 +9,7 @@ class MyBusinessDetailsCard extends StatelessWidget {
   final String? businessCategory;
   final String? croppedImageUrl;
   final int followersCount;
-  final List<String> orderedDays; // Assume orderedDays are strings for simplicity
-  // final Function() onShare;
-  // final Function() toggleDropdown;
-  // final bool isDropdownVisible;
+  final List<OperationDay> orderedDays; // Assume orderedDays are strings for simplicity
   final Function(BuildContext) onShare;
   final Function(BuildContext) onViewOpeningHours;
 
@@ -51,24 +49,24 @@ class MyBusinessDetailsCard extends StatelessWidget {
           // Business Info Section
           Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg',
-                  width: 66,
-                  height: 66,
-                  fit: BoxFit.cover,
-                )
-              ),
               // ClipRRect(
               //   borderRadius: BorderRadius.circular(10),
-              //   child: croppedImageUrl != null ? Image.network(
-              //     croppedImageUrl ?? 'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg',
+              //   child: Image.network(
+              //   'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg',
               //     width: 66,
               //     height: 66,
               //     fit: BoxFit.cover,
-              //   )  : Icon(Icons.people),
+              //   )
               // ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: (croppedImageUrl != null && croppedImageUrl!.isNotEmpty) ? Image.network(
+                  croppedImageUrl!,
+                  width: 66,
+                  height: 66,
+                  fit: BoxFit.cover,
+                )  : Icon(Icons.people), 
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -169,7 +167,7 @@ class MyBusinessDetailsCard extends StatelessWidget {
                   //   arguments: {'update': businessName},
                   // );
                    context.go(
-                    '/register-business',
+                    '/update-business-profile/',
                     extra: {'update': businessName}, // Pass arguments with 'extra'
                   );
                 },
