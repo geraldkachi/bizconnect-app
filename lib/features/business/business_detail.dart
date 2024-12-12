@@ -54,6 +54,31 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
 
   Future<void> handleSocialShare(String platform, String url) async {
     // Same as the handleSocialShare logic in the previous method
+
+  String encodeUrl(String url) => Uri.encodeComponent(url);
+
+  // Handles social share
+  // Future<void> handleSocialShare(String platform, String url) async {
+    final socialUrls = {
+      'message': 'sms:?body=Check out this business: ${encodeUrl(url)}',
+      'instagram': url,
+      'whatsapp': 'https://wa.me/?text=Check out this business: ${encodeUrl(url)}',
+      'x': 'https://x.com/intent/tweet?url=${encodeUrl(url)}&text=Check out this business',
+      'facebook': 'https://www.facebook.com/sharer/sharer.php?u=${encodeUrl(url)}',
+      'gmail': 'mailto:?subject=Check out this business&body=${encodeUrl(url)}',
+      'telegram': 'https://telegram.me/share/url?url=${encodeUrl(url)}&text=Check out this business',
+      'linkedin': 'https://www.linkedin.com/sharing/share-offsite/?url=${encodeUrl(url)}',
+    };
+
+    final shareUrl = socialUrls[platform];
+    if (platform == 'instagram') {
+      Clipboard.setData(ClipboardData(text: url));
+      await launchUrl(Uri.parse('https://www.instagram.com/'));
+    } else if (shareUrl != null) {
+      await launchUrl(Uri.parse(shareUrl));
+    }
+  
+  
   }
 
   showModalBottomSheet(
@@ -123,6 +148,7 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
               ),
               subtitle: Text(shortenUrl(shareableUrl, textConstraint)),
             ),
+             const SizedBox(height: 10),
 
             // Social Media Options
             GridView.count(
@@ -143,10 +169,11 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
               ].map((platform) {
                 return GestureDetector(
                   onTap: () => handleSocialShare(platform, shareableUrl),
-                  child: SvgPicture.asset('assets/share/$platform.svg'),
+                  child: SvgPicture.asset('assets/svg/social/$platform.svg', width: 40, height: 40,),
                 );
               }).toList(),
             ),
+             const SizedBox(height: 40),
           ],
         ),
       );
@@ -157,32 +184,32 @@ void showSocialShareModal(BuildContext context, String businessName, String shar
 
 
 void showShareModal(BuildContext context, String businessName, String shareableUrl, String imageUrl) {
-  const textConstraint = 90;
+  // const textConstraint = 90;
 
   // Encode URL for social sharing
-  String encodeUrl(String url) => Uri.encodeComponent(url);
+  // String encodeUrl(String url) => Uri.encodeComponent(url);
 
-  // Handles social share
-  Future<void> handleSocialShare(String platform, String url) async {
-    final socialUrls = {
-      'message': 'sms:?body=Check out this business: ${encodeUrl(url)}',
-      'instagram': url,
-      'whatsapp': 'https://wa.me/?text=Check out this business: ${encodeUrl(url)}',
-      'x': 'https://x.com/intent/tweet?url=${encodeUrl(url)}&text=Check out this business',
-      'facebook': 'https://www.facebook.com/sharer/sharer.php?u=${encodeUrl(url)}',
-      'gmail': 'mailto:?subject=Check out this business&body=${encodeUrl(url)}',
-      'telegram': 'https://telegram.me/share/url?url=${encodeUrl(url)}&text=Check out this business',
-      'linkedin': 'https://www.linkedin.com/sharing/share-offsite/?url=${encodeUrl(url)}',
-    };
+  // // Handles social share
+  // Future<void> handleSocialShare(String platform, String url) async {
+  //   final socialUrls = {
+  //     'message': 'sms:?body=Check out this business: ${encodeUrl(url)}',
+  //     'instagram': url,
+  //     'whatsapp': 'https://wa.me/?text=Check out this business: ${encodeUrl(url)}',
+  //     'x': 'https://x.com/intent/tweet?url=${encodeUrl(url)}&text=Check out this business',
+  //     'facebook': 'https://www.facebook.com/sharer/sharer.php?u=${encodeUrl(url)}',
+  //     'gmail': 'mailto:?subject=Check out this business&body=${encodeUrl(url)}',
+  //     'telegram': 'https://telegram.me/share/url?url=${encodeUrl(url)}&text=Check out this business',
+  //     'linkedin': 'https://www.linkedin.com/sharing/share-offsite/?url=${encodeUrl(url)}',
+  //   };
 
-    final shareUrl = socialUrls[platform];
-    if (platform == 'instagram') {
-      Clipboard.setData(ClipboardData(text: url));
-      await launchUrl(Uri.parse('https://www.instagram.com/'));
-    } else if (shareUrl != null) {
-      await launchUrl(Uri.parse(shareUrl));
-    }
-  }
+  //   final shareUrl = socialUrls[platform];
+  //   if (platform == 'instagram') {
+  //     Clipboard.setData(ClipboardData(text: url));
+  //     await launchUrl(Uri.parse('https://www.instagram.com/'));
+  //   } else if (shareUrl != null) {
+  //     await launchUrl(Uri.parse(shareUrl));
+  //   }
+  // }
 
   showModalBottomSheet(
     context: context,
@@ -214,25 +241,26 @@ void showShareModal(BuildContext context, String businessName, String shareableU
             Align(
               alignment: Alignment.topCenter,
               child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-            SizedBox(width: 20),
+              children: const [
+            // SizedBox(width: 20),
             Text(
               "Share your business",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: red),
             ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, size: 20),
-              ),
+              // IconButton(
+              //   onPressed: () => Navigator.pop(context),
+              //   icon: const Icon(Icons.close, size: 20),
+              // ),
             ],),
             ),
 
+            SizedBox(height: 10),
             // Copy Link Button
             ListTile(
-              leading: SvgPicture.asset('assets/icons/get-clickable.svg'),
-              title: const Text("Get clickable link"),
+              leading: SvgPicture.asset('assets/svg/social/get-link.svg'),
+              title: const Text("Get clickable link", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: red),),
               onTap: () {
                 Clipboard.setData(ClipboardData(text: shareableUrl));
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -241,15 +269,18 @@ void showShareModal(BuildContext context, String businessName, String shareableU
               },
             ),
 
+            SizedBox(height: 10),
             // Share via Social Media
             ListTile(
-              leading: SvgPicture.asset('assets/icons/share-share.svg'),
-              title: const Text("Share via social media"),
+              leading: SvgPicture.asset('assets/svg/social/via-social.svg'),
+              title: const Text("Share via social media",  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: red),),
               onTap: () {
                 Navigator.pop(context);
                 showSocialShareModal(context, businessName, shareableUrl, imageUrl);
               },
             ),
+             SizedBox(height: 40),
+
           ],
         ),
       );
@@ -292,8 +323,6 @@ void showOpeningHoursModal(BuildContext context, List<OperationDay> orderedDays)
     },
   );
 }
-
-
 
     return Scaffold(
       backgroundColor: grey50,
@@ -356,11 +385,10 @@ void showOpeningHoursModal(BuildContext context, List<OperationDay> orderedDays)
                                 orderedDays: profile.operationDays ?? [],
                                 // onShare: showShareModal, // help ensure the reight provides
                                 onShare: (context) {
-                                final shareableUrl = 'https://your-business-url.com/${profile.uuid}'; // Construct the URL to share
+                                final shareableUrl = 'https://bizconnect24.com/business/${profile.uuid}'; // Construct the URL to share
                                 final businessName = profile.name ?? 'Na';
                                 final imageUrl = constructBizImgUrl(profile.croppedImageUrl, type: 'meta') ??
                                     'https://res.cloudinary.com/drwt2qqf9/image/upload/c_fill,h_500,w_500,q_auto/v1721488956/default-img_vhxk4d.jpg';
-                                
                                 showShareModal(context, businessName, shareableUrl, imageUrl);
                               },
                                 onViewOpeningHours: (context) =>
