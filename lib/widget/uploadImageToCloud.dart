@@ -18,7 +18,7 @@ class UploadSignature {
   factory UploadSignature.fromJson(Map<String, dynamic> json) {
     return UploadSignature(
       signature: json['signature'],
-      timestamp: json['timestamp'],
+      timestamp: json['timestamp'], 
     );
   }
 }
