@@ -161,14 +161,9 @@ class MyBusinessDetailsCard extends StatelessWidget {
               ],),
               ElevatedButton(
                 onPressed: () {
-                  // Navigator.pushNamed(
-                  //   context,
-                  //   '/register-business',
-                  //   arguments: {'update': businessName},
-                  // );
                    context.go(
-                    '/update-business-profile/',
-                    extra: {'update': businessName}, // Pass arguments with 'extra'
+                    '/main_screen/update_business_profile',
+                    // extra: {'update': businessName}, // Pass arguments with 'extra'
                   );
                 },
                 style: ElevatedButton.styleFrom(

@@ -107,7 +107,7 @@ class _EntryPageState extends State<EntryPage> {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   context.go(
-                                      '/login'); // Navigate to the signup page
+                                      '/login'); // Navigate to the login page
                                 },
                             ),
                           ],

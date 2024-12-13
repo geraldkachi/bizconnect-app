@@ -97,6 +97,7 @@ flutter:
     - assets/svg/social/
     - assets/png/
     - .env
+    - assets/data/locations/
     - assets/data/locations/NG/states.json
     - assets/data/locations/US/states.json
     - assets/data/locations/CA/states.json

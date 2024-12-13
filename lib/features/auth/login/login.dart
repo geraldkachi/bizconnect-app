@@ -168,8 +168,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        // context.go('/signup');
-                                        context.go('/main_screen');
+                                        context.go('/signup');
+                                        // context.go('/main_screen');
                                       },
                                   ),
                                 ],

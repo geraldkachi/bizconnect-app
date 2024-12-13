@@ -143,12 +143,6 @@ class BusinessCard extends StatelessWidget {
                     onPressed: () {
                        final uuid = profile.uuid;
                         context.go('/main_screen/business_details/$uuid');
-                      // context.go('/main_screen/business_details');
-                      // Navigator.pushNamed(
-                      //   context,
-                      //   '/register-business',
-                      //   arguments: {'update': profile.uuid},
-                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE7F2FF),

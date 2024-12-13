@@ -35,9 +35,7 @@ class BusinessDetailsInfo extends StatelessWidget {
     final socialLinks = constructSocialLinks();
      Future<void> _launchURL(String url) async {
       final Uri uri = Uri.parse(url);
-      // if (await canLaunch(uri.toString())) { canLaunchUrl
       if (await canLaunchUrl(uri)) { 
-        // await launch(uri.toString()); launchUrl
         await launchUrl(uri); 
       } else {
         throw 'Could not launch $url';

@@ -12,6 +12,7 @@ import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:bizconnect/service/toast_service.dart';
 import 'package:bizconnect/utils/business_profile_data.dart';
 import 'package:bizconnect/widget/datetime_slot.dart';
+import 'package:dio/dio.dart';
 // import 'package:bizconnect/service/profile_business_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,38 +72,142 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   File? selectedImage;
   String? fileName;
 
-// precious that works
-Future<void> fetchStates(String countryCode) async {
-    try {
-      final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
-      final List<dynamic> data = json.decode(response);
-      stateData = data.map((e) => e['name'].toString()).toList();
-      selectStateAndProvince = null; // Reset state selection
-      selectCity = null; // Reset city selection
-      cityData = []; // Clear city dropdown data
-      notifyListeners();
-    } catch (error) {
-      print("Error fetching states: $error");
+  // Validation for required fields
+  bool validateRequiredFields(BuildContext context, Map<String, dynamic> values) {
+    bool isError = false;
+
+    // Example required fields
+    List<String> requiredFields = [
+      "businessName",
+      "description",
+      "businessCategoryUuid",
+      "country",
+      "stateAndProvince",
+      "city",
+      "street",
+      "postalCode",
+  ];
+    for (var field in requiredFields) {
+      if (values[field] == null || values[field].isEmpty) {
+        _toastService.showToast(
+          context,
+          title: "Error",
+          subTitle: 'Please fill all required fields. Missing: $field',
+        );
+        isError = true;
+      }
     }
+
+    // Check operational days (example logic)
+    if (values['operationDays'] != null) {
+      for (var day in values['operationDays']) {
+        if (day['openTime'] == null || day['closeTime'] == null) {
+          _toastService.showToast(context, title: 'Error', subTitle: 'Opening and closing time are required.');
+          isError = true;
+        }
+        if (day['openTime'] == day['closeTime']) {
+          _toastService.showToast(
+            context, title: 'Error', subTitle: 'Opening and closing time cannot be the same.',
+          );
+          isError = true;
+        }
+      }
+    }
+
+    return isError;
   }
 
-// precious that
-  Future<void> fetchCities(String stateCode) async {
+  // Handle navigation to the next tab
+  void handleNextButton(BuildContext context, Map<String, dynamic> values) {
+    if (!validateRequiredFields(context, values)) {
+      prevIndex = 1; 
+      notifyListeners();
+    }
+  }
+  
+// precious that works
+// Future<void> fetchStates(String countryCode) async {
+//     try {
+//       final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
+//       final List<dynamic> data = json.decode(response);
+//       stateData = data.map((e) => e['name'].toString()).toList();
+//       selectStateAndProvince = null; // Reset state selection
+//       selectCity = null; // Reset city selection
+//       cityData = []; // Clear city dropdown data
+//       notifyListeners();
+//     } catch (error) {
+//       print("Error fetching states: $error");
+//     } finally {
+//       notifyListeners();
+//     }
+//   }
+
+
+Future<void> fetchStates(String countryCode) async {
   try {
-    // Load the JSON file
-    final String response = await rootBundle.loadString('assets/data/locations/cities.json');
+    // Load the JSON data from the local assets based on the country code
+    final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
+    final List<dynamic> data = json.decode(response);
+
+    // Map the states from the loaded data to a list of state names
+    stateData = data.map((e) => e['name'].toString()).toList();
+
+    // Reset selections
+    selectStateAndProvince = null; // Reset state selection
+    selectCity = null; // Reset city selection
+    cityData = []; // Clear city dropdown data
+
+    // Notify listeners (assuming you're using a provider or state management)
+    notifyListeners();
+  } catch (error) {
+    print("Error fetching states: $error");
+  }
+}
+
+// precious that
+//   Future<void> fetchCities(String stateCode) async {
+//   try {
+//     // Load the JSON file
+//     final String response = await rootBundle.loadString('assets/data/locations/cities.json');
+//     final Map<String, dynamic> data = json.decode(response);
+
+//     // Check if the state/province code exists
+//     if (data.containsKey(stateCode)) {
+//       final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
+//       // Extract the city names (assuming the city name is the first element in the array)
+//       cityData = cityList.map((city) => city[0].toString()).toList();
+//     } else {
+//       cityData = []; // Clear city data if stateCode doesn't match
+//     }
+
+//     notifyListeners(); // Notify UI to update
+//   } catch (error) {
+//     print("Error fetching cities for $stateCode: $error");
+//   }
+// }
+
+
+Future<void> fetchCities(String stateCode) async {
+  try {
+    // Load the JSON data for cities in the given state
+    final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
     final Map<String, dynamic> data = json.decode(response);
 
-    // Check if the state/province code exists
+    // Check if the stateCode exists in the data
     if (data.containsKey(stateCode)) {
-      final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
-      // Extract the city names (assuming the city name is the first element in the array)
+      // Extract the city names under the given state code
+      final List<dynamic> cityList = data[stateCode];
+      print("City list for $stateCode: $cityList");
+
+      // Map cities to a list of city names
       cityData = cityList.map((city) => city[0].toString()).toList();
+       print("Mapped cityData: $cityData");
     } else {
-      cityData = []; // Clear city data if stateCode doesn't match
+      cityData = []; // Clear city data if no cities are found for the given state
     }
 
-    notifyListeners(); // Notify UI to update
+    // Notify listeners (assuming you're using a provider or state management)
+    notifyListeners();
   } catch (error) {
     print("Error fetching cities for $stateCode: $error");
   }
@@ -113,46 +218,93 @@ void togglePassword() {
   notifyListeners();
 }
 
+// image
 
-  Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+Future<void> pickImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
-        selectedImage = File(image.path);
-        fileName = image.name;
-        notifyListeners();
-      await cropImage(); // Prompt user to crop immediately after selecting an image
-    }
+  if (image != null) {
+    selectedImage = File(image.path);
+    fileName = image.name;
+    notifyListeners();
+    await cropImage(); // Immediately prompt the user to crop the image
   }
+}
 
-   Future<void> cropImage() async {
-    if (selectedImage == null) return;
-     notifyListeners();
+Future<void> cropImage() async {
+  if (selectedImage == null) return;
 
-    final croppedImage = await ImageCropper().cropImage(
-      sourcePath: selectedImage!.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Crop Image',
-          toolbarColor: Colors.blue,
-          toolbarWidgetColor: Colors.white,
-          activeControlsWidgetColor: Colors.blue,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
-        ),
-        IOSUiSettings(
-          title: 'Crop Image',
-        ),
-      ],
-    );
+  final croppedImage = await ImageCropper().cropImage(
+    sourcePath: selectedImage!.path,
+    uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: 'Crop Image',
+        toolbarColor: Colors.blue,
+        toolbarWidgetColor: Colors.white,
+        activeControlsWidgetColor: Colors.blue,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: false,
+      ),
+      IOSUiSettings(
+        title: 'Crop Image',
+      ),
+    ],
+  );
 
-    if (croppedImage != null) {
-        selectedImage = File(croppedImage.path);
-        fileName = croppedImage.path.split('/').last;
-    }
-     notifyListeners();
+  if (croppedImage != null) {
+    selectedImage = File(croppedImage.path);
+    // where would i get croppedImageMetadata
+    // croppedImageMetadata = {
+    //   'width': croppedImage.width,
+    //   'height': croppedImage.height,
+    // };
+    notifyListeners();
   }
+}
+
+
+  // Future<void> pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  //   if (image != null) {
+  //       selectedImage = File(image.path);
+  //       fileName = image.name;
+  //       notifyListeners();
+  //     await cropImage(); // Prompt user to crop immediately after selecting an image
+  //   }
+  // }
+ 
+
+
+  //  Future<void> cropImage() async {
+  //   if (selectedImage == null) return;
+  //    notifyListeners();
+
+  //   final croppedImage = await ImageCropper().cropImage(
+  //     sourcePath: selectedImage!.path,
+  //     uiSettings: [
+  //       AndroidUiSettings(
+  //         toolbarTitle: 'Crop Image',
+  //         toolbarColor: Colors.blue,
+  //         toolbarWidgetColor: Colors.white,
+  //         activeControlsWidgetColor: Colors.blue,
+  //         initAspectRatio: CropAspectRatioPreset.original,
+  //         lockAspectRatio: false,
+  //       ),
+  //       IOSUiSettings(
+  //         title: 'Crop Image',
+  //       ),
+  //     ],
+  //   );
+
+  //   if (croppedImage != null) {
+  //       selectedImage = File(croppedImage.path);
+  //       fileName = croppedImage.path.split('/').last;
+  //   }
+  //    notifyListeners();
+  // }
 
 
   void deleteImage() {
@@ -203,6 +355,11 @@ void togglePassword() {
     notifyListeners();
   }
 
+  Future<String?> encodeImage(File image) async {
+  final bytes = await image.readAsBytes();
+  return base64Encode(bytes);
+}
+
 
   Future<void> setupProfileBusiness(BuildContext context) async {
       // router.go('/main_screen');
@@ -213,6 +370,66 @@ void togglePassword() {
 
     if (!formKey.currentState!.validate()) return;
 
+    try {
+      isLoading = true;
+      notifyListeners();
+
+       final payload = {
+      'name': businessNameController.text.trim(),
+      'description': describeYourBusinessController.text.trim(),
+      'businessCategoryUuid': selectBusinessUuid,
+      'country': selectedBusinessCountry,
+      'stateAndProvince': selectStateAndProvince,
+      'city': selectCity,
+      // 'city': "saint gerald",
+      'street': streetController.text.trim(),
+      'postalCode': zipCodePostalCodeController.text.trim(),
+      'phoneNumber': businessPhoneNumberController.text.trim(),
+      'businessEmail': businessEmailController.text.trim(),
+      'operationDays': slots.map((slot) => slot.toJson()).toList(),
+      'websiteUrl': websiteController.text.trim(),
+      'linkedinUrl': linkedinUrlController.text.trim(),
+      'instagramUrl': instagramController.text.trim(),
+      'facebookUrl': facebookController.text.trim(),
+      'image': selectedImage != null ? await encodeImage(selectedImage!) : null,
+      // 'image': selectedImage != null ? MultipartFile.fromFileSync(selectedImage!.path, filename: fileName) : null,
+      // 'image': selectedImage, // Placeholder for an uploaded business image
+      'cloudinaryConfig': null, // Placeholder for cloud storage configuration
+      'streetCoordinates': {
+        'lat': 0.0, 
+        'lng': 0.0,
+      },
+    };
+    log('payload setup $payload');
+
+      // await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
+
+      // Clear all fields
+      clearAllFields();
+      // router.go('/main_screen');
+    } on BizException catch (e) {
+      debugPrint(e.message);
+      _toastService.showToast(context, title: 'Error', subTitle: e.message ?? 'Unknown error');
+    } catch (e) {
+      // debugPrint(e);
+      _toastService.showToast(context, title: 'Error', subTitle: 'Something went wrong.');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfileBusiness(BuildContext context) async {
+      // router.go('/main_screen');
+    if (slots.isEmpty) {
+      _toastService.showToast(context, title: 'Error', subTitle: 'You must add at least one slot.');
+      return;
+    }
+
+    if (!formKey.currentState!.validate()) return;
+    
+    log('selectedImage $selectedImage');
+    log('fileName $fileName');
     try {
       isLoading = true;
       notifyListeners();
@@ -242,7 +459,7 @@ void togglePassword() {
       },
     };
 
-      await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
+      await _profileBusinessServiceProfileBusinessService.updateBusiness(payload, '');
 
       // Clear all fields
       clearAllFields();

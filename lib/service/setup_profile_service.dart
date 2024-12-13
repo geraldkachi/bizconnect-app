@@ -11,9 +11,6 @@ import 'package:flutter/foundation.dart';
 
 class ProfileBusinessService {
   final NetworkService _networkService = getIt<NetworkService>();
-  // final SecureStorageService _secureStorageService =
-  //     getIt<SecureStorageService>();
-  // CategoriesModel? _transactionList;
 
   List<Map<String, dynamic>> _businessCategories = [];
   List<Map<String, dynamic>> get businessCategories => _businessCategories;
@@ -34,30 +31,33 @@ class ProfileBusinessService {
       rethrow;
     }
     return;
-    // return userData;
+  }
+
+  Future<void> updateBusiness(Map<String, dynamic> businessPayload, String id) async {
+    try {
+      debugPrint('Raw payload $businessPayload');
+
+      final response = await _networkService.post(
+        '/api/business-profile/update/$id',
+        data: jsonEncode(businessPayload),
+      );
+      debugPrint('response update profile $response');
+    } on BizException {
+      rethrow;
+    } catch (e) {
+      debugPrint('response error $e');
+      rethrow;
+    }
+    return;
   }
 
   Future<BusinessCategoriesModel> allBusinessCategories() async {
     try {
-      final response =
-          await _networkService.get('/api/business-profile/categories');
-
-      // Decode the response into a JSON map
+      final response = await _networkService.get('/api/business-profile/categories');
       final Map<String, dynamic> jsonDecodedPayload = response;
-
-      // Validate that 'data' and 'businessCategories' exist and are of the correct type
       if (jsonDecodedPayload['data'] != null) {
-        //  _businessCategories = jsonDecodedPayload['data']['businessCategories'];
-
-        // Debugging output
         print('Fetched Categories: $jsonDecodedPayload');
-
-        // Map the JSON to BusinessCategoriesModel objects
         return BusinessCategoriesModel.fromJson(jsonDecodedPayload);
-
-        // businessCategories
-        //     .map((json) => BusinessCategoriesModel.fromJson(json))
-        //     .toList();
       } else {
         throw BizException(message: 'Invalid response structure');
       }
@@ -70,16 +70,9 @@ class ProfileBusinessService {
 
   Future<BusinessCategoriesModel> allBusinessList() async {
     try {
-      final response =
-          await _networkService.get('/api/business-profile/list');
-      // Decode the response into a JSON map
+      final response = await _networkService.get('/api/business-profile/list');
       final Map<String, dynamic> jsonDecodedPayload = response;
-
-      // Validate that 'data' and 'businessCategories' exist and are of the correct type
       if (jsonDecodedPayload['data'] != null) {
-        //  _businessCategories = jsonDecodedPayload['data']['businessCategories'];
-
-        // Debugging output
         print('Fetched Business Listing: $jsonDecodedPayload');
         return BusinessCategoriesModel.fromJson(jsonDecodedPayload);
       } else {

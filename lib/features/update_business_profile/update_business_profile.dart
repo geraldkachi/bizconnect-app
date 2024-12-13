@@ -1,54 +1,56 @@
-// ignore_for_file: prefer_const_constructors
-import 'package:bizconnect/data/country_data.dart';
+import 'package:bizconnect/app/theme/colors.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:bizconnect/utils/validator.dart';
 import 'package:bizconnect/widget/button.dart';
 import 'package:bizconnect/widget/datetime_slot.dart';
+import 'package:bizconnect/widget/dotted_line.dart';
+import 'package:bizconnect/widget/image_file_upload.dart';
 import 'package:bizconnect/widget/input.dart';
+import 'package:bizconnect/widget/select_dropdown.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bizconnect/widget/select_dropdown.dart';
-import 'package:bizconnect/widget/image_file_upload.dart';
-import 'package:bizconnect/widget/dotted_line.dart';
 
-class SetupBusinessProfilePage extends ConsumerStatefulWidget {
-  const SetupBusinessProfilePage({super.key});
+
+class UpdateBusinessProfile extends ConsumerStatefulWidget {
+  const UpdateBusinessProfile({super.key});
 
   @override
-  ConsumerState<SetupBusinessProfilePage> createState() =>
-      _SetupBusinessProfilePageState();
+  ConsumerState<UpdateBusinessProfile> createState() => _UpdateBusinessProfileState();
 }
 
-class _SetupBusinessProfilePageState
-    extends ConsumerState<SetupBusinessProfilePage>
-    with SingleTickerProviderStateMixin {
+
+class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  with SingleTickerProviderStateMixin {
   final currentYear = DateTime.now().year;
-  // final dropDownKey = GlobalKey<DropdownSearchState<String>>();
   final GlobalKey<DropdownSearchState<String>> dropDownKey =
       GlobalKey<DropdownSearchState<String>>();
-
-     @override
+  @override
   void initState() {
     super.initState();
-    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final businessProfileProvider = ref.read(setupBusinessProfileViewModelProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // This will run after the build method is completed     
-        setupProfileRead.fetchCategories(context);
+        businessProfileProvider.fetchCategories(context);
     // _loadCategories();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
+    //  final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
+    // final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final businessProfile = ref.watch(setupBusinessProfileViewModelProvider);
+
+  
+  final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
     final setupProfileRead =
         ref.read(setupBusinessProfileViewModelProvider.notifier);
 
     return Scaffold(
+            appBar: AppBar(title: Text('Update Business Profile')),
+
       body: Padding(
         padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
         child: Form(
@@ -86,36 +88,20 @@ class _SetupBusinessProfilePageState
                   ),
                   child: Column(
                     children: [
+                      // Tabs Section
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 0.0, vertical: 10.0),
+                      //   child:
                          Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: List.generate(2, (index) {
-                            final isSelected = setupProfileWatch.prevIndex == index;
                             return Expanded(
                               child: GestureDetector(
                                   onTap: () {
-                                    // setState(() {
-                                    //   setupProfileRead.prevIndex = index;
-                                    // });
-                                      if (index == 1 && setupProfileWatch.prevIndex == 0) {
-                                      // Validate and move to next tab
-                                      setupProfileRead.handleNextButton(context, {
-                                        'businessName': setupProfileWatch.businessNameController.text,
-                                        'description': setupProfileWatch.describeYourBusinessController.text,
-                                        "": setupProfileWatch.selectedBusinessCategory,
-                                        'businessCategoryUuid': setupProfileWatch.selectBusinessUuid,
-                                        'country': setupProfileWatch.selectedBusinessCountry,
-                                        'stateAndProvince': setupProfileWatch.selectStateAndProvince,
-                                        'city': "saint gerald",
-                                        'street': setupProfileWatch.streetController.text.trim(),
-                                        'postalCode': setupProfileWatch.zipCodePostalCodeController.text.trim(),
-                                        'operationDays': [
-                                          {'openTime': '09:00', 'closeTime': '17:00'}
-                                        ],
-                                      });
-                                    } else {
+                                    setState(() {
                                       setupProfileRead.prevIndex = index;
-                                      setupProfileRead.notifyListeners();
-                                    }
+                                    });
                                   },
                                   child: Container(
                                     color: Colors.transparent, // Ensures the whole area is tappable
@@ -123,7 +109,7 @@ class _SetupBusinessProfilePageState
                                     child: Column(
                                       children: [
                                         Text(
-                                          index == 0 ? "" : "",
+                                          index == 0 ? "Business Profile" : "Operations Info",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -253,66 +239,110 @@ class _SetupBusinessProfilePageState
                                         // Country
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          items: [],
+                                          // dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          asyncItems: (String filter) async {
-                                            return setupProfileWatch.countries
-                                              .where((country) => country['name'].toString().toLowerCase().contains(filter.toLowerCase()))
+                                          items: [],
+                                          // items: setupProfileWatch.countries.map((e) => e['name'] as String).toList(),
+                                        asyncItems: (String filter) async {
+                                          // Dynamically fetch and filter countries
+                                          return setupProfileWatch.countries
+                                              .where((country) => country['name']
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains(filter.toLowerCase()))
                                               .map((e) => e['name'] as String)
                                               .toList();
-                                          },
+                                        },
+                                          popupProps: PopupProps.menu(
+                                              // disabledItemFn: (item) => item == 'Item 3',
+                                              fit: FlexFit.tight,
+                                              isFilterOnline: true
+                                              ),
                                           selectedItem: setupProfileWatch.selectedBusinessCountry,
                                           onChanged: (value) async {
                                             setupProfileWatch.selectedBusinessCountry = value;
-                                            setupProfileWatch.selectStateAndProvince = null;
-                                            setupProfileWatch.selectCity = null;
-
-                                            final countryISO = setupProfileWatch.countries
-                                                .firstWhere((country) => country['name'] == value)['isoCode'];
-                                            if (countryISO != null) {
-                                              await setupProfileWatch.fetchStates(countryISO);
-                                            }
-                                            print("Selected: $value");
+                                                setupProfileWatch.selectStateAndProvince = '';
+                                                setupProfileWatch.selectCity = '';
+                                                
+                                           // await setupProfileWatch.fetchStates(
+                                           //  setupProfileWatch.countries
+                                           //     .firstWhere((country) => country['name'] == value)['isoCode']!);
+                                           // Get country ISO code and fetch states
+                                              final countryISO = setupProfileWatch.countries
+                                                  .firstWhere((country) => country['name'] == value)['isoCode'];
+                                              if (countryISO != null) {
+                                                await setupProfileWatch.fetchStates(countryISO);
+                                              }
+                                                
+                                                // if (countryIsoCode != null) {
+                                                //   await setupProfileWatch.fetchStates(countryIsoCode);
+                                                // }
+                                                 print("Selected: $value");
                                           },
                                           validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
-                                          dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                                          dropdownIcon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: grey400),
                                           showSearchBox: true,
                                         ),
-
+                                        // State and Province
+                                        const SizedBox(height: 10),
                                         DropdownField<String>(
+                                          // dropdownKey: dropDownKey,
                                           labelText: "State and Province",
                                           hintText: "State and Province",
                                           items: setupProfileWatch.stateData,
                                           selectedItem: setupProfileWatch.selectStateAndProvince,
+                                          popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
                                           onChanged: (value) async {
-                                            setupProfileWatch.selectStateAndProvince = value;
-                                            setupProfileWatch.selectCity = ''; // Reset city selection
-
-                                            if (value != null && value.isNotEmpty) {
-                                              await setupProfileWatch.fetchCities(value);
-                                            }
+                                              setupProfileWatch.selectStateAndProvince =value;
+                                              setupProfileWatch.selectCity = ''; // Reset city selection                                              
+                                              // await setupProfileWatch.fetchCities(
+                                              //   setupProfileWatch.stateData.firstWhere((city) => city == value)[0]!,  // Pass selected state/province code
+                                              // ); // Pass selected state/province code
+                                             if (value != null && value.isNotEmpty) {
+                                                await setupProfileWatch.fetchCities(value);
+                                              }
+                                            dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },
                                           validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
-                                          dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                                          dropdownIcon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: grey400),
                                           showSearchBox: true,
                                         ),
-
+                                        // City
+                                        const SizedBox(height: 10),
                                         DropdownField<String>(
+                                          // dropdownKey: dropDownKey,
                                           labelText: "City",
                                           hintText: "Select city",
                                           items: setupProfileWatch.cityData,
+                                          popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
+                                          // popupProps: PopupProps.modalBottomSheet(fit: FlexFit.tight,  isFilterOnline: true,),
                                           selectedItem: setupProfileWatch.selectCity,
-                                          onChanged: (value) {
-                                            setupProfileWatch.selectCity = value;
-                                            print("Selected City: $value");
+                                         onChanged: (value) async {
+                                              setupProfileWatch.selectCity = value;
+                                            dropDownKey.currentState?.changeSelectedItem(value);
+                                            print("Selected: $value");
                                           },
                                           validator: (value) => (value == null || value.isEmpty) ? "This city field is required" : null,
-                                          dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                                          dropdownIcon: const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: grey400),
                                           showSearchBox: true,
                                         ),
-                                      
+                                        const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .streetController,
+                                          labelText: "Street",
+                                          hintText: "Enter Street name",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                        ),
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch
@@ -486,8 +516,9 @@ class _SetupBusinessProfilePageState
                                           isLoading:
                                               setupProfileWatch.isLoading,
                                           onPressed: () async {
-                                            setupProfileRead
-                                                .setupProfileBusiness(context);
+                                            // context.go('/main_screen');
+                                            // setupProfileRead
+                                            //     .setupProfileBusiness(context);
                                           },
                                         )
                                       ],

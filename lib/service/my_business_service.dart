@@ -38,21 +38,14 @@ class MyBusinessService {
       throw BizException(message: 'Unable to fetch business listing');
     }
   }
-// single business 
+  
 // Fetches single business details by ID
   Future<BusinessProfileDetailModel> getBusinessDetails(String id,) async {
     try {
-      final response = await _networkService
-          .get('/api/business-profile/list/$id?tid=${DateTime.now().millisecondsSinceEpoch}');
-
-      // Decode the response into a JSON map
+      final response = await _networkService.get('/api/business-profile/list/$id?tid=${DateTime.now().millisecondsSinceEpoch}');
       final Map<String, dynamic> jsonDecodedPayload = response;
-
-      // log('business details $response');
-      // Validate that 'data' and 'details' exist and are of the correct type
       if (jsonDecodedPayload['data'] != null &&
           jsonDecodedPayload['data']['details'] != null) {
-        // log('Fetched Business Details: ${jsonDecodedPayload['data']['details']}');
         return BusinessProfileDetailModel.fromJson(jsonDecodedPayload['data']['details']);
       } else {
         throw BizException(message: 'Invalid response structure');

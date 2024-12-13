@@ -5,12 +5,11 @@ import 'package:bizconnect/features/auth/login/login.dart';
 import 'package:bizconnect/features/auth/sign_up/sign_up.dart';
 import 'package:bizconnect/features/auth/verify-account/verify-account.dart';
 import 'package:bizconnect/features/business/business_detail.dart';
-import 'package:bizconnect/features/business/widget/my_business_detail_info.dart';
+import 'package:bizconnect/features/update_business_profile/update_business_profile.dart';
 import 'package:bizconnect/features/entry/entry.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-profile.dart';
 import 'package:bizconnect/features/splashscreen/splashscreen.dart';
 import 'package:bizconnect/features/main_screen/main_page.dart';
-import 'package:bizconnect/models/my_business_list.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
@@ -63,14 +62,18 @@ final GoRouter router = GoRouter(
             }, 
             routes: [
               // GoRoute(
-              //   path: 'record_inflow_payment',
-              //   builder: (context, state) => RecordInflowPayment(),
+              //   path: 'update-business-profile',
+              //   builder: (context, state) => UpdateBusinessProfile(),
               // ),
               // GoRoute(
               //   path: 'record_expense_payment',
               //   builder: (context, state) => RecordExpensePayment(),
               // ),
             ]),
+            GoRoute(
+                path: 'update_business_profile',
+                builder: (context, state) => UpdateBusinessProfile(),
+              ),
         // GoRoute(
         //   path: 'add_admin',
         //   builder: (context, state) => AddAdminPage(),

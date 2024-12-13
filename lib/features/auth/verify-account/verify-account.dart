@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/service/auth_service.dart';
+import 'package:bizconnect/utils/validator.dart';
 import 'package:bizconnect/widget/button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bizconnect/app/theme/colors.dart';
+import 'package:bizconnect/widget/input.dart';
 
 
 class VerifyPage extends ConsumerStatefulWidget {
@@ -19,6 +21,7 @@ class VerifyPage extends ConsumerStatefulWidget {
 
 class _VerifyPageState extends ConsumerState<VerifyPage> {
   final AuthService _authService = getIt<AuthService>();
+  TextEditingController otp = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +131,35 @@ class _VerifyPageState extends ConsumerState<VerifyPage> {
                                   color: red,
                                   fontWeight: FontWeight.w500),
                             ),
+
+                           const SizedBox(height: 10),
+                            InputField(
+                            controller: otp,
+                            labelText: "OTP",
+                            hintText: "000-000",
+                            validator: (value) =>
+                                Validator.validate6Otp(value),
+                            suffixIcon: InkWell(
+                                onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text("Resend: 04:32", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),),
+                              ),
+                            ),
+                          ),
+                           const SizedBox(height: 20),
+                          Button(
+                            text: "Verify",
+                            isLoading: false,
+                            onPressed: () async {
+                              // if (otp.text.isEmpty) {
+                              //   showToast("Please enter OTP");
+                              //   return;
+                              // }
+                              //  _secureStorageService.deleteAccessToken();
+                              // loginRead.login(context);
+                            },
+                          ),
                           ],
                         ),
                       ),

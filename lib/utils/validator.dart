@@ -62,6 +62,15 @@ class Validator {
       return null;
     }
   }
+  static String? validate6Otp(String? s) {
+    if (StringUtils.isEmpty(s)) {
+      return "Field cannot be empty";
+    } else if (s!.length < 6) {
+      return "Field cannot be less than 11 digits";
+    } else {
+      return null;
+    }
+  }
 
   static String? validate10Digits(String? s) {
     if (StringUtils.isEmpty(s)) {

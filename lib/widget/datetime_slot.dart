@@ -245,65 +245,6 @@ class SlotItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          // Close Time
-          // Expanded(
-          //   child: TextFormField(
-          //     controller: closeTimeController,
-          //     readOnly: true,
-          //     decoration:  InputDecoration(
-          //       labelText: 'Closing hour',
-          //       hintText: '--',
-          //       // suffixIcon: const Icon(Icons.access_time, color: grey400),
-          //       suffixIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-          //       // border: OutlineInputBorder(),
-          //       border:  OutlineInputBorder(
-          //               borderRadius: BorderRadius.circular(12.0),
-          //               borderSide:
-          //                   const BorderSide(color: grey100, width: 1.0),
-          //             ),
-          //              enabledBorder: OutlineInputBorder(
-          //               borderRadius: BorderRadius.circular(12.0),
-          //               borderSide:
-          //                   const BorderSide(color: grey100, width: 1.0),
-          //             ),
-          //              focusedBorder: OutlineInputBorder(
-          //               borderRadius: BorderRadius.circular(12.0),
-          //               borderSide: const BorderSide(color: black, width: 1.0),
-          //             ),
-
-          //     ),
-          //     onTap: () {
-          //       // Show time selection
-          //       showModalBottomSheet(
-          //         context: context,
-          //         builder: (context) {
-          //           return ListView(
-          //             children: timeSlots
-          //                 .map((time) => ListTile(
-          //                       title: Text(time),
-          //                       onTap: () {
-          //                         Navigator.pop(context);
-          //                         onSlotUpdated(DateTimeSlot(
-          //                           day: slot.day,
-          //                           openTime: slot.openTime,
-          //                           closeTime: time,
-          //                         ));
-          //                       },
-          //                     ))
-          //                 .toList(),
-          //           );
-          //         },
-          //       );
-          //     },
-          //   ),
-          // ),
-          // // Delete Button
-          // if (onDelete != null)
-          //   IconButton(
-          //     icon: const Icon(Icons.cancel_rounded, color: Colors.black),
-          //     onPressed: onDelete,
-          //   ),
-
           Expanded(
             child: Stack(
               clipBehavior: Clip.none, // Allows the icon to overflow the bounds
