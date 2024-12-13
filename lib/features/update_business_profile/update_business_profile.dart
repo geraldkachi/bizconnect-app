@@ -289,30 +289,30 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                         // State and Province
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          // dropdownKey: dropDownKey,
-                                          labelText: "State and Province",
-                                          hintText: "State and Province",
-                                          items: setupProfileWatch.stateData,
-                                          selectedItem: setupProfileWatch.selectStateAndProvince,
-                                          popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
-                                          onChanged: (value) async {
-                                              setupProfileWatch.selectStateAndProvince =value;
-                                              setupProfileWatch.selectCity = ''; // Reset city selection                                              
-                                              // await setupProfileWatch.fetchCities(
-                                              //   setupProfileWatch.stateData.firstWhere((city) => city == value)[0]!,  // Pass selected state/province code
-                                              // ); // Pass selected state/province code
-                                             if (value != null && value.isNotEmpty) {
-                                                await setupProfileWatch.fetchCities(value);
-                                              }
-                                            dropDownKey.currentState?.changeSelectedItem(value);
-                                            print("Selected: $value");
-                                          },
-                                          validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
-                                          dropdownIcon: const Icon(
-                                              Icons.arrow_drop_down,
-                                              color: grey400),
-                                          showSearchBox: true,
-                                        ),
+  labelText: "State and Province",
+  hintText: "State and Province",
+  items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
+  selectedItem: setupProfileWatch.selectStateAndProvince,
+  onChanged: (value) async {
+    setupProfileWatch.selectStateAndProvince = value;
+    setupProfileWatch.selectCity = ''; // Reset city selection
+
+    // Get the isoCode of the selected state
+    final selectedState = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value, orElse: () => null!);
+    if (selectedState != null) {
+      final stateCode = selectedState['isoCode'];
+      print('stateCode $stateCode');
+      if (stateCode != null && stateCode.isNotEmpty) {
+        await setupProfileWatch.fetchCities(stateCode);
+      }
+    }
+    print("Selected state: $value");
+  },
+  validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
+  dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+  showSearchBox: true,
+),
+
                                         // City
                                         const SizedBox(height: 10),
                                         DropdownField<String>(

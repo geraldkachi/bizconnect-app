@@ -201,15 +201,15 @@ class _SetupBusinessProfilePageState
                                             hintText: "Upload logo or business flyer",
                                             setupProfileWatch:setupProfileWatch),
                                         const SizedBox(height: 10),
-                                       
+
                                         DropdownField<String>(
                                           // dropdownKey: dropDownKey,
                                           // selectedItem: ref.read(setupBusinessProfileViewModelProvider.notifier).selectedBusinessCategory,
                                           selectedItem: setupProfileWatch.selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
-                                          // items: setupProfileRead.categoryData.map((e) => e['description'] as String).toList(),
-                                          items: [],
+                                          items: setupProfileRead.categoryData.map((e) => e['description'] as String).toList(),
+                                          // items: [],
                                           asyncItems: (String filter) async {
                                               final filteredCategories = setupProfileRead.categoryData
                                                   .where((category) => category['description'].toLowerCase().contains(filter.toLowerCase()))
@@ -218,7 +218,6 @@ class _SetupBusinessProfilePageState
                                               return filteredCategories;  // Return the filtered list
                                             },
                                           popupProps: PopupProps.menu(
-                                              // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true),
                                           onChanged: (value) {
                                             // Update the state when an item is selected
@@ -273,6 +272,7 @@ class _SetupBusinessProfilePageState
                                             if (countryISO != null) {
                                               await setupProfileWatch.fetchStates(countryISO);
                                             }
+                                            print('countryISO $countryISO');
                                             print("Selected: $value");
                                           },
                                           validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
@@ -280,25 +280,57 @@ class _SetupBusinessProfilePageState
                                           showSearchBox: true,
                                         ),
 
-                                        DropdownField<String>(
-                                          labelText: "State and Province",
-                                          hintText: "State and Province",
-                                          items: setupProfileWatch.stateData,
-                                          selectedItem: setupProfileWatch.selectStateAndProvince,
-                                          onChanged: (value) async {
-                                            setupProfileWatch.selectStateAndProvince = value;
-                                            setupProfileWatch.selectCity = ''; // Reset city selection
+                                        // DropdownField<String>(
+                                        //   labelText: "State and Province",
+                                        //   hintText: "State and Province",
+                                        //   items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
+                                        //   selectedItem: setupProfileWatch.selectStateAndProvince,
+                                        //   onChanged: (value) async {
+                                        //     setupProfileWatch.selectStateAndProvince = value;
+                                        //     setupProfileWatch.selectCity = ''; // Reset city selection
+                                            
+                                        //     // if (value != null && value.isNotEmpty) {
+                                        //     //   await setupProfileWatch.fetchCities(value);
+                                        //     // }
+                                        //     // print("Selected state: $value");
+                                        //       if (value != null && value.isNotEmpty) {
+                                        //         // Find the isoCode for the selected state
+                                        //         final isoCode = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value)['isoCode'];
+                                        //         await setupProfileWatch.fetchCities(isoCode);  // Pass isoCode to fetch cities
+                                        //       }
+                                        //       print("Selected state: $value");
+                                        //   },
+                                        //   validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
+                                        //   dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+                                        //   showSearchBox: true,
+                                        // ),
+                                        const SizedBox(height: 10),
+                                       DropdownField<String>(
+  labelText: "State and Province",
+  hintText: "State and Province",
+  items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
+  selectedItem: setupProfileWatch.selectStateAndProvince,
+  onChanged: (value) async {
+    setupProfileWatch.selectStateAndProvince = value;
+    setupProfileWatch.selectCity = ''; // Reset city selection
 
-                                            if (value != null && value.isNotEmpty) {
-                                              await setupProfileWatch.fetchCities(value);
-                                            }
-                                            print("Selected: $value");
-                                          },
-                                          validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
-                                          dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-                                          showSearchBox: true,
-                                        ),
+    // Get the isoCode of the selected state
+    final selectedState = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value, orElse: () => null!);
+    if (selectedState != null) {
+      final stateCode = selectedState['isoCode'];
+      if (stateCode != null && stateCode.isNotEmpty) {
+        await setupProfileWatch.fetchCities(stateCode);
+      }
+    }
+    print("Selected state: $value");
+  },
+  validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
+  dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
+  showSearchBox: true,
+),
 
+
+const SizedBox(height: 10),
                                         DropdownField<String>(
                                           labelText: "City",
                                           hintText: "Select city",
@@ -313,6 +345,16 @@ class _SetupBusinessProfilePageState
                                           showSearchBox: true,
                                         ),
                                       
+                                        const SizedBox(height: 10),
+                                        InputField(
+                                          controller: setupProfileWatch
+                                              .streetController,
+                                          labelText: "Street",
+                                          hintText: "Enter Street name",
+                                          validator: (value) =>
+                                              Validator.validateName(value),
+                                        ),
+
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch

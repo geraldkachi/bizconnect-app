@@ -103,6 +103,11 @@ flutter:
     - assets/data/locations/CA/states.json
     - assets/data/locations/GB/states.json
     - assets/data/locations/DE/states.json
+    - assets/data/locations/NG/cities.json
+    - assets/data/locations/US/cities.json
+    - assets/data/locations/CA/cities.json
+    - assets/data/locations/GB/cities.json
+    - assets/data/locations/DE/cities.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

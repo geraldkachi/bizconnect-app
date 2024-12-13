@@ -24,8 +24,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 final setupBusinessProfileViewModelProvider =
-    ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>(
-        (ref) => SetupBusinessProfileViewModel());
+    ChangeNotifierProvider.autoDispose<SetupBusinessProfileViewModel>((ref) => SetupBusinessProfileViewModel());
 
 class SetupBusinessProfileViewModel extends ChangeNotifier {
   final ProfileBusinessService _profileBusinessServiceProfileBusinessService = getIt<ProfileBusinessService>();
@@ -54,10 +53,14 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   String? selectStateAndProvince;
   String? selectCity;
   String? selectBusinessUuid;
+  File? selectedOriginalImage;
+  File? selectedCroppedImage;
+  String? originalImageUrl;
+  String? croppedImageUrl;
 
   // List<Map<String, dynamic>> countryData = []; how can i it here its on a different file
   final List<Map<String, String?>> countries = countryData;
-  List<String> stateData = [];
+  List<Map<String, dynamic>> stateData = [];
   List<String> cityData = [];
   // Slot-related
   TextEditingController dayController = TextEditingController();
@@ -126,43 +129,29 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   }
   
 // precious that works
-// Future<void> fetchStates(String countryCode) async {
-//     try {
-//       final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
-//       final List<dynamic> data = json.decode(response);
-//       stateData = data.map((e) => e['name'].toString()).toList();
-//       selectStateAndProvince = null; // Reset state selection
-//       selectCity = null; // Reset city selection
-//       cityData = []; // Clear city dropdown data
-//       notifyListeners();
-//     } catch (error) {
-//       print("Error fetching states: $error");
-//     } finally {
-//       notifyListeners();
-//     }
-//   }
-
 
 Future<void> fetchStates(String countryCode) async {
   try {
-    // Load the JSON data from the local assets based on the country code
+    // Load the JSON data for the states
     final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
     final List<dynamic> data = json.decode(response);
 
-    // Map the states from the loaded data to a list of state names
-    stateData = data.map((e) => e['name'].toString()).toList();
+    // Map the states to a list of maps with `name` and `isoCode`
+    stateData = data.map((e) => {"name": e['name'], "isoCode": e['isoCode']}).toList();
 
     // Reset selections
     selectStateAndProvince = null; // Reset state selection
     selectCity = null; // Reset city selection
     cityData = []; // Clear city dropdown data
 
-    // Notify listeners (assuming you're using a provider or state management)
+    // Notify listeners
     notifyListeners();
   } catch (error) {
     print("Error fetching states: $error");
   }
 }
+
+
 
 // precious that
 //   Future<void> fetchCities(String stateCode) async {
@@ -186,32 +175,75 @@ Future<void> fetchStates(String countryCode) async {
 //   }
 // }
 
+// Future<void> fetchCities(String stateCode) async {
+//   // print('Loading asset: ${rootBundle.loadString('assets/data/locations/$stateCode/cities.json')}');
+//   try {
+//     // Load the JSON data for cities in the given state
+//     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
+//     final Map<String, dynamic> data = json.decode(response);
 
+//     // Check if the stateCode exists in the data
+//     if (data.containsKey(stateCode)) {
+//       // Map the city names under the given state code
+//       cityData = data[stateCode].map((city) => city[0].toString()).toList();
+//       print("Mapped cityData: $cityData");
+//     } else {
+//       cityData = []; // Clear city data if no cities are found for the given state
+//     }
+
+//     // Notify listeners
+//     notifyListeners();
+//   } catch (error) {
+//     print("Error fetching cities for $stateCode: $error");
+//   }
+// }
 Future<void> fetchCities(String stateCode) async {
   try {
     // Load the JSON data for cities in the given state
     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-    final Map<String, dynamic> data = json.decode(response);
+    final List<dynamic> data = json.decode(response);
 
-    // Check if the stateCode exists in the data
-    if (data.containsKey(stateCode)) {
-      // Extract the city names under the given state code
-      final List<dynamic> cityList = data[stateCode];
-      print("City list for $stateCode: $cityList");
+    // Map the city names directly to a list
+    cityData = data.map((city) => city['name'].toString()).toList();
 
-      // Map cities to a list of city names
-      cityData = cityList.map((city) => city[0].toString()).toList();
-       print("Mapped cityData: $cityData");
-    } else {
-      cityData = []; // Clear city data if no cities are found for the given state
-    }
-
-    // Notify listeners (assuming you're using a provider or state management)
+    // Notify listeners
     notifyListeners();
   } catch (error) {
     print("Error fetching cities for $stateCode: $error");
+    cityData = []; // Ensure cityData is cleared in case of an error
+    notifyListeners();
   }
 }
+
+
+
+// Future<void> fetchCities(String stateCode) async {
+//   try {
+//     // Load the JSON data for cities in the given state
+//     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
+//     final Map<String, dynamic> data = json.decode(response);
+
+//     // Check if the stateCode exists in the data
+//     if (data.containsKey(stateCode)) {
+//       // Extract the city names under the given state code
+//       final List<dynamic> cityList = data[stateCode];
+//       print("City list for $stateCode: $cityList");
+
+//       // Map cities to a list of city names
+//       cityData = cityList.map((city) => city[0].toString()).toList();
+//       print("Mapped cityData: $cityData");
+//     } else {
+//       cityData = []; // Clear city data if no cities are found for the given state
+//     }
+
+//     // Notify listeners (assuming you're using a provider or state management)
+//     notifyListeners();
+//   } catch (error) {
+//     print("Error fetching cities for $stateCode: $error");
+//   }
+// }
+
+
 
 void togglePassword() {
   obscureText = !obscureText;
@@ -402,7 +434,7 @@ Future<void> cropImage() async {
     };
     log('payload setup $payload');
 
-      // await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
+      await _profileBusinessServiceProfileBusinessService.profileBusiness(payload);
 
       // Clear all fields
       clearAllFields();
