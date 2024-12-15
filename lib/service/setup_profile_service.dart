@@ -83,4 +83,34 @@ class ProfileBusinessService {
       throw BizException(message: 'Unable to fetch business listing');
     }
   }
+
+
+  // Future<List<String>> fetchStreetSuggestions(String query, String country, String state, String city) async {
+  //   // Replace with actual API call logic to fetch street suggestions
+  //   await Future.delayed(Duration(seconds: 2));  // Simulate network delay
+  //   return ["Street 1", "Street 2", "Street 3"]; // Mocked data
+  // }
+
+  Future<List<String>> fetchStreetSuggestions(String query, String country, String state, String city) async {
+  try {
+    final url = '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
+    
+    // Make the GET request using your network service
+    final response = await _networkService.get(url);
+    // if (jsonDecodedPayload['data'] != null) {
+    // streetSuggestions = List<String>.from(jsonDecodedPayload['data']);
+    // If the response contains data, map it to a list of street names
+    final Map<String, dynamic> jsonDecodedPayload = response;
+    if (jsonDecodedPayload['data'] != null) {
+      final List<String> streetSuggestions = List<String>.from(jsonDecodedPayload['data']);
+      return streetSuggestions;
+    } else {
+      throw BizException(message: 'Invalid response structure');
+    }
+  } catch (e, stackTrace) {
+    debugPrint('Error fetching street suggestions: $e\n$stackTrace');
+    throw BizException(message: 'Unable to fetch street suggestions');
+  }
+}
+
 }
