@@ -183,6 +183,7 @@ class _SetupBusinessProfilePageState
                                               .businessNameController,
                                           labelText: "Business name",
                                           hintText: "Enter Business Name",
+                                          important: true,
                                           validator: (value) =>
                                               Validator.validateName(value),
                                         ),
@@ -193,6 +194,7 @@ class _SetupBusinessProfilePageState
                                           labelText: "Describe your business",
                                           hintText:
                                               "Short sentence about your business",
+                                          important: true,
                                           validator: (value) =>
                                               Validator.validateName(value),
                                           maxLines: 5,
@@ -209,6 +211,7 @@ class _SetupBusinessProfilePageState
                                           selectedItem: setupProfileWatch.selectedBusinessCategory,
                                           labelText: "Business Category",
                                           hintText: "Search Business Category",
+                                          important: true,
                                           items: setupProfileRead.categoryData.map((e) => e['description'] as String).toList(),
                                           asyncItems: (String filter) async {
                                               final filteredCategories = setupProfileRead.categoryData
@@ -244,6 +247,7 @@ class _SetupBusinessProfilePageState
                                           items: setupProfileWatch.countries.map((country) => country.name).toList(),
                                           labelText: "Select Country",
                                           hintText: "Select Country",
+                                          important: true,
                                           selectedItem: setupProfileWatch.selectedCountry,
                                            onChanged: (value) async {
                                             // Find the country ISO code
@@ -271,6 +275,7 @@ class _SetupBusinessProfilePageState
                                        DropdownField<String>(
                                           labelText: "State and Province",
                                           hintText: "State and Province",
+                                          important: true,
                                           items: setupProfileWatch.stateData.map((state) => state.name).toList(),
                                           selectedItem: setupProfileWatch.selectedState,
                                           onChanged: (value) async {
@@ -301,6 +306,7 @@ class _SetupBusinessProfilePageState
                                         DropdownField<String>(
                                           labelText: "City",
                                           hintText: "Select city",
+                                          important: true,
                                           items: setupProfileWatch.cityData,
                                           selectedItem: setupProfileWatch.selectCity,
                                           onChanged: (value) {

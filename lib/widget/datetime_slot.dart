@@ -49,7 +49,46 @@ class _DateTimeSlotsState extends ConsumerState<DateTimeSlots> {
           style:
               TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: red),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
+        // Labels for the top layer
+        const Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Day",
+                style: TextStyle(
+                  color: grey401,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Opening hour",
+                style: TextStyle(
+                  color: grey401,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Closing hour",
+                style: TextStyle(
+                  color: grey401,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ],
+        ),
+        // const SizedBox(height: 7),
+        const SizedBox(height: 0),
         ...setupProfileWatch.slots.asMap().entries.map((entry) {
           final index = entry.key;
           final slot = entry.value;
@@ -85,6 +124,7 @@ class SlotItem extends StatelessWidget {
   final List<String> timeSlots;
   final Function(DateTimeSlot) onSlotUpdated;
   final VoidCallback? onDelete;
+  final bool showLabels; // Add this parameter
 
   const SlotItem({
     super.key,
@@ -93,6 +133,7 @@ class SlotItem extends StatelessWidget {
     required this.timeSlots,
     required this.onSlotUpdated,
     this.onDelete,
+    this.showLabels = false, // Default is false
   });
 
   @override
@@ -110,15 +151,6 @@ class SlotItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Day",
-                  style: TextStyle(
-                    color: grey401,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 7),
                 TextFormField(
                   controller: dayController,
                   readOnly: true,
@@ -179,16 +211,6 @@ class SlotItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Opening hour",
-                  style: TextStyle(
-                    color: grey401,
-                    fontSize: 12,
-                    // fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 7),
                 TextFormField(
                   controller: openTimeController,
                   readOnly: true,
@@ -253,15 +275,6 @@ class SlotItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Closing hour",
-                      style: TextStyle(
-                        color: grey401,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
                     TextFormField(
                       controller: closeTimeController,
                       readOnly: true,

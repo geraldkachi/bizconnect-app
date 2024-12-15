@@ -15,6 +15,7 @@ class DropdownField<T> extends StatelessWidget {
   final String? Function(T?)? validator;
   final Widget? dropdownIcon;
   final bool showSearchBox;
+  final bool? important;
   final Widget? prefixIcon;
   final PopupProps<T>? popupProps; // Add this to allow custom PopupProps
   // final FutureOr<List<T>> Function(String filter)? asyncItems; // Added for async filtering
@@ -35,8 +36,8 @@ class DropdownField<T> extends StatelessWidget {
     this.showSearchBox = false,
      this.prefixIcon,
     this.asyncItems,
-    this.popupProps // Add this to allow custom PopupProps
-
+    this.popupProps, 
+    this.important // Add this to allow custom PopupProps
   });
 
 
@@ -45,13 +46,28 @@ class DropdownField<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            color: black,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
+         Row(
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(
+                color: black,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            
+            if (important ?? false) 
+            const Text(
+              "*",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+                color: Color(0xffE03137),
+                letterSpacing: -.5,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 7),
         DropdownSearch<T>(
