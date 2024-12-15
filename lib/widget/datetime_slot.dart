@@ -49,7 +49,7 @@ class _DateTimeSlotsState extends ConsumerState<DateTimeSlots> {
           style:
               TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: red),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         // Labels for the top layer
         const Row(
           children: [
