@@ -49,8 +49,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController facebookController = TextEditingController();
   
   String? selectedBusinessCategory;
-  String? selectedBusinessCountry;
-  String? selectStateAndProvince;
   String? selectCity;
   String? selectBusinessUuid;
   File? selectedOriginalImage;
@@ -58,10 +56,14 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   String? originalImageUrl;
   String? croppedImageUrl;
 
-  // List<Map<String, dynamic>> countryData = []; how can i it here its on a different file
-  final List<Map<String, String?>> countries = countryData;
-  List<Map<String, dynamic>> stateData = [];
+  List<Country> countries = CountryUtils.getAllCountries();
+  // List<Map<String, dynamic>> stateData = [];
+  List<Location> stateData = [];
   List<String> cityData = [];
+   String? selectedCountry;
+  String? selectedState;
+  String? selectedCity;
+
   // Slot-related
   TextEditingController dayController = TextEditingController();
   TextEditingController openTimeController = TextEditingController();
@@ -127,122 +129,60 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
-// precious that works
 
-Future<void> fetchStates(String countryCode) async {
-  try {
-    // Load the JSON data for the states
-    final String response = await rootBundle.loadString('assets/data/locations/$countryCode/states.json');
-    final List<dynamic> data = json.decode(response);
+  Future<void> fetchStates(String countryCode) async {
+    try {
+      final String response = await rootBundle.loadString(
+          'assets/data/locations/$countryCode/states.json');
+      final List<dynamic> data = json.decode(response);
 
-    // Map the states to a list of maps with `name` and `isoCode`
-    stateData = data.map((e) => {"name": e['name'], "isoCode": e['isoCode']}).toList();
-
-    // Reset selections
-    selectStateAndProvince = null; // Reset state selection
-    selectCity = null; // Reset city selection
-    cityData = []; // Clear city dropdown data
-
-    // Notify listeners
-    notifyListeners();
-  } catch (error) {
-    print("Error fetching states: $error");
+      stateData = data.map((e) => Location.fromJson(e)).toList();
+      selectedState = null; // Reset state
+      selectedCity = null; // Reset city
+      cityData = [];
+      notifyListeners();
+    } catch (error) {
+      print("Error fetching states: $error");
+      stateData = [];
+      notifyListeners();
+    }
   }
-}
 
-
-
-// precious that
-//   Future<void> fetchCities(String stateCode) async {
-//   try {
-//     // Load the JSON file
-//     final String response = await rootBundle.loadString('assets/data/locations/cities.json');
-//     final Map<String, dynamic> data = json.decode(response);
-
-//     // Check if the state/province code exists
-//     if (data.containsKey(stateCode)) {
-//       final List<dynamic> cityList = data[stateCode]; // Get cities under the state/province
-//       // Extract the city names (assuming the city name is the first element in the array)
-//       cityData = cityList.map((city) => city[0].toString()).toList();
-//     } else {
-//       cityData = []; // Clear city data if stateCode doesn't match
-//     }
-
-//     notifyListeners(); // Notify UI to update
-//   } catch (error) {
-//     print("Error fetching cities for $stateCode: $error");
-//   }
-// }
-
-// Future<void> fetchCities(String stateCode) async {
-//   // print('Loading asset: ${rootBundle.loadString('assets/data/locations/$stateCode/cities.json')}');
-//   try {
-//     // Load the JSON data for cities in the given state
-//     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-//     final Map<String, dynamic> data = json.decode(response);
-
-//     // Check if the stateCode exists in the data
-//     if (data.containsKey(stateCode)) {
-//       // Map the city names under the given state code
-//       cityData = data[stateCode].map((city) => city[0].toString()).toList();
-//       print("Mapped cityData: $cityData");
-//     } else {
-//       cityData = []; // Clear city data if no cities are found for the given state
-//     }
-
-//     // Notify listeners
-//     notifyListeners();
-//   } catch (error) {
-//     print("Error fetching cities for $stateCode: $error");
-//   }
-// }
-Future<void> fetchCities(String stateCode) async {
+ Future<void> fetchCities(String countryCode, String stateCode) async {
   try {
-    // Load the JSON data for cities in the given state
-    final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-    final List<dynamic> data = json.decode(response);
+    final String response = await rootBundle.loadString(
+        'assets/data/locations/$countryCode/cities.json');
+    final Map<String, dynamic> data = json.decode(response); // Decode as Map
 
-    // Map the city names directly to a list
-    cityData = data.map((city) => city['name'].toString()).toList();
+    // Get the cities for the provided state code
+    final List<dynamic> cities = data[stateCode] ?? []; // Handle case where stateCode doesn't exist
 
-    // Notify listeners
+    cityData = cities
+        .map((city) => city[0].toString()) // Assuming the city name is the first element in the list
+        .toList();
+    
+    selectedCity = null; // Reset city
     notifyListeners();
   } catch (error) {
-    print("Error fetching cities for $stateCode: $error");
-    cityData = []; // Ensure cityData is cleared in case of an error
+    print("Error fetching cities: $error");
+    cityData = [];
     notifyListeners();
   }
 }
 
 
 
-// Future<void> fetchCities(String stateCode) async {
-//   try {
-//     // Load the JSON data for cities in the given state
-//     final String response = await rootBundle.loadString('assets/data/locations/$stateCode/cities.json');
-//     final Map<String, dynamic> data = json.decode(response);
+  List<Map<String, dynamic>> getFormattedCountries() {
+    return CountryUtils.formatCountries(countries);
+  }
 
-//     // Check if the stateCode exists in the data
-//     if (data.containsKey(stateCode)) {
-//       // Extract the city names under the given state code
-//       final List<dynamic> cityList = data[stateCode];
-//       print("City list for $stateCode: $cityList");
+  List<Map<String, dynamic>> getFormattedStates() {
+    return stateData.map((state) => {'uuid': state.name, 'value': state.name}).toList();
+  }
 
-//       // Map cities to a list of city names
-//       cityData = cityList.map((city) => city[0].toString()).toList();
-//       print("Mapped cityData: $cityData");
-//     } else {
-//       cityData = []; // Clear city data if no cities are found for the given state
-//     }
-
-//     // Notify listeners (assuming you're using a provider or state management)
-//     notifyListeners();
-//   } catch (error) {
-//     print("Error fetching cities for $stateCode: $error");
-//   }
-// }
-
+  List<Map<String, dynamic>> getFormattedCities() {
+    return cityData.map((city) => {'uuid': city, 'value': city}).toList();
+  }
 
 
 void togglePassword() {
@@ -251,7 +191,6 @@ void togglePassword() {
 }
 
 // image
-
 Future<void> pickImage() async {
   final ImagePicker picker = ImagePicker();
   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -294,50 +233,6 @@ Future<void> cropImage() async {
     notifyListeners();
   }
 }
-
-
-  // Future<void> pickImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-  //   if (image != null) {
-  //       selectedImage = File(image.path);
-  //       fileName = image.name;
-  //       notifyListeners();
-  //     await cropImage(); // Prompt user to crop immediately after selecting an image
-  //   }
-  // }
- 
-
-
-  //  Future<void> cropImage() async {
-  //   if (selectedImage == null) return;
-  //    notifyListeners();
-
-  //   final croppedImage = await ImageCropper().cropImage(
-  //     sourcePath: selectedImage!.path,
-  //     uiSettings: [
-  //       AndroidUiSettings(
-  //         toolbarTitle: 'Crop Image',
-  //         toolbarColor: Colors.blue,
-  //         toolbarWidgetColor: Colors.white,
-  //         activeControlsWidgetColor: Colors.blue,
-  //         initAspectRatio: CropAspectRatioPreset.original,
-  //         lockAspectRatio: false,
-  //       ),
-  //       IOSUiSettings(
-  //         title: 'Crop Image',
-  //       ),
-  //     ],
-  //   );
-
-  //   if (croppedImage != null) {
-  //       selectedImage = File(croppedImage.path);
-  //       fileName = croppedImage.path.split('/').last;
-  //   }
-  //    notifyListeners();
-  // }
-
 
   void deleteImage() {
       selectedImage = null;
@@ -410,8 +305,8 @@ Future<void> cropImage() async {
       'name': businessNameController.text.trim(),
       'description': describeYourBusinessController.text.trim(),
       'businessCategoryUuid': selectBusinessUuid,
-      'country': selectedBusinessCountry,
-      'stateAndProvince': selectStateAndProvince,
+      'country': selectedCountry,
+      'stateAndProvince': selectedState,
       'city': selectCity,
       // 'city': "saint gerald",
       'street': streetController.text.trim(),
@@ -470,10 +365,9 @@ Future<void> cropImage() async {
       'name': businessNameController.text.trim(),
       'description': describeYourBusinessController.text.trim(),
       'businessCategoryUuid': selectBusinessUuid,
-      'country': selectedBusinessCountry,
-      'stateAndProvince': selectStateAndProvince,
-      // 'city': selectCity,
-      'city': "saint gerald",
+      'country': selectedCountry,
+      'stateAndProvince': selectedState,
+      'city': selectCity,
       'street': streetController.text.trim(),
       'postalCode': zipCodePostalCodeController.text.trim(),
       'phoneNumber': businessPhoneNumberController.text.trim(),

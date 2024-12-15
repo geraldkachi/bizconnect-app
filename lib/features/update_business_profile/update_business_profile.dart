@@ -1,4 +1,5 @@
 import 'package:bizconnect/app/theme/colors.dart';
+import 'package:bizconnect/data/country_data.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 import 'package:bizconnect/utils/validator.dart';
 import 'package:bizconnect/widget/button.dart';
@@ -242,44 +243,40 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           // dropdownKey: dropDownKey,
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          items: [],
+                                          items: setupProfileWatch.countries.map((country) => country.name).toList(),
                                           // items: setupProfileWatch.countries.map((e) => e['name'] as String).toList(),
-                                        asyncItems: (String filter) async {
-                                          // Dynamically fetch and filter countries
-                                          return setupProfileWatch.countries
-                                              .where((country) => country['name']
-                                                  .toString()
-                                                  .toLowerCase()
-                                                  .contains(filter.toLowerCase()))
-                                              .map((e) => e['name'] as String)
-                                              .toList();
-                                        },
+                                        // asyncItems: (String filter) async {
+                                        //   // Dynamically fetch and filter countries
+                                        //   return setupProfileWatch.countries
+                                        //       .where((country) => country['name']
+                                        //           .toString()
+                                        //           .toLowerCase()
+                                        //           .contains(filter.toLowerCase()))
+                                        //       .map((e) => e['name'] as String)
+                                        //       .toList();
+                                        // },
                                           popupProps: PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,
                                               isFilterOnline: true
                                               ),
-                                          selectedItem: setupProfileWatch.selectedBusinessCountry,
+                                          selectedItem: setupProfileWatch.selectedCountry,
                                           onChanged: (value) async {
-                                            setupProfileWatch.selectedBusinessCountry = value;
-                                                setupProfileWatch.selectStateAndProvince = '';
-                                                setupProfileWatch.selectCity = '';
-                                                
-                                           // await setupProfileWatch.fetchStates(
-                                           //  setupProfileWatch.countries
-                                           //     .firstWhere((country) => country['name'] == value)['isoCode']!);
-                                           // Get country ISO code and fetch states
-                                              final countryISO = setupProfileWatch.countries
-                                                  .firstWhere((country) => country['name'] == value)['isoCode'];
-                                              if (countryISO != null) {
-                                                await setupProfileWatch.fetchStates(countryISO);
-                                              }
-                                                
-                                                // if (countryIsoCode != null) {
-                                                //   await setupProfileWatch.fetchStates(countryIsoCode);
-                                                // }
-                                                 print("Selected: $value");
-                                          },
+                                          // Find the country ISO code
+                                           setupProfileWatch.fetchStates(value!);
+                                          final countryISO = CountryUtils.getCountryIsoCode(value!);
+                                          
+                                          // Update selected country
+                                          setupProfileRead.selectedCountry = value;
+                                          setupProfileRead.selectCity = null;
+                                          setupProfileRead.selectCity = null;
+
+                                          // Fetch states for the selected country
+                                          if (countryISO.isNotEmpty) {
+                                            await setupProfileRead.fetchStates(countryISO);
+                                          }
+                                          print('Selected Country ISO: $countryISO');
+                                        },
                                           validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
                                           dropdownIcon: const Icon(
                                               Icons.arrow_drop_down,
@@ -288,25 +285,31 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                         ),
                                         // State and Province
                                         const SizedBox(height: 10),
-                                        DropdownField<String>(
+                                         DropdownField<String>(
   labelText: "State and Province",
   hintText: "State and Province",
-  items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
-  selectedItem: setupProfileWatch.selectStateAndProvince,
+  items: setupProfileWatch.stateData.map((state) => state.name).toList(),
+  selectedItem: setupProfileWatch.selectCity,
   onChanged: (value) async {
-    setupProfileWatch.selectStateAndProvince = value;
-    setupProfileWatch.selectCity = ''; // Reset city selection
+    // Find the state by its name
+    final selectedState = setupProfileWatch.stateData.firstWhere(
+      (state) => state.name == value,
+      orElse: () => null!, // Handle cases where the state is not found
+    );
+    
 
-    // Get the isoCode of the selected state
-    final selectedState = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value, orElse: () => null!);
     if (selectedState != null) {
-      final stateCode = selectedState['isoCode'];
-      print('stateCode $stateCode');
-      if (stateCode != null && stateCode.isNotEmpty) {
-        await setupProfileWatch.fetchCities(stateCode);
+      setupProfileRead.selectCity = value;
+      setupProfileRead.selectCity = null; // Reset city selection
+
+      // Fetch cities for the selected state using its ISO code
+      if (selectedState.isoCode.isNotEmpty) {
+        // await setupProfileRead.fetchCities(selectedState.isoCode);
+        await  setupProfileWatch.fetchCities(setupProfileWatch.selectedCountry!, selectedState.isoCode!);
       }
+
+      print("Selected State: $value, Code: ${selectedState.isoCode}");
     }
-    print("Selected state: $value");
   },
   validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
   dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
@@ -343,6 +346,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           validator: (value) =>
                                               Validator.validateName(value),
                                         ),
+
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch

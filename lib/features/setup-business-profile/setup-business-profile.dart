@@ -103,8 +103,8 @@ class _SetupBusinessProfilePageState
                                         'description': setupProfileWatch.describeYourBusinessController.text,
                                         "": setupProfileWatch.selectedBusinessCategory,
                                         'businessCategoryUuid': setupProfileWatch.selectBusinessUuid,
-                                        'country': setupProfileWatch.selectedBusinessCountry,
-                                        'stateAndProvince': setupProfileWatch.selectStateAndProvince,
+                                        'country': setupProfileWatch.selectedCountry,
+                                        'stateAndProvince': setupProfileWatch.selectCity,
                                         'city': "saint gerald",
                                         'street': setupProfileWatch.streetController.text.trim(),
                                         'postalCode': setupProfileWatch.zipCodePostalCodeController.text.trim(),
@@ -240,89 +240,60 @@ class _SetupBusinessProfilePageState
                                           ),
                                           showSearchBox: true,
                                           prefixIcon: Icon(Icons.search,weight: 24.0, size: 34.0,)
-                                          //  dropdownBuilder: (context, selectedItem) {
-                                          //     return Text(selectedItem ?? ''); // Customize as needed
-                                          //   },
-                                          // prefixIcon: SvgPicture.asset(
-                                          //   'assets/svg/search.svg',
-                                          //   width: 14.0,
-                                          //   height: 14.0,
-                                          // ),
                                         ),
                                         // Country
                                         const SizedBox(height: 10),
                                         DropdownField<String>(
-                                          items: [],
+                                          items: setupProfileWatch.countries.map((country) => country.name).toList(),
                                           labelText: "Select Country",
                                           hintText: "Select Country",
-                                          asyncItems: (String filter) async {
-                                            return setupProfileWatch.countries
-                                              .where((country) => country['name'].toString().toLowerCase().contains(filter.toLowerCase()))
-                                              .map((e) => e['name'] as String)
-                                              .toList();
-                                          },
-                                          selectedItem: setupProfileWatch.selectedBusinessCountry,
-                                          onChanged: (value) async {
-                                            setupProfileWatch.selectedBusinessCountry = value;
-                                            setupProfileWatch.selectStateAndProvince = null;
-                                            setupProfileWatch.selectCity = null;
+                                          selectedItem: setupProfileWatch.selectedCountry,
+                                           onChanged: (value) async {
+                                            // Find the country ISO code
+                                            final countryISO = CountryUtils.getCountryIsoCode(value!);
+                                            
+                                            // Update selected country
+                                            setupProfileRead.selectedCountry = value;
+                                            setupProfileRead.selectedState = null;
+                                            setupProfileRead.selectCity = null;
 
-                                            final countryISO = setupProfileWatch.countries
-                                                .firstWhere((country) => country['name'] == value)['isoCode'];
-                                            if (countryISO != null) {
-                                              await setupProfileWatch.fetchStates(countryISO);
+                                            // Fetch states for the selected country
+                                            if (countryISO.isNotEmpty) {
+                                              await setupProfileRead.fetchStates(countryISO);
                                             }
-                                            print('countryISO $countryISO');
-                                            print("Selected: $value");
+                                            print('Selected Country ISO: $countryISO');
                                           },
+                                     
                                           validator: (value) => (value == null || value.isEmpty) ? "This country field is required" : null,
                                           dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
                                           showSearchBox: true,
                                         ),
 
-                                        // DropdownField<String>(
-                                        //   labelText: "State and Province",
-                                        //   hintText: "State and Province",
-                                        //   items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
-                                        //   selectedItem: setupProfileWatch.selectStateAndProvince,
-                                        //   onChanged: (value) async {
-                                        //     setupProfileWatch.selectStateAndProvince = value;
-                                        //     setupProfileWatch.selectCity = ''; // Reset city selection
-                                            
-                                        //     // if (value != null && value.isNotEmpty) {
-                                        //     //   await setupProfileWatch.fetchCities(value);
-                                        //     // }
-                                        //     // print("Selected state: $value");
-                                        //       if (value != null && value.isNotEmpty) {
-                                        //         // Find the isoCode for the selected state
-                                        //         final isoCode = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value)['isoCode'];
-                                        //         await setupProfileWatch.fetchCities(isoCode);  // Pass isoCode to fetch cities
-                                        //       }
-                                        //       print("Selected state: $value");
-                                        //   },
-                                        //   validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
-                                        //   dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
-                                        //   showSearchBox: true,
-                                        // ),
+                                      
                                         const SizedBox(height: 10),
                                        DropdownField<String>(
   labelText: "State and Province",
   hintText: "State and Province",
-  items: setupProfileWatch.stateData.map((state) => state['name'].toString()).toList(),
-  selectedItem: setupProfileWatch.selectStateAndProvince,
+  items: setupProfileWatch.stateData.map((state) => state.name).toList(),
+  selectedItem: setupProfileWatch.selectedState,
   onChanged: (value) async {
-    setupProfileWatch.selectStateAndProvince = value;
-    setupProfileWatch.selectCity = ''; // Reset city selection
+    // Find the state by its name
+    final selectedState = setupProfileWatch.stateData.firstWhere(
+      (state) => state.name == value,
+      orElse: () => null!, // Handle cases where the state is not found
+    );
 
-    // Get the isoCode of the selected state
-    final selectedState = setupProfileWatch.stateData.firstWhere((state) => state['name'] == value, orElse: () => null!);
     if (selectedState != null) {
-      final stateCode = selectedState['isoCode'];
-      if (stateCode != null && stateCode.isNotEmpty) {
-        await setupProfileWatch.fetchCities(stateCode);
+      setupProfileRead.selectedState = value;
+      setupProfileRead.selectCity = null; // Reset city selection
+
+      // Fetch cities for the selected state using its ISO code
+      if (selectedState.isoCode.isNotEmpty) {
+        await setupProfileRead.fetchCities(selectedState.countryCode!,selectedState.isoCode);
       }
+
+      print("Selected State: $value, Code: ${selectedState.isoCode} country-code ${selectedState.countryCode}");
     }
-    print("Selected state: $value");
   },
   validator: (value) => (value == null || value.isEmpty) ? "This state field is required" : null,
   dropdownIcon: const Icon(Icons.arrow_drop_down, color: grey400),
