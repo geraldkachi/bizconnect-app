@@ -333,8 +333,8 @@ class SlotItem extends StatelessWidget {
                 // Delete Icon Positioned at the Top-Right Corner
                 if (onDelete != null)
                   Positioned(
-                    top: 2,
-                    right: -12,
+                    top: -18,
+                    right: -14,
                     child: IconButton(
                       icon:
                           const Icon(Icons.cancel_rounded, color: Colors.black),
