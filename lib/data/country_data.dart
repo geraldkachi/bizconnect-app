@@ -160,16 +160,12 @@ class CountryUtils {
     }
   }
 
-
-
-  //
-
-    static Country? getCountryByName(String countryName) {
-    return countryList.firstWhere(
-      (country) => country.name.toLowerCase() == countryName.toLowerCase(),
-      orElse: () => null!,
-    );
-  }
+  static Country? getCountryByName(String countryName) {
+  return countryList.firstWhere(
+    (country) => country.name.toLowerCase() == countryName.toLowerCase(),
+    orElse: () => null!,
+  );
+}
 
   static Country? CountryUtilsgetCountryByCode(String isoCode) {
     return countryList.firstWhere(
@@ -178,50 +174,12 @@ class CountryUtils {
     );
   }
 
-  // static List<Country> getAllCountries() {
-  //   return countryList;
-  // }
-
   static List<Map<String, dynamic>> formatCountries(List<Country> countries) {
     return countries
         .map((country) => {'uuid': country.name, 'value': country.name})
         .toList();
   }
 }
-
-
-
-
-// class CountryUtils {
-//   static final List<Country> countryList = [
-//     // List of countries (Add your existing JSON list here)
-//   ];
-
-//   static Country? getCountryByName(String countryName) {
-//     return countryList.firstWhere(
-//       (country) => country.name.toLowerCase() == countryName.toLowerCase(),
-//       orElse: () => null,
-//     );
-//   }
-
-//   static Country? CountryUtilsgetCountryByCode(String isoCode) {
-//     return countryList.firstWhere(
-//       (country) => country.isoCode.toLowerCase() == isoCode.toLowerCase(),
-//       orElse: () => null,
-//     );
-//   }
-
-//   static List<Country> getAllCountries() {
-//     return countryList;
-//   }
-
-//   static List<Map<String, dynamic>> formatCountries(List<Country> countries) {
-//     return countries
-//         .map((country) => {'uuid': country.name, 'value': country.name})
-//         .toList();
-//   }
-// }
-
 
 // Get a country by ISO code
 Country? canada = CountryUtils.getCountryByCode('CA');

@@ -5,8 +5,6 @@ import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/models/business_category.dart';
 import 'package:bizconnect/service/network_service.dart';
-import 'package:bizconnect/service/secure_storage_service.dart';
-// import 'package:bizconnect/service/secure_storage_service.dart';
 import 'package:flutter/foundation.dart';
 
 class ProfileBusinessService {
@@ -33,7 +31,8 @@ class ProfileBusinessService {
     return;
   }
 
-  Future<void> updateBusiness(Map<String, dynamic> businessPayload, String id) async {
+  Future<void> updateBusiness(
+      Map<String, dynamic> businessPayload, String id) async {
     try {
       debugPrint('Raw payload $businessPayload');
 
@@ -53,7 +52,8 @@ class ProfileBusinessService {
 
   Future<BusinessCategoriesModel> allBusinessCategories() async {
     try {
-      final response = await _networkService.get('/api/business-profile/categories');
+      final response =
+          await _networkService.get('/api/business-profile/categories');
       final Map<String, dynamic> jsonDecodedPayload = response;
       if (jsonDecodedPayload['data'] != null) {
         print('Fetched Categories: $jsonDecodedPayload');
@@ -66,7 +66,6 @@ class ProfileBusinessService {
       throw BizException(message: 'Unable to fetch categories');
     }
   }
-
 
   Future<BusinessCategoriesModel> allBusinessList() async {
     try {
@@ -84,33 +83,27 @@ class ProfileBusinessService {
     }
   }
 
+  Future<List<String>> fetchStreetSuggestions(
+      String query, String country, String state, String city) async {
+    try {
+      final url =
+          '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
 
-  // Future<List<String>> fetchStreetSuggestions(String query, String country, String state, String city) async {
-  //   // Replace with actual API call logic to fetch street suggestions
-  //   await Future.delayed(Duration(seconds: 2));  // Simulate network delay
-  //   return ["Street 1", "Street 2", "Street 3"]; // Mocked data
-  // }
-
-  Future<List<String>> fetchStreetSuggestions(String query, String country, String state, String city) async {
-  try {
-    final url = '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
-    
-    // Make the GET request using your network service
-    final response = await _networkService.get(url);
-    // if (jsonDecodedPayload['data'] != null) {
-    // streetSuggestions = List<String>.from(jsonDecodedPayload['data']);
-    // If the response contains data, map it to a list of street names
-    final Map<String, dynamic> jsonDecodedPayload = response;
-    if (jsonDecodedPayload['data'] != null) {
-      final List<String> streetSuggestions = List<String>.from(jsonDecodedPayload['data']);
-      return streetSuggestions;
-    } else {
-      throw BizException(message: 'Invalid response structure');
+      // Make the GET request using your network service
+      final response = await _networkService.get(url);
+      log('street response $response');
+      print('street response $response');
+      final Map<String, dynamic> jsonDecodedPayload = response;
+      if (jsonDecodedPayload['data'] != null) {
+        final List<String> streetSuggestions = List<String>.from(
+            jsonDecodedPayload['data']['data']['suggestions']);
+        return streetSuggestions;
+      } else {
+        throw BizException(message: 'Invalid response structure');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Error fetching street suggestions: $e\n$stackTrace');
+      throw BizException(message: 'Unable to fetch street suggestions');
     }
-  } catch (e, stackTrace) {
-    debugPrint('Error fetching street suggestions: $e\n$stackTrace');
-    throw BizException(message: 'Unable to fetch street suggestions');
   }
-}
-
 }

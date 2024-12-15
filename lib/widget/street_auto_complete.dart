@@ -1,10 +1,11 @@
+import 'dart:developer';
+
 import 'package:bizconnect/app/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bizconnect/features/setup-business-profile/setup-business-view-model.dart';
 
 class StreetAutoComplete extends ConsumerStatefulWidget {
-  //  final Function(String) onStreetSelected;
   const StreetAutoComplete({super.key});
 
   @override
@@ -22,16 +23,41 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
 
           // Method that handles the selected street
           void onStreetSelected(String selectedStreet) {
-            setupBusinessProfileState.streetController.text = selectedStreet;
-            // Optionally, you can save this in the state or use it for further actions
+            streetController.text = selectedStreet;
+              print('streetController texting: ${streetController}');
           }
     
-        void fetchAddressSuggestions(String query) {
-          if (query.isEmpty) return;
-
+        
+    void fetchAddressSuggestions(String query) {
+      print('query: $query');
+       if (query.isEmpty) {
+          // Clear suggestions if the query is empty
           ref.read(setupBusinessProfileViewModelProvider.notifier)
-              .fetchStreetSuggestions(context, query, setupBusinessProfileState.selectedCountry!, setupBusinessProfileState.selectedState!, setupBusinessProfileState.selectedCity!);
+              .updateStreetSuggestions([]);
+          return;
         }
+
+      final selectedCountry = setupBusinessProfileState.selectedCountry;
+      final selectedState = setupBusinessProfileState.selectedState;
+      final selectedCity = setupBusinessProfileState.selectedCity;
+
+      if (selectedCountry == null || selectedState == null || selectedCity == null) {
+        log('Error: Missing required fields');
+        setupBusinessProfileState.notifyListeners();
+        return;
+      }
+
+      ref.read(setupBusinessProfileViewModelProvider.notifier)
+          .fetchStreetSuggestions(context, query, selectedCountry, selectedState, selectedCity);
+    }
+
+        // log(message);
+        // print('selectedCountry now: ${setupBusinessProfileState.selectedCountry}');
+        // print('City Data now: ${setupBusinessProfileState.cityData}');
+        // print('Selected City now: ${setupBusinessProfileState.selectCity}');
+        // print('Street Suggestions mow: ${setupBusinessProfileState.streetSuggestions}');
+        // print('Street text mow: ${setupBusinessProfileState.streetController.text}');
+
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,6 +126,24 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
               },
             ),
           ),
+
+          // if (streetSuggestions.isNotEmpty)
+          // DropdownButton<String>(
+          //   isExpanded: true,
+          //   value: null, // No pre-selected value
+          //   hint: const Text('Select a street'),
+          //   items: streetSuggestions.map((street) {
+          //     return DropdownMenuItem<String>(
+          //       value: street,
+          //       child: Text(street),
+          //     );
+          //   }).toList(),
+          //   onChanged: (selectedStreet) {
+          //     if (selectedStreet != null) {
+          //       onStreetSelected(selectedStreet);
+          //     }
+          //   },
+          // ),
         ],
       ],
     );

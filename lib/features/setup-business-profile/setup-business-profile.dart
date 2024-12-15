@@ -282,7 +282,7 @@ class _SetupBusinessProfilePageState
 
                                             if (selectedState != null) {
                                               setupProfileRead.selectedState = value;
-                                              setupProfileRead.selectCity = null; // Reset city selection
+                                              setupProfileRead.selectCity = ''; // Reset city selection
                                               setupProfileRead.streetController.text = '';
 
                                               // Fetch cities for the selected state using its ISO code
@@ -317,23 +317,13 @@ class _SetupBusinessProfilePageState
                                      
                                         StreetAutoComplete(),
 
-                                        // InputField(
-                                        //   controller: setupProfileWatch
-                                        //       .streetController,
-                                        //   labelText: "Street",
-                                        //   hintText: "Enter Street name",
-                                        //   validator: (value) =>
-                                        //       Validator.validateName(value),
-                                        // ),
-
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch
                                               .zipCodePostalCodeController,
                                           labelText: "Zip Code/Postal Code",
                                           hintText: "Enter postal code",
-                                          validator: (value) =>
-                                              Validator.validateName(value),
+                                          validator: (value) => Validator.validateName(value),
                                         ),
                                         const SizedBox(height: 10),
 

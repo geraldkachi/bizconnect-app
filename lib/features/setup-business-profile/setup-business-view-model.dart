@@ -8,6 +8,7 @@ import 'package:bizconnect/data/country_data.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/models/business_category.dart';
 import 'package:bizconnect/models/city_model.dart';
+import 'package:bizconnect/models/google_place_result.dart';
 import 'package:bizconnect/models/state_province_model.dart';
 import 'package:bizconnect/service/setup_profile_service.dart';
 import 'package:bizconnect/service/toast_service.dart';
@@ -60,7 +61,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   String? croppedImageUrl;
 
   List<Country> countries = CountryUtils.getAllCountries();
-  // List<Map<String, dynamic>> stateData = [];
   List<Location> stateData = [];
   List<String> cityData = [];
   String? selectedCountry;
@@ -83,19 +83,24 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   File? selectedImage;
   String? fileName;
 
-  // Method to fetch street suggestions
-  Future<void> fetchStreetSuggestions(BuildContext context, String query, String country, String state, String city) async {
-    if (query.isEmpty) return;
+  Future<void> fetchStreetSuggestions(BuildContext context, String query,
+      String country, String state, String city) async {
+    // if (query.isEmpty) return;
+    if (query.isEmpty || country.isEmpty || state.isEmpty || city.isEmpty) {
+      print('Error: One or more parameters are null or empty');
+      return;
+    }
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    print(' query: ${query} country: ${country}, state: ${state}, city: ${city}');
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
+    _debounce = Timer(const Duration(milliseconds: 350), () async {
       try {
         // Fetch street suggestions as before
         final suggestions = await _profileBusinessServiceProfileBusinessService
             .fetchStreetSuggestions(query, country, state, city);
-        streetSuggestions = suggestions;
+        streetSuggestions = suggestions ?? [];
+        print('street suggestions $suggestions');
+        log(' query: ${query} country: ${country}, state: ${state}, city: ${city}');
+
         isLoading = false;
-    log(' query: ${query} country: ${country}, state: ${state}, city: ${city}');
         notifyListeners();
       } catch (e) {
         _toastService.showToast(
@@ -110,30 +115,17 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
     });
   }
 
-  // isLoading = true;
-  // notifyListeners();
-  // try {
-  //   // Call your API to fetch the street suggestions
-  //   var response = await _profileBusinessServiceProfileBusinessService.fetchStreetSuggestions(query, country, state, city);
-  //   streetSuggestions = response;
-  // } catch (e) {
-  //   _toastService.showToast(
-  //     context,
-  //       title: "Error",
-  //       subTitle: 'Error fetching street suggestions $e',
-  //     );
-  //   print("Error fetching street suggestions: $e");
-  // } finally {
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
-  // }
+  void updateStreetSuggestions(List<String> suggestions) {
+    streetSuggestions = suggestions;
+    notifyListeners();
+  }
 
   // Method to select a street
   void selectStreet(String street) {
     streetController.text = street;
     notifyListeners();
   }
+
   // Validation for required fields
   bool validateRequiredFields(
       BuildContext context, Map<String, dynamic> values) {
