@@ -35,6 +35,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   BusinessCategoriesModel categories = BusinessCategoriesModel();
+  StressSuggestionsResponse streetSuggestions = StressSuggestionsResponse();
   List<Map<String, dynamic>> categoryData = [];
 
   // Text controllers
@@ -53,7 +54,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   TextEditingController facebookController = TextEditingController();
 
   String? selectedBusinessCategory;
-  String? selectCity;
   String? selectBusinessUuid;
   File? selectedOriginalImage;
   File? selectedCroppedImage;
@@ -68,7 +68,9 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   String? selectedCity;
 
   Timer? _debounce;
-  List<String> streetSuggestions = [];
+  List<String> streetSuggestionsList = [];
+// List<Map<String, dynamic>> streetSuggestionsList = [];
+
 
   // Slot-related
   TextEditingController dayController = TextEditingController();
@@ -94,12 +96,12 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
     _debounce = Timer(const Duration(milliseconds: 350), () async {
       try {
         // Fetch street suggestions as before
-        final suggestions = await _profileBusinessServiceProfileBusinessService
+         streetSuggestions = await _profileBusinessServiceProfileBusinessService
             .fetchStreetSuggestions(query, country, state, city);
-        streetSuggestions = suggestions ?? [];
-        print('street suggestions $suggestions');
-        log(' query: ${query} country: ${country}, state: ${state}, city: ${city}');
-
+            streetSuggestionsList = streetSuggestions.data!.suggestions
+          .map((suggestion) => suggestion.name)
+            // .map((e) => {'name' : e.name})
+          .toList() ?? [];
         isLoading = false;
         notifyListeners();
       } catch (e) {
@@ -110,13 +112,14 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
         );
         isLoading = false;
         notifyListeners();
-        throw e;
+        rethrow;
       }
     });
   }
 
   void updateStreetSuggestions(List<String> suggestions) {
-    streetSuggestions = suggestions;
+  // void updateStreetSuggestions(List<Map<String, dynamic>> suggestions) {
+    streetSuggestionsList = suggestions;
     notifyListeners();
   }
 
@@ -346,7 +349,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
         'businessCategoryUuid': selectBusinessUuid,
         'country': selectedCountry,
         'stateAndProvince': selectedState,
-        'city': selectCity,
+        'city': selectedCity,
         // 'city': "saint gerald",
         'street': streetController.text.trim(),
         'postalCode': zipCodePostalCodeController.text.trim(),
@@ -411,7 +414,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
         'businessCategoryUuid': selectBusinessUuid,
         'country': selectedCountry,
         'stateAndProvince': selectedState,
-        'city': selectCity,
+        'city': selectedCity,
         'street': streetController.text.trim(),
         'postalCode': zipCodePostalCodeController.text.trim(),
         'phoneNumber': businessPhoneNumberController.text.trim(),

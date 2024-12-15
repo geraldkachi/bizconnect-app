@@ -246,8 +246,8 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           
                                           // Update selected country
                                           setupProfileRead.selectedCountry = value;
-                                          setupProfileRead.selectCity = null;
-                                          setupProfileRead.selectCity = null;
+                                          setupProfileRead.selectedCity = null;
+                                          setupProfileRead.selectedCity = null;
 
                                           // Fetch states for the selected country
                                           if (countryISO.isNotEmpty) {
@@ -267,7 +267,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
   labelText: "State and Province",
   hintText: "State and Province",
   items: setupProfileWatch.stateData.map((state) => state.name).toList(),
-  selectedItem: setupProfileWatch.selectCity,
+  selectedItem: setupProfileWatch.selectedCity,
   onChanged: (value) async {
     // Find the state by its name
     final selectedState = setupProfileWatch.stateData.firstWhere(
@@ -277,8 +277,8 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
     
 
     if (selectedState != null) {
-      setupProfileRead.selectCity = value;
-      setupProfileRead.selectCity = null; // Reset city selection
+      setupProfileRead.selectedCity = value;
+      setupProfileRead.selectedCity = null; // Reset city selection
 
       // Fetch cities for the selected state using its ISO code
       if (selectedState.isoCode.isNotEmpty) {
@@ -303,9 +303,9 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           items: setupProfileWatch.cityData,
                                           popupProps: const PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
                                           // popupProps: PopupProps.modalBottomSheet(fit: FlexFit.tight,  isFilterOnline: true,),
-                                          selectedItem: setupProfileWatch.selectCity,
+                                          selectedItem: setupProfileWatch.selectedCity,
                                          onChanged: (value) async {
-                                              setupProfileWatch.selectCity = value;
+                                              setupProfileWatch.selectedCity = value;
                                             dropDownKey.currentState?.changeSelectedItem(value);
                                             print("Selected: $value");
                                           },

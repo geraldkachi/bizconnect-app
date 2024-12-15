@@ -14,17 +14,23 @@ class StreetAutoComplete extends ConsumerStatefulWidget {
 }
 
 class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with SingleTickerProviderStateMixin {
+    // Flag to control whether suggestions are visible or not
+  bool showSuggestions = true;
+
   @override
   Widget build(BuildContext context) {
     final setupBusinessProfileState = ref.watch(setupBusinessProfileViewModelProvider);
     final streetController = setupBusinessProfileState.streetController;
-    final streetSuggestions = setupBusinessProfileState.streetSuggestions;
+    final streetSuggestions = setupBusinessProfileState.streetSuggestionsList;
     final isLoading = setupBusinessProfileState.isLoading;
 
           // Method that handles the selected street
           void onStreetSelected(String selectedStreet) {
             streetController.text = selectedStreet;
               print('streetController texting: $streetController');
+               setState(() {
+                showSuggestions = false; // Hide suggestions after selection
+              });
           }
     
         
@@ -37,12 +43,19 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
           return;
         }
 
+        // Show suggestions when starting to type
+      setState(() {
+        showSuggestions = true;
+      });
+
       final selectedCountry = setupBusinessProfileState.selectedCountry;
       final selectedState = setupBusinessProfileState.selectedState;
       final selectedCity = setupBusinessProfileState.selectedCity;
 
       if (selectedCountry == null || selectedState == null || selectedCity == null) {
         log('Error: Missing required fields');
+          log(' query: ${query} country: ${selectedCountry}, state: ${selectedState}, city: ${selectedCity}');
+
         setupBusinessProfileState.notifyListeners();
         return;
       }
@@ -50,14 +63,6 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
       ref.read(setupBusinessProfileViewModelProvider.notifier)
           .fetchStreetSuggestions(context, query, selectedCountry, selectedState, selectedCity);
     }
-
-        // log(message);
-        // print('selectedCountry now: ${setupBusinessProfileState.selectedCountry}');
-        // print('City Data now: ${setupBusinessProfileState.cityData}');
-        // print('Selected City now: ${setupBusinessProfileState.selectCity}');
-        // print('Street Suggestions mow: ${setupBusinessProfileState.streetSuggestions}');
-        // print('Street text mow: ${setupBusinessProfileState.streetController.text}');
-
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,23 +112,25 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
             // prefixIcon:prefixIcon 
           ),
         ),
-        if (streetSuggestions.isNotEmpty) ...[
+        if (streetSuggestions.isNotEmpty && showSuggestions) ...[
           // Container
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              itemCount: streetSuggestions.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(streetSuggestions[index]),
-                  onTap: () {
-                    streetController.text = streetSuggestions[index];
-                    onStreetSelected(streetSuggestions[index]);
-                     streetController.text = streetSuggestions[index];
-                    // widget.onStreetSelected(streetSuggestions[index]);
-                  },
-                );
-              },
+          Container(
+            color: Colors.grey[100],
+            child: SizedBox(
+              height: 150,
+              child: ListView.builder(
+                itemCount: streetSuggestions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(streetSuggestions[index]),
+                    onTap: () {
+                      streetController.text = streetSuggestions[index];
+                      onStreetSelected(streetSuggestions[index]);
+                      // widget.onStreetSelected(streetSuggestions[index]);
+                    },
+                  );
+                },
+              ),
             ),
           ),
 
@@ -131,7 +138,7 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
           // DropdownButton<String>(
           //   isExpanded: true,
           //   value: null, // No pre-selected value
-          //   hint: const Text('Select a street'),
+          //   hint: const Text(''),
           //   items: streetSuggestions.map((street) {
           //     return DropdownMenuItem<String>(
           //       value: street,

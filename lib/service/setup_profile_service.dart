@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/models/business_category.dart';
+import 'package:bizconnect/models/google_place_result.dart';
 import 'package:bizconnect/service/network_service.dart';
 import 'package:flutter/foundation.dart';
 
@@ -83,24 +84,18 @@ class ProfileBusinessService {
     }
   }
 
-  Future<List<String>> fetchStreetSuggestions(
+  Future<StressSuggestionsResponse> fetchStreetSuggestions(
       String query, String country, String state, String city) async {
     try {
-      final url =
-          '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
-
-      // Make the GET request using your network service
+      final url = '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
       final response = await _networkService.get(url);
-      log('street response $response');
-      print('street response $response');
-      final Map<String, dynamic> jsonDecodedPayload = response;
-      if (jsonDecodedPayload['data'] != null) {
-        final List<String> streetSuggestions = List<String>.from(
-            jsonDecodedPayload['data']['data']['suggestions']);
-        return streetSuggestions;
-      } else {
-        throw BizException(message: 'Invalid response structure');
-      }
+    log('API street response: $response');
+    // Check and extract suggestions
+    if (response['data'] != null && response['data']['suggestions'] is List) {
+      return StressSuggestionsResponse.fromJson(response);
+    } else {
+      throw BizException(message: 'Invalid response structure');
+    }
     } catch (e, stackTrace) {
       debugPrint('Error fetching street suggestions: $e\n$stackTrace');
       throw BizException(message: 'Unable to fetch street suggestions');

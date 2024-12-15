@@ -107,7 +107,7 @@ class _SetupBusinessProfilePageState
                                         "": setupProfileWatch.selectedBusinessCategory,
                                         'businessCategoryUuid': setupProfileWatch.selectBusinessUuid,
                                         'country': setupProfileWatch.selectedCountry,
-                                        'stateAndProvince': setupProfileWatch.selectCity,
+                                        'stateAndProvince': setupProfileWatch.selectedCity,
                                         'city': "saint gerald",
                                         'street': setupProfileWatch.streetController.text.trim(),
                                         'postalCode': setupProfileWatch.zipCodePostalCodeController.text.trim(),
@@ -256,7 +256,7 @@ class _SetupBusinessProfilePageState
                                             // Update selected country
                                             setupProfileRead.selectedCountry = value;
                                             setupProfileRead.selectedState = null;
-                                            setupProfileRead.selectCity = null;
+                                            setupProfileRead.selectedCity = null;
 
                                             // Fetch states for the selected country
                                             if (countryISO.isNotEmpty) {
@@ -287,7 +287,7 @@ class _SetupBusinessProfilePageState
 
                                             if (selectedState != null) {
                                               setupProfileRead.selectedState = value;
-                                              setupProfileRead.selectCity = ''; // Reset city selection
+                                              setupProfileRead.selectedCity = ''; // Reset city selection
                                               setupProfileRead.streetController.text = '';
 
                                               // Fetch cities for the selected state using its ISO code
@@ -308,9 +308,9 @@ class _SetupBusinessProfilePageState
                                           hintText: "Select city",
                                           important: true,
                                           items: setupProfileWatch.cityData,
-                                          selectedItem: setupProfileWatch.selectCity,
+                                          selectedItem: setupProfileWatch.selectedCity,
                                           onChanged: (value) {
-                                            setupProfileWatch.selectCity = value;
+                                            setupProfileWatch.selectedCity = value;
                                             setupProfileRead.streetController.text = '';
                                             print("Selected City: $value");
                                           },

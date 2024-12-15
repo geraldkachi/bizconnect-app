@@ -1,60 +1,126 @@
-class GooglePlaceResult {
-  final String businessStatus;
+import 'dart:convert';
+
+class StressSuggestionsResponse {
+  final bool? success;
+  final Message? message;
+  final Data? data;
+
+  StressSuggestionsResponse({
+    this.success,
+    this.message,
+    this.data,
+  });
+
+  factory StressSuggestionsResponse.fromJson(Map<String, dynamic> json) {
+    return StressSuggestionsResponse(
+      success: json['success'],
+      message: Message.fromJson(json['message']),
+      data: Data.fromJson(json['data']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'message': message!.toJson(),
+      'data': data!.toJson(),
+    };
+  }
+}
+
+class Message {
+  final int code;
+  final String desc;
+
+  Message({
+    required this.code,
+    required this.desc,
+  });
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      code: json['code'],
+      desc: json['desc'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'code': code,
+      'desc': desc,
+    };
+  }
+}
+
+class Data {
+  final List<Suggestion> suggestions;
+
+  Data({required this.suggestions});
+
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      suggestions: (json['suggestions'] as List)
+          .map((e) => Suggestion.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'suggestions': suggestions.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class Suggestion {
   final String formattedAddress;
   final Geometry geometry;
   final String icon;
   final String iconBackgroundColor;
   final String iconMaskBaseUri;
   final String name;
-  final OpeningHours? openingHours;
-  final List<Photo>? photos;
   final String placeId;
-  final PlusCode plusCode;
-  final double? rating;
   final String reference;
   final List<String> types;
-  final int? userRatingsTotal;
 
-  GooglePlaceResult({
-    required this.businessStatus,
+  Suggestion({
     required this.formattedAddress,
     required this.geometry,
     required this.icon,
     required this.iconBackgroundColor,
     required this.iconMaskBaseUri,
     required this.name,
-    this.openingHours,
-    this.photos,
     required this.placeId,
-    required this.plusCode,
-    this.rating,
     required this.reference,
     required this.types,
-    this.userRatingsTotal,
   });
 
-  factory GooglePlaceResult.fromJson(Map<String, dynamic> json) {
-    return GooglePlaceResult(
-      businessStatus: json['business_status'],
+  factory Suggestion.fromJson(Map<String, dynamic> json) {
+    return Suggestion(
       formattedAddress: json['formatted_address'],
       geometry: Geometry.fromJson(json['geometry']),
       icon: json['icon'],
       iconBackgroundColor: json['icon_background_color'],
       iconMaskBaseUri: json['icon_mask_base_uri'],
       name: json['name'],
-      openingHours: json['opening_hours'] != null
-          ? OpeningHours.fromJson(json['opening_hours'])
-          : null,
-      photos: json['photos'] != null
-          ? List<Photo>.from(json['photos'].map((x) => Photo.fromJson(x)))
-          : [],
       placeId: json['place_id'],
-      plusCode: PlusCode.fromJson(json['plus_code']),
-      rating: json['rating']?.toDouble(),
       reference: json['reference'],
       types: List<String>.from(json['types']),
-      userRatingsTotal: json['user_ratings_total'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'formatted_address': formattedAddress,
+      'geometry': geometry.toJson(),
+      'icon': icon,
+      'icon_background_color': iconBackgroundColor,
+      'icon_mask_base_uri': iconMaskBaseUri,
+      'name': name,
+      'place_id': placeId,
+      'reference': reference,
+      'types': types,
+    };
   }
 }
 
@@ -62,16 +128,20 @@ class Geometry {
   final LocationG location;
   final Viewport viewport;
 
-  Geometry({
-    required this.location,
-    required this.viewport,
-  });
+  Geometry({required this.location, required this.viewport});
 
   factory Geometry.fromJson(Map<String, dynamic> json) {
     return Geometry(
       location: LocationG.fromJson(json['location']),
       viewport: Viewport.fromJson(json['viewport']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'location': location.toJson(),
+      'viewport': viewport.toJson(),
+    };
   }
 }
 
@@ -82,7 +152,17 @@ class LocationG {
   LocationG({required this.lat, required this.lng});
 
   factory LocationG.fromJson(Map<String, dynamic> json) {
-    return LocationG(lat: json['lat'], lng: json['lng']);
+    return LocationG(
+      lat: json['lat'],
+      lng: json['lng'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'lat': lat,
+      'lng': lng,
+    };
   }
 }
 
@@ -98,51 +178,11 @@ class Viewport {
       southwest: LocationG.fromJson(json['southwest']),
     );
   }
-}
 
-class OpeningHours {
-  final bool openNow;
-
-  OpeningHours({required this.openNow});
-
-  factory OpeningHours.fromJson(Map<String, dynamic> json) {
-    return OpeningHours(openNow: json['open_now']);
-  }
-}
-
-class Photo {
-  final int height;
-  final List<String> htmlAttributions;
-  final String photoReference;
-  final int width;
-
-  Photo({
-    required this.height,
-    required this.htmlAttributions,
-    required this.photoReference,
-    required this.width,
-  });
-
-  factory Photo.fromJson(Map<String, dynamic> json) {
-    return Photo(
-      height: json['height'],
-      htmlAttributions: List<String>.from(json['html_attributions']),
-      photoReference: json['photo_reference'],
-      width: json['width'],
-    );
-  }
-}
-
-class PlusCode {
-  final String compoundCode;
-  final String globalCode;
-
-  PlusCode({required this.compoundCode, required this.globalCode});
-
-  factory PlusCode.fromJson(Map<String, dynamic> json) {
-    return PlusCode(
-      compoundCode: json['compound_code'],
-      globalCode: json['global_code'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'northeast': northeast.toJson(),
+      'southwest': southwest.toJson(),
+    };
   }
 }
