@@ -24,7 +24,7 @@ class _StreetAutoCompleteState extends ConsumerState<StreetAutoComplete> with Si
           // Method that handles the selected street
           void onStreetSelected(String selectedStreet) {
             streetController.text = selectedStreet;
-              print('streetController texting: ${streetController}');
+              print('streetController texting: $streetController');
           }
     
         

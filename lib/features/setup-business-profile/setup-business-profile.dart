@@ -130,7 +130,7 @@ class _SetupBusinessProfilePageState
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: setupProfileRead.prevIndex == index
+                                            color: (setupProfileRead.prevIndex == index || index == 0)
                                                 ? const Color(0xFF17BEBB)
                                                 : const Color(0xFFDBD8D8),
                                           ),
@@ -138,7 +138,7 @@ class _SetupBusinessProfilePageState
                                         const SizedBox(height: 4),
                                         Container(
                                           height: 4,
-                                          color: setupProfileRead.prevIndex == index
+                                          color: (setupProfileRead.prevIndex == index || index == 0)
                                               ? const Color(0xFF17BEBB)
                                               : const Color(0xFFDBD8D8),
                                         ),
@@ -236,7 +236,7 @@ class _SetupBusinessProfilePageState
                                             size: 37.0,
                                           ),
                                           showSearchBox: true,
-                                          prefixIcon: Icon(Icons.search,weight: 24.0, size: 34.0,)
+                                          prefixIcon: Icon(Icons.search)
                                         ),
                                         // Country
                                         const SizedBox(height: 10),

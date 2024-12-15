@@ -40,17 +40,14 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
 
   @override
   Widget build(BuildContext context) {
-    //  final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
-    // final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
     final businessProfile = ref.watch(setupBusinessProfileViewModelProvider);
 
   
-  final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
-    final setupProfileRead =
-        ref.read(setupBusinessProfileViewModelProvider.notifier);
+    final setupProfileWatch = ref.watch(setupBusinessProfileViewModelProvider);
+    final setupProfileRead = ref.read(setupBusinessProfileViewModelProvider.notifier);
 
     return Scaffold(
-            appBar: AppBar(title: Text('Update Business Profile')),
+            appBar: AppBar(title: const Text('Update Business Profile')),
 
       body: Padding(
         padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
@@ -60,9 +57,9 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(height: 26),
-                 Row(
+                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Spacer(),
                     Text(
                       "Setup Your Business Profile",
@@ -151,7 +148,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                   ? Column(
                                       children: [
                                         const SizedBox(height: 10),
-                                        Center(
+                                        const Center(
                                           child: Text(
                                             "Tell Us About Your Business",
                                             style: TextStyle(
@@ -204,7 +201,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                                   .toList();
                                               return filteredCategories;  // Return the filtered list
                                             },
-                                          popupProps: PopupProps.menu(
+                                          popupProps: const PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,  isFilterOnline: true),
                                           onChanged: (value) {
@@ -227,15 +224,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                             size: 37.0,
                                           ),
                                           showSearchBox: true,
-                                          prefixIcon: Icon(Icons.search,weight: 24.0, size: 34.0,)
-                                          //  dropdownBuilder: (context, selectedItem) {
-                                          //     return Text(selectedItem ?? ''); // Customize as needed
-                                          //   },
-                                          // prefixIcon: SvgPicture.asset(
-                                          //   'assets/svg/search.svg',
-                                          //   width: 14.0,
-                                          //   height: 14.0,
-                                          // ),
+                                          prefixIcon: const Icon(Icons.search)
                                         ),
                                         // Country
                                         const SizedBox(height: 10),
@@ -244,18 +233,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           labelText: "Select Country",
                                           hintText: "Select Country",
                                           items: setupProfileWatch.countries.map((country) => country.name).toList(),
-                                          // items: setupProfileWatch.countries.map((e) => e['name'] as String).toList(),
-                                        // asyncItems: (String filter) async {
-                                        //   // Dynamically fetch and filter countries
-                                        //   return setupProfileWatch.countries
-                                        //       .where((country) => country['name']
-                                        //           .toString()
-                                        //           .toLowerCase()
-                                        //           .contains(filter.toLowerCase()))
-                                        //       .map((e) => e['name'] as String)
-                                        //       .toList();
-                                        // },
-                                          popupProps: PopupProps.menu(
+                                          popupProps: const PopupProps.menu(
                                               // disabledItemFn: (item) => item == 'Item 3',
                                               fit: FlexFit.tight,
                                               isFilterOnline: true
@@ -323,7 +301,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           labelText: "City",
                                           hintText: "Select city",
                                           items: setupProfileWatch.cityData,
-                                          popupProps: PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
+                                          popupProps: const PopupProps.menu(fit: FlexFit.tight, isFilterOnline: true),
                                           // popupProps: PopupProps.modalBottomSheet(fit: FlexFit.tight,  isFilterOnline: true,),
                                           selectedItem: setupProfileWatch.selectCity,
                                          onChanged: (value) async {
@@ -374,7 +352,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                   : Column(
                                       children: [
                                         const SizedBox(height: 10),
-                                        Center(
+                                        const Center(
                                           child: Text(
                                             "Operations Info",
                                             style: TextStyle(
@@ -414,7 +392,7 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                           ),
                                         ),
                                         const SizedBox(height: 20),
-                                        HorizontalDottedLine(),
+                                        const HorizontalDottedLine(),
                                         const SizedBox(height: 20),
                                         DateTimeSlots(
                                           initialSlots: [
@@ -430,14 +408,14 @@ class _UpdateBusinessProfileState extends ConsumerState<UpdateBusinessProfile>  
                                         ),
 
                                         const SizedBox(height: 20),
-                                        HorizontalDottedLine(),
+                                        const HorizontalDottedLine(),
                                         const SizedBox(height: 20),
-                                        Row(
+                                        const Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Text(
                                               "Upload social media links",
                                               style: TextStyle(
