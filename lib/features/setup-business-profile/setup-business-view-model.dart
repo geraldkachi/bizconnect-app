@@ -84,6 +84,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   // image
   File? selectedImage;
   String? fileName;
+  File? croppedImage;
+
+  Map<String, dynamic>? uploadedCroppedImageData;
+  Map<String, dynamic>? uploadedOriginalImageData;
 
   Future<void> fetchStreetSuggestions(BuildContext context, String query,
       String country, String state, String city) async {
@@ -100,7 +104,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
             .fetchStreetSuggestions(query, country, state, city);
             streetSuggestionsList = streetSuggestions.data!.suggestions
           .map((suggestion) => suggestion.name)
-            // .map((e) => {'name' : e.name})
           .toList() ?? [];
         isLoading = false;
         notifyListeners();
@@ -118,7 +121,6 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   }
 
   void updateStreetSuggestions(List<String> suggestions) {
-  // void updateStreetSuggestions(List<Map<String, dynamic>> suggestions) {
     streetSuggestionsList = suggestions;
     notifyListeners();
   }
@@ -234,7 +236,9 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   }
 
 // image
-  Future<void> pickImage() async {
+
+// previous code 
+Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
@@ -249,7 +253,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
   Future<void> cropImage() async {
     if (selectedImage == null) return;
 
-    final croppedImage = await ImageCropper().cropImage(
+    final cropped = await ImageCropper().cropImage(
       sourcePath: selectedImage!.path,
       uiSettings: [
         AndroidUiSettings(
@@ -260,28 +264,100 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        IOSUiSettings(
-          title: 'Crop Image',
-        ),
+        IOSUiSettings(title: 'Crop Image'),
       ],
     );
 
-    if (croppedImage != null) {
-      selectedImage = File(croppedImage.path);
-      // where would i get croppedImageMetadata
-      // croppedImageMetadata = {
-      //   'width': croppedImage.width,
-      //   'height': croppedImage.height,
-      // };
+    if (cropped != null) {
+      croppedImage = File(cropped.path);
       notifyListeners();
+    }
+  }
+
+// corrent code 
+  Future<void> uploadImage(String folderPath) async {
+    log('folderPath $folderPath');
+    if (selectedImage == null || croppedImage == null) return;
+    log('selectedImage: ${selectedImage} croppedImage: $croppedImage');
+
+    try {
+      final signature = await _profileBusinessServiceProfileBusinessService.getUploadSignature(folderPath);
+
+      final originalImageResponse = await _profileBusinessServiceProfileBusinessService.uploadImage(
+        imageFile: selectedImage!,
+        folderPath: folderPath,
+        signature: signature,
+      );
+
+      final croppedImageResponse = await _profileBusinessServiceProfileBusinessService.uploadImage(
+        imageFile: croppedImage!,
+        folderPath: folderPath,
+        signature: signature,
+      );
+
+      uploadedOriginalImageData = originalImageResponse;
+      uploadedCroppedImageData = croppedImageResponse;
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error uploading images: $e");
     }
   }
 
   void deleteImage() {
     selectedImage = null;
+    croppedImage = null;
     fileName = null;
     notifyListeners();
   }
+
+  // Future<void> pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+  //   if (image != null) {
+  //     selectedImage = File(image.path);
+  //     fileName = image.name;
+  //     notifyListeners();
+  //     await cropImage();
+  //   }
+  // }
+
+  // Future<void> cropImage() async {
+  //   if (selectedImage == null) return;
+
+  //   final croppedImage = await ImageCropper().cropImage(
+  //     sourcePath: selectedImage!.path,
+  //     uiSettings: [
+  //       AndroidUiSettings(
+  //         toolbarTitle: 'Crop Image',
+  //         toolbarColor: Colors.blue,
+  //         toolbarWidgetColor: Colors.white,
+  //         activeControlsWidgetColor: Colors.blue,
+  //         initAspectRatio: CropAspectRatioPreset.original,
+  //         lockAspectRatio: false,
+  //       ),
+  //       IOSUiSettings(
+  //         title: 'Crop Image',
+  //       ),
+  //     ],
+  //   );
+
+  //   if (croppedImage != null) {
+  //     selectedImage = File(croppedImage.path);
+  //     // where would i get croppedImageMetadata
+  //     // croppedImageMetadata = {
+  //     //   'width': croppedImage.width,
+  //     //   'height': croppedImage.height,
+  //     // };
+  //     notifyListeners();
+  //   }
+  // }
+
+  // void deleteImage() {
+  //   selectedImage = null;
+  //   fileName = null;
+  //   notifyListeners();
+  // }
 
 // for Slot and DateTime
   List<DateTimeSlot> slots = [
@@ -343,6 +419,30 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
+       Map<String, dynamic>? cloudinaryConfig;
+    if (selectedImage != null && croppedImage != null) {
+      // Assuming you have a function `uploadImageToCloudinary` to handle the upload
+      uploadedCroppedImageData = await uploadImageToCloudinary(croppedImage!);
+      uploadedOriginalImageData = await uploadImageToCloudinary(selectedImage!);
+
+      if (uploadedCroppedImageData != null && uploadedOriginalImageData != null) {
+        cloudinaryConfig = {
+          'versions': {
+            'cropped': uploadedCroppedImageData!['version'],
+            'original': uploadedOriginalImageData!['version'],
+          },
+          'publicIds': {
+            'cropped': uploadedCroppedImageData!['public_id'],
+            'original': uploadedOriginalImageData!['public_id'],
+          },
+          'signatures': {
+            'cropped': uploadedCroppedImageData!['signature'],
+            'original': uploadedOriginalImageData!['signature'],
+          },
+        };
+      }
+    }
+
       final payload = {
         'name': businessNameController.text.trim(),
         'description': describeYourBusinessController.text.trim(),
@@ -363,7 +463,7 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
         // 'image': selectedImage != null ? await encodeImage(selectedImage!) : null,
         // 'image': selectedImage != null ? MultipartFile.fromFileSync(selectedImage!.path, filename: fileName) : null,
         // 'image': selectedImage, // Placeholder for an uploaded business image
-        'cloudinaryConfig': selectedImage != null ? await encodeImage(selectedImage!) : null, // image is ought to be here instead correct this 
+        'cloudinaryConfig': cloudinaryConfig, // image is ought to be here instead correct this 
         'streetCoordinates': {
           'lat': 0.0,
           'lng': 0.0,
@@ -504,4 +604,81 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
       // return [];
     }
   }
+
+  Future<void> getUploadSignature(BuildContext context) async {
+    try {
+      isLoading = true;
+      notifyListeners();
+      categories = await _profileBusinessServiceProfileBusinessService
+          .allBusinessCategories();
+      // categoryData = categories.data!.businessCategories.map((e) => e.description).toList();
+      categoryData = categories.data!.businessCategories
+          .map((e) => {'uuid': e.uuid, 'description': e.description})
+          .toList();
+      log('category ${categories.data!.businessCategories.map((e) => e.description)}');
+      isLoading = false;
+      notifyListeners();
+      // return categories;
+    } on BizException catch (e) {
+      isLoading = false;
+      notifyListeners();
+      _toastService.showToast(context,
+          title: 'Error', subTitle: e.message ?? '');
+      // return [];
+    } catch (e, stack) {
+      isLoading = false;
+      notifyListeners();
+      _toastService.showToast(context,
+          title: 'Error', subTitle: 'Something went wrong.');
+      debugPrint('fetch categories error: $e\n$stack');
+      // return [];
+    }
+  }
+
+
+  //  String cloudinaryCloudName = 'dshq6chfl'; // Replace with your Cloudinary cloud name
+
+//  String cloudinaryApiKey = '877589337471488';
+// // class CloudinaryService {
+//   static const String cloudName = 'dshq6chfl';
+//   static const String apiKey = "877589337471488";
+//   static const String apiSecret = "your_api_secret";
+
+//   Future<Map<String, dynamic>> getUploadSignature(String folderPath) async {
+//     final response = await http.get(
+//       Uri.parse("https://your-api-endpoint.com/signature?folderPath=$folderPath"),
+//     );
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception("Failed to get upload signature");
+//     }
+//   }
+
+//   Future<Map<String, dynamic>> uploadImage({
+//     required File imageFile,
+//     required String folderPath,
+//     required Map<String, dynamic> signature,
+//   }) async {
+//     final uri = Uri.parse(
+//       "https://api.cloudinary.com/v1_1/$cloudName/auto/upload",
+//     );
+
+//     final request = http.MultipartRequest("POST", uri)
+//       ..fields["folder"] = folderPath
+//       ..fields["signature"] = signature["signature"]
+//       ..fields["timestamp"] = signature["timestamp"].toString()
+//       ..fields["api_key"] = apiKey
+//       ..files.add(await http.MultipartFile.fromPath("file", imageFile.path));
+
+//     final streamedResponse = await request.send();
+//     final response = await http.Response.fromStream(streamedResponse);
+
+//     if (response.statusCode == 200) {
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception("Failed to upload image");
+//     }
+//   }
+// }
 }

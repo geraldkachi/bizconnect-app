@@ -155,3 +155,111 @@ class _ImageUploadFieldState extends State<ImageUploadField> {
     );
   }
 }
+
+
+
+
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+
+// class ImageUploadField extends StatefulWidget {
+//   final String labelText;
+//   final String hintText;
+//   final SetupBusinessProfileViewModel setupProfileWatch;
+
+//   const ImageUploadField({
+//     super.key,
+//     required this.labelText,
+//     required this.hintText,
+//     required this.setupProfileWatch,
+//   });
+
+//   @override
+//   State<ImageUploadField> createState() => _ImageUploadFieldState();
+// }
+
+// class _ImageUploadFieldState extends State<ImageUploadField> {
+//   void _viewImage(File? file) {
+//     if (file == null) return;
+
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return Dialog(
+//           child: GestureDetector(
+//             onTap: () => Navigator.of(context).pop(),
+//             child: Center(
+//               child: Image.file(
+//                 file,
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+
+//   Future<void> _uploadImage() async {
+//     await widget.setupProfileWatch.uploadImage("business-profile-images");
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text("Image uploaded successfully")),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           widget.labelText,
+//           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+//         ),
+//         const SizedBox(height: 7),
+//         GestureDetector(
+//           onTap: widget.setupProfileWatch.pickImage,
+//           child: Container(
+//             height: 50,
+//             decoration: BoxDecoration(
+//               borderRadius: BorderRadius.circular(12.0),
+//               border: Border.all(color: Colors.grey.shade300, width: 1.0),
+//             ),
+//             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+//             child: widget.setupProfileWatch.selectedImage != null
+//                 ? Row(
+//                     children: [
+//                       ClipRRect(
+//                         borderRadius: BorderRadius.circular(8.0),
+//                         child: Image.file(
+//                           widget.setupProfileWatch.selectedImage!,
+//                           width: 30,
+//                           height: 30,
+//                           fit: BoxFit.cover,
+//                         ),
+//                       ),
+//                       const SizedBox(width: 10),
+//                       Expanded(
+//                         child: Text(
+//                           widget.setupProfileWatch.fileName ?? "File selected",
+//                           overflow: TextOverflow.ellipsis,
+//                         ),
+//                       ),
+//                       IconButton(
+//                         icon: const Icon(Icons.upload),
+//                         onPressed: _uploadImage,
+//                       ),
+//                       IconButton(
+//                         icon: const Icon(Icons.delete),
+//                         onPressed: widget.setupProfileWatch.deleteImage,
+//                       ),
+//                     ],
+//                   )
+//                 : Text(widget.hintText),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+

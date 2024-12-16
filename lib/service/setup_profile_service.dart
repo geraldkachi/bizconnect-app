@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+
 import 'package:bizconnect/app/locator.dart';
 import 'package:bizconnect/exceptions/bizcon_exception.dart';
 import 'package:bizconnect/models/business_category.dart';
@@ -67,6 +71,7 @@ class ProfileBusinessService {
       throw BizException(message: 'Unable to fetch categories');
     }
   }
+ 
 
   Future<BusinessCategoriesModel> allBusinessList() async {
     try {
@@ -89,7 +94,7 @@ class ProfileBusinessService {
     try {
       final url = '/api/business-profile/location/suggest?query=$query&country=$country&city=$city&state=$state';
       final response = await _networkService.get(url);
-    log('API street response: $response');
+    // log('API street response: $response');
     // Check and extract suggestions
     if (response['data'] != null && response['data']['suggestions'] is List) {
       return StressSuggestionsResponse.fromJson(response);
@@ -101,4 +106,46 @@ class ProfileBusinessService {
       throw BizException(message: 'Unable to fetch street suggestions');
     }
   }
+
+ String cloudinaryApiKey = '877589337471488';
+  static const String cloudName = 'dshq6chfl';
+  static const String apiKey = "877589337471488";
+  static const String apiSecret = "your_api_secret";
+
+  Future<Map<String, dynamic>> getUploadSignature(String folderPath) async {
+    final response = await _networkService.get("/api/business-profile/upload-signature?folderPath=$folderPath");
+      log('upload-signature $response');
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Failed to get upload signature");
+    }
+  }
+
+  Future<Map<String, dynamic>> uploadImage({
+    required File imageFile,
+    required String folderPath,
+    required Map<String, dynamic> signature,
+  }) async {
+    final uri = Uri.parse(
+      "https://api.cloudinary.com/v1_1/$cloudName/auto/upload",
+    );
+
+    final request = http.MultipartRequest("POST", uri)
+      ..fields["folder"] = folderPath
+      ..fields["signature"] = signature["signature"]
+      ..fields["timestamp"] = signature["timestamp"].toString()
+      ..fields["api_key"] = apiKey
+      ..files.add(await http.MultipartFile.fromPath("file", imageFile.path));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Failed to upload image");
+    }
+  }
+
 }

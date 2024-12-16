@@ -5,8 +5,8 @@ const String cloudinaryCloudName = 'dshq6chfl'; // Replace with your Cloudinary 
 
 const String cloudinaryApiKey = '877589337471488';
 class CloudinaryConfig {
-  static const String apiKey = "<your-cloudinary-api-key>";
-  static const String cloudName = "<your-cloudinary-cloud-name>";
+  static const String apiKey = cloudinaryApiKey;
+  static const String cloudName = cloudinaryCloudName;
 }
 
 class UploadSignature {
