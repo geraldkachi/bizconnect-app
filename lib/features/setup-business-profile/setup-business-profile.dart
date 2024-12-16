@@ -365,20 +365,17 @@ class _SetupBusinessProfilePageState
                                               .businessPhoneNumberController,
                                           labelText: "Enter phone number",
                                           hintText: "Enter Phone Number",
-                                          validator: (value) =>
-                                              Validator.validatePhoneNumber(
-                                                  value),
-                                        ),
+                                          important: true,
+                                          validator: (value) => Validator.validatePhoneNumber(value)),
                                         const SizedBox(height: 10),
                                         InputField(
                                           controller: setupProfileWatch
                                               .businessEmailController,
                                           labelText: "Business email",
                                           hintText: "Enter Business email",
-                                          validator: (value) =>
-                                              Validator.validateEmail(value),
-                                          suffixIcon: IconButton(
-                                            icon: SvgPicture.asset(
+                                          important: true,
+                                          validator: (value) => Validator.validateEmail(value),
+                                          suffixIcon: IconButton(icon: SvgPicture.asset(
                                               'assets/svg/mail.svg',
                                               width: 8.0,
                                               height: 20.03,

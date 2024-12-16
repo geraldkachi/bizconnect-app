@@ -360,11 +360,10 @@ class SetupBusinessProfileViewModel extends ChangeNotifier {
         'linkedinUrl': linkedinUrlController.text.trim(),
         'instagramUrl': instagramController.text.trim(),
         'facebookUrl': facebookController.text.trim(),
-        'image':
-            selectedImage != null ? await encodeImage(selectedImage!) : null,
+        // 'image': selectedImage != null ? await encodeImage(selectedImage!) : null,
         // 'image': selectedImage != null ? MultipartFile.fromFileSync(selectedImage!.path, filename: fileName) : null,
         // 'image': selectedImage, // Placeholder for an uploaded business image
-        'cloudinaryConfig': null, // Placeholder for cloud storage configuration
+        'cloudinaryConfig': selectedImage != null ? await encodeImage(selectedImage!) : null, // image is ought to be here instead correct this 
         'streetCoordinates': {
           'lat': 0.0,
           'lng': 0.0,
